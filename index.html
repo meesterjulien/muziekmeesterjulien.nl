@@ -3755,19 +3755,26 @@ document.addEventListener('keyup',function(e){
 });
 setTimeout(function(){buildFilterPiano();moogRotate2('filterCutoffLine',1,32);moogRotate2('filterResLine',0,32);},400);
 // ===== WAVEFORM LUISTERAAR =====
+var waveOscNode=null,waveGainNode=null;
 function playWaveform(type){
   var ac=gFAC(),t=ac.currentTime;
-  var osc=ac.createOscillator(),g=ac.createGain();
+  if(waveGainNode){try{waveGainNode.gain.cancelScheduledValues(t);waveGainNode.gain.setTargetAtTime(0,t,0.02);}catch(e){}}
+  if(waveOscNode){try{waveOscNode.stop(t+0.05);}catch(e){}}
+  waveGainNode=ac.createGain();waveGainNode.connect(ac.destination);
   if(type==='noise'){
-    var bufSize=ac.sampleRate*0.8,buf=ac.createBuffer(1,bufSize,ac.sampleRate),d=buf.getChannelData(0);
+    var bufSize=ac.sampleRate*1.2,buf=ac.createBuffer(1,bufSize,ac.sampleRate),d=buf.getChannelData(0);
     for(var i=0;i<bufSize;i++)d[i]=Math.random()*2-1;
-    var src=ac.createBufferSource();src.buffer=buf;src.connect(g);
-    g.gain.setValueAtTime(0.3,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.8);
-    g.connect(ac.destination);src.start();src.stop(t+0.8);return;
+    waveOscNode=ac.createBufferSource();waveOscNode.buffer=buf;waveOscNode.connect(waveGainNode);
+    waveGainNode.gain.setValueAtTime(0.3,t);waveGainNode.gain.exponentialRampToValueAtTime(0.001,t+1.2);
+    waveOscNode.start(t);waveOscNode.stop(t+1.2);return;
   }
-  osc.type=type;osc.frequency.value=440;
-  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.4,t+0.02);g.gain.exponentialRampToValueAtTime(0.001,t+0.8);
-  osc.connect(g);g.connect(ac.destination);osc.start(t);osc.stop(t+0.8);
+  waveOscNode=ac.createOscillator();waveOscNode.type=type;waveOscNode.frequency.value=440;
+  waveOscNode.connect(waveGainNode);
+  waveGainNode.gain.setValueAtTime(0,t);
+  waveGainNode.gain.linearRampToValueAtTime(0.4,t+0.02);
+  waveGainNode.gain.setValueAtTime(0.4,t+0.6);
+  waveGainNode.gain.exponentialRampToValueAtTime(0.001,t+1.2);
+  waveOscNode.start(t);waveOscNode.stop(t+1.3);
 }
 
 // ===== ADSR SYNTH =====
@@ -3935,14 +3942,31 @@ setTimeout(function(){buildLFOPiano();buildF3Piano();},500);
 
 // ===== FOCUS TRACKER =====
 var _inputFocused = false;
+function stopAllNotes() {
+  try { stopFilterNote(); } catch(e) {}
+  try { stopLFONote(); } catch(e) {}
+  try { stopF3Note(); } catch(e) {}
+  try { if(waveGainNode){waveGainNode.gain.setTargetAtTime(0,gFAC().currentTime,0.02);}if(waveOscNode){waveOscNode.stop(gFAC().currentTime+0.05);} } catch(e) {}
+  try { if(adsrOsc){adsrOsc.stop();} } catch(e) {}
+  try { if(lfoOscNode){lfoOscNode.stop();lfoOscNode=null;} } catch(e) {}
+  fKeysDown = {};
+  f3KeysDown = {};
+  try { Object.keys(activeNotes||{}).forEach(function(k){ stopNote(parseInt(k)); }); } catch(e) {}
+}
 document.addEventListener('focusin', function(e) {
   var tag = e.target && e.target.tagName;
-  if (tag === 'INPUT' || tag === 'TEXTAREA') _inputFocused = true;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') {
+    _inputFocused = true;
+    stopAllNotes();
+  }
 });
 document.addEventListener('focusout', function(e) {
   var tag = e.target && e.target.tagName;
   if (tag === 'INPUT' || tag === 'TEXTAREA') _inputFocused = false;
 });
+// Stop ook als het venster focus verliest
+window.addEventListener('blur', function() { stopAllNotes(); });
+window.addEventListener('visibilitychange', function() { if(document.hidden) stopAllNotes(); });
 
 // ===== CANVAS TEKENEN =====
 var canvasStates={};
