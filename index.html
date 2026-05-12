@@ -3727,6 +3727,9 @@ function buildFilterPiano(){
 }
 document.addEventListener('keydown',function(e){
   if(e.repeat)return;
+  // Geen geluid als je in een tekstvak of textarea zit
+  var tag=document.activeElement&&document.activeElement.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA')return;
   var geluidActive=document.getElementById('geluid')&&document.getElementById('geluid').classList.contains('active');
   if(!geluidActive)return;
   // Waveform knoppen 1-4
@@ -3746,6 +3749,7 @@ document.addEventListener('keydown',function(e){
   if(f3idx>=0&&!f3KeysDown[e.key]){f3KeysDown[e.key]=true;gFAC();startF3Note(F3_FREQS[f3idx]);}
 });
 document.addEventListener('keyup',function(e){
+  var tag=document.activeElement&&document.activeElement.tagName;if(tag==='INPUT'||tag==='TEXTAREA')return;
   if(fNotes[e.key.toLowerCase()]&&fKeysDown[e.key]){fKeysDown[e.key]=false;stopFilterNote();}
 });
 setTimeout(function(){buildFilterPiano();moogRotate2('filterCutoffLine',1,32);moogRotate2('filterResLine',0,32);},400);
@@ -3921,6 +3925,7 @@ document.addEventListener('keydown',function(e){
   if(idx>=0&&document.getElementById('geluid').classList.contains('active')){f3KeysDown[e.key]=true;gFAC();startF3Note(F3_FREQS[idx]);}
 });
 document.addEventListener('keyup',function(e){
+  var tag=document.activeElement&&document.activeElement.tagName;if(tag==='INPUT'||tag==='TEXTAREA')return;
   var idx=F3_KEYS.indexOf(e.key.toLowerCase());
   if(idx>=0&&f3KeysDown[e.key]){f3KeysDown[e.key]=false;stopF3Note();}
 });
