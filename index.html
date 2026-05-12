@@ -1817,7 +1817,40 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
       <div class="task-content">
         <div class="task-tag tag-maken">Maken</div>
         <div class="task-title">Oscillator — vier waveforms</div>
-        <div class="task-body">Laad de sine → sawtooth → square → noise. Schets voor elke waveform een snelle tekening in je schrift en schrijf één omschrijvend woord.</div>
+        <div class="task-body">Ga naar <a href="https://learningsynths.ableton.com" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700;">learningsynths.ableton.com</a> — de lessen staan direct op de pagina. Scroll omlaag naar het hoofdstuk <strong>"Oscillators"</strong> en klik op elke golfvorm om hem te beluisteren. Schrijf daarna in het vak eronder één woord dat beschrijft hoe het klinkt.</div>
+
+        <!-- Vier waveform kaartjes met tekenvak -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+
+          <!-- SINE -->
+          <div style="background:#f0eeff;border-radius:10px;padding:10px;border:1.5px solid #c8b8ee;">
+            <div style="font-size:11px;font-weight:800;color:#7c6af7;margin-bottom:4px;">SINE</div>
+            <svg width="100%" height="40" viewBox="0 0 120 40"><path d="M0,20 C15,20 15,4 30,4 C45,4 45,36 60,36 C75,36 75,4 90,4 C105,4 105,36 120,36" fill="none" stroke="#7c6af7" stroke-width="2.5" stroke-linecap="round"/></svg>
+            <input type="text" placeholder="Klinkt als..." onclick="event.stopPropagation()" style="width:100%;margin-top:6px;padding:5px 8px;border-radius:7px;border:1.5px solid #c8b8ee;font-family:'Nunito',sans-serif;font-size:12px;background:#fff;color:#2d2a24;">
+          </div>
+
+          <!-- SAWTOOTH -->
+          <div style="background:#fff3ee;border-radius:10px;padding:10px;border:1.5px solid #ffb89a;">
+            <div style="font-size:11px;font-weight:800;color:#FF6B35;margin-bottom:4px;">SAWTOOTH</div>
+            <svg width="100%" height="40" viewBox="0 0 120 40"><polyline points="0,36 30,4 30,36 60,4 60,36 90,4 90,36 120,4" fill="none" stroke="#FF6B35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <input type="text" placeholder="Klinkt als..." onclick="event.stopPropagation()" style="width:100%;margin-top:6px;padding:5px 8px;border-radius:7px;border:1.5px solid #ffb89a;font-family:'Nunito',sans-serif;font-size:12px;background:#fff;color:#2d2a24;">
+          </div>
+
+          <!-- SQUARE -->
+          <div style="background:#f0faf5;border-radius:10px;padding:10px;border:1.5px solid #90ddb8;">
+            <div style="font-size:11px;font-weight:800;color:#2ECC8A;margin-bottom:4px;">SQUARE</div>
+            <svg width="100%" height="40" viewBox="0 0 120 40"><polyline points="0,36 0,6 30,6 30,36 60,6 90,6 90,36 120,36 120,6" fill="none" stroke="#2ECC8A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <input type="text" placeholder="Klinkt als..." onclick="event.stopPropagation()" style="width:100%;margin-top:6px;padding:5px 8px;border-radius:7px;border:1.5px solid #90ddb8;font-family:'Nunito',sans-serif;font-size:12px;background:#fff;color:#2d2a24;">
+          </div>
+
+          <!-- NOISE -->
+          <div style="background:#fff8e0;border-radius:10px;padding:10px;border:1.5px solid #ffd88a;">
+            <div style="font-size:11px;font-weight:800;color:#c8820a;margin-bottom:4px;">NOISE</div>
+            <svg width="100%" height="40" viewBox="0 0 120 40"><polyline points="0,20 5,8 10,28 15,14 20,32 25,6 30,22 35,10 40,30 45,16 50,26 55,4 60,20 65,34 70,12 75,24 80,8 85,30 90,18 95,28 100,6 105,22 110,14 115,32 120,20" fill="none" stroke="#c8820a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <input type="text" placeholder="Klinkt als..." onclick="event.stopPropagation()" style="width:100%;margin-top:6px;padding:5px 8px;border-radius:7px;border:1.5px solid #ffd88a;font-family:'Nunito',sans-serif;font-size:12px;background:#fff;color:#2d2a24;">
+          </div>
+
+        </div>
       </div>
     </div>
 
