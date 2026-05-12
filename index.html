@@ -648,11 +648,11 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
         <div style="font-size:.75rem;color:var(--mt);font-weight:800;">⏱ 0:35 – 1:10 minuten</div>
       </div>
     </div>
-    <p style="font-size:.875rem;color:var(--mt);line-height:1.7;margin-bottom:.75rem;">Het grote zelfstandige deel. Je opent <strong style="color:var(--tx);">audiotool.com</strong> en bouwt drie geluiden volgens een opdrachtenbrief. Elke brief heeft verplichte technische eisen:</p>
+    <p style="font-size:.875rem;color:var(--mt);line-height:1.7;margin-bottom:.75rem;">Het grote zelfstandige deel. Je opent <strong style="color:var(--tx);">audiotool.com</strong> en bouwt drie geluiden volgens een opdracht. Elke opdracht heeft verplichte technische eisen:</p>
     <div style="display:flex;flex-direction:column;gap:.4rem;">
-      <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🅰️ <strong>Brief A</strong> — een specifiek geluid bouwen met verplichte instellingen</div>
-      <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🅱️ <strong>Brief B</strong> — een tweede geluid met andere parameters</div>
-      <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🅲️ <strong>Brief C</strong> — een derde geluid, experimenteler</div>
+      <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🅰️ <strong>Opdracht A</strong> — een specifiek geluid bouwen met verplichte instellingen</div>
+      <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🅱️ <strong>Opdracht B</strong> — een tweede geluid met andere parameters</div>
+      <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🅲️ <strong>Opdracht C</strong> — een derde geluid, experimenteler</div>
       <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">📋 <strong>Patch sheet</strong> — documenteer alle instellingen van je drie geluiden</div>
       <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">⭐ <strong>Bonus</strong> — voeg een tweede oscillator toe en ontdek het detune-effect</div>
     </div>
@@ -768,9 +768,9 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
     <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--pu);margin-bottom:.85rem;">Fase 3 — Ontwerp Drie Geluiden (0:35–1:10)</div>
     <div style="background:#f8f4ee;border-radius:10px;padding:.75rem;font-size:.875rem;color:var(--mt);line-height:1.7;margin-bottom:.85rem;">
       Dit is een creatieve opdracht — er zijn geen vaste antwoorden. Let bij beoordeling op:<br><br>
-      <strong style="color:var(--tx);">Brief A (bas/kick):</strong> Sine of triangle, lage frequentie, snelle decay, weinig resonance<br>
-      <strong style="color:var(--tx);">Brief B (pad/sfeer):</strong> Sawtooth of meerdere oscillatoren, lange attack + release, filter half open<br>
-      <strong style="color:var(--tx);">Brief C (effect/textuur):</strong> Noise of detune, LFO actief, experimentele instellingen<br><br>
+      <strong style="color:var(--tx);">Opdracht A (bas/kick):</strong> Sine of triangle, lage frequentie, snelle decay, weinig resonance<br>
+      <strong style="color:var(--tx);">Opdracht B (pad/sfeer):</strong> Sawtooth of meerdere oscillatoren, lange attack + release, filter half open<br>
+      <strong style="color:var(--tx);">Opdracht C (effect/textuur):</strong> Noise of detune, LFO actief, experimentele instellingen<br><br>
       <strong style="color:var(--tx);">Detune bonus:</strong> Twee oscillatoren licht van elkaar afgestemd → fatter, breder geluid → dit heet <em>chorus-effect</em> of <em>unison detune</em>.
     </div>
   </div>
@@ -807,22 +807,22 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
 #geluid-inner {
   overflow-x: hidden;
   overflow-y: auto;
-  --bg: #fff9f0;
-  --surface: #fff3e0;
-  --surface2: #fdebd0;
-  --border: #e8d8c0;
+  --bg: #0d0d14;
+  --surface: #15151f;
+  --surface2: #1b1b28;
+  --border: #252535;
   --accent: #7c6af7;
-  --accent-glow: rgba(124,106,247,0.12);
-  --green: #2e9e5b;
-  --green-bg: rgba(46,158,91,0.08);
-  --amber: #c8820a;
-  --amber-bg: rgba(200,130,10,0.08);
-  --red: #d04040;
-  --text: #2d2a24;
-  --muted: #8a7a60;
-  --done: #f0e8d8;
-  --done-text: #a09070;
-  background: #fff9f0;
+  --accent-glow: rgba(124,106,247,0.15);
+  --green: #4ade80;
+  --green-bg: rgba(74,222,128,0.08);
+  --amber: #fbbf24;
+  --amber-bg: rgba(251,191,36,0.08);
+  --red: #f87171;
+  --text: #e4e4f0;
+  --muted: #6b6b8a;
+  --done: #2a2a3a;
+  --done-text: #4a4a6a;
+  background: #0d0d14;
   min-height: calc(100vh - 56px);
 }
 #geluid-inner * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1087,8 +1087,8 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
   .tag-nadenken { background: rgba(251,191,36,0.1); color: #fbbf24; }
   .tag-bespreken { background: rgba(248,113,113,0.1); color: #f87171; }
 
-  /* Brief cards (studio phase) */
-#geluid-inner .brief-card {
+  /* Opdracht cards (studio phase) */
+#geluid-inner .opdracht-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -1096,7 +1096,7 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
     margin-bottom: 14px;
   }
 
-#geluid-inner .brief-letter {
+#geluid-inner .opdracht-letter {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 42px;
     line-height: 1;
@@ -1106,7 +1106,7 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
     margin-top: -4px;
   }
 
-#geluid-inner .brief-title {
+#geluid-inner .opdracht-title {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.15em;
@@ -1115,13 +1115,13 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
     margin-bottom: 8px;
   }
 
-#geluid-inner .brief-name {
+#geluid-inner .opdracht-name {
     font-weight: 500;
     font-size: 17px;
     margin-bottom: 10px;
   }
 
-#geluid-inner .brief-eisen {
+#geluid-inner .opdracht-eisen {
     list-style: none;
     display: flex;
     flex-direction: column;
@@ -1129,7 +1129,7 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
     margin-top: 12px;
   }
 
-#geluid-inner .brief-eisen li {
+#geluid-inner .opdracht-eisen li {
     font-family: 'DM Mono', monospace;
     font-size: 12px;
     color: #8888aa;
@@ -1138,13 +1138,13 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
     align-items: flex-start;
   }
 
-#geluid-inner .brief-eisen li::before {
+#geluid-inner .opdracht-eisen li::before {
     content: '▸';
     color: var(--accent);
     flex-shrink: 0;
   }
 
-#geluid-inner .brief-check {
+#geluid-inner .opdracht-check {
     margin-top: 16px;
     padding-top: 14px;
     border-top: 1px solid var(--border);
@@ -1154,13 +1154,13 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
     cursor: pointer;
   }
 
-#geluid-inner .brief-check input[type="checkbox"] {
+#geluid-inner .opdracht-check input[type="checkbox"] {
     accent-color: var(--accent);
     width: 15px; height: 15px;
     cursor: pointer;
   }
 
-#geluid-inner .brief-check label {
+#geluid-inner .opdracht-check label {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     color: var(--muted);
@@ -2073,7 +2073,7 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
       <div class="phase-time-badge">0:35 – 1:10</div>
     </div>
     <h2>Ontwerp Drie Geluiden</h2>
-    <p class="phase-desc">Bouw de drie geluiden hieronder met onze eigen synthesizer. Elke brief heeft specifieke technische eisen. Documenteer je instellingen op het patch-formulier.</p>
+    <p class="phase-desc">Bouw de drie geluiden hieronder met onze eigen synthesizer. Elke opdracht heeft specifieke technische eisen. Documenteer je instellingen op het patch-formulier.</p>
 
     <!-- INGEBOUWDE SYNTH VOOR FASE 3 -->
     <div style="background:#1a0f04;border-radius:16px;padding:1rem;margin-bottom:1.25rem;">
@@ -2136,57 +2136,57 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
       <div style="font-size:10px;color:#8a6a3a;text-align:center;margin-top:4px;">klik of gebruik Z X C V B N M</div>
     </div>
 
-    <!-- Brief A -->
-    <div class="brief-card">
-      <div class="brief-letter">A</div>
-      <div class="brief-title">Brief A</div>
-      <div class="brief-name">Pad — breed, traag, evoluerend</div>
+    <!-- Opdracht A -->
+    <div class="opdracht-card">
+      <div class="opdracht-letter">A</div>
+      <div class="opdracht-title">Opdracht A</div>
+      <div class="opdracht-name">Pad — breed, traag, evoluerend</div>
       <p style="font-size:13.5px; color:#888899; line-height:1.6;">Maak een pad-sound die aanvoelt als filmische spanning of ruimte. Hij moet langzaam opkomen en langzaam verdwijnen.</p>
-      <ul class="brief-eisen">
+      <ul class="opdracht-eisen">
         <li>Attack langer dan 500ms — de sound mag niet direct hoorbaar zijn</li>
         <li>Langzame LFO op de filter cutoff verplicht</li>
         <li>Kies een zachte waveform (sine of triangle aanbevolen)</li>
         <li>Schrijf op je patch sheet: welk gevoel of beeld roept deze sound op?</li>
       </ul>
-      <div class="brief-check">
-        <input type="checkbox" id="brief-a" onchange="briefDone(this)">
-        <label for="brief-a">Pad afgerond &amp; gedocumenteerd</label>
+      <div class="opdracht-check">
+        <input type="checkbox" id="opdracht-a" onchange="opdrachtDone(this)">
+        <label for="opdracht-a">Pad afgerond &amp; gedocumenteerd</label>
       </div>
     </div>
 
-    <!-- Brief B -->
-    <div class="brief-card">
-      <div class="brief-letter">B</div>
-      <div class="brief-title">Brief B</div>
-      <div class="brief-name">Lead — scherp, melodisch, aanwezig</div>
+    <!-- Opdracht B -->
+    <div class="opdracht-card">
+      <div class="opdracht-letter">B</div>
+      <div class="opdracht-title">Opdracht B</div>
+      <div class="opdracht-name">Lead — scherp, melodisch, aanwezig</div>
       <p style="font-size:13.5px; color:#888899; line-height:1.6;">Maak een lead-sound die in een mix zou opvallen als een melodie-instrument. Hij moet "doorzetten".</p>
-      <ul class="brief-eisen">
+      <ul class="opdracht-eisen">
         <li>Kies een harmonisch rijke waveform (sawtooth of square aanbevolen)</li>
         <li>Filter cutoff blijft boven 2kHz — de sound moet helder zijn</li>
         <li>Korte attack (&lt;30ms), middellange sustain</li>
         <li>Speel een kleine melodie van 4 noten — werkt de sound daarvoor?</li>
       </ul>
-      <div class="brief-check">
-        <input type="checkbox" id="brief-b" onchange="briefDone(this)">
-        <label for="brief-b">Lead afgerond &amp; gedocumenteerd</label>
+      <div class="opdracht-check">
+        <input type="checkbox" id="opdracht-b" onchange="opdrachtDone(this)">
+        <label for="opdracht-b">Lead afgerond &amp; gedocumenteerd</label>
       </div>
     </div>
 
-    <!-- Brief C -->
-    <div class="brief-card">
-      <div class="brief-letter">C</div>
-      <div class="brief-title">Brief C</div>
-      <div class="brief-name">Hit — percussief, hard, kort</div>
+    <!-- Opdracht C -->
+    <div class="opdracht-card">
+      <div class="opdracht-letter">C</div>
+      <div class="opdracht-title">Opdracht C</div>
+      <div class="opdracht-name">Hit — percussief, hard, kort</div>
       <p style="font-size:13.5px; color:#888899; line-height:1.6;">Maak een percussieve hit van minder dan één seconde. Geen melodie, geen sustain — alleen een klap.</p>
-      <ul class="brief-eisen">
+      <ul class="opdracht-eisen">
         <li>Begin met noise of sine — kies bewust</li>
         <li>Zero sustain: de release mag niet meer dan 200ms zijn</li>
         <li>Gebruik een pitch envelope als dat beschikbaar is</li>
         <li>De totale hit duurt minder dan 1 seconde</li>
       </ul>
-      <div class="brief-check">
-        <input type="checkbox" id="brief-c" onchange="briefDone(this)">
-        <label for="brief-c">Hit afgerond &amp; gedocumenteerd</label>
+      <div class="opdracht-check">
+        <input type="checkbox" id="opdracht-c" onchange="opdrachtDone(this)">
+        <label for="opdracht-c">Hit afgerond &amp; gedocumenteerd</label>
       </div>
     </div>
 
@@ -2443,7 +2443,7 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
 
 <script>
   const checkboxCards = document.querySelectorAll('.task-card');
-  const briefCheckboxes = document.querySelectorAll('.brief-check input[type="checkbox"]');
+  const briefCheckboxes = document.querySelectorAll('.opdracht-check input[type="checkbox"]');
   const totalEl = document.getElementById('total-count');
   const doneEl = document.getElementById('done-count');
   const pfill = document.getElementById('pfill');
@@ -2477,7 +2477,7 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
     updateProgress();
   }
 
-  function briefDone(cb) {
+  function opdrachtDone(cb) {
     updateProgress();
   }
 
