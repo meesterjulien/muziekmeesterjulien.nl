@@ -1709,7 +1709,95 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
       <div class="task-content">
         <div class="task-tag tag-kijken">Kijken</div>
         <div class="task-title">Bekijk het signaaldiagram</div>
-        <div class="task-body">De docent laat het signaalpad zien: <strong>OSC → FILTER → AMP ENVELOPE → OUTPUT</strong>. Teken dit schema snel na in je schrift. Onthoud de volgorde.</div>
+        <div class="task-body">Zo werkt een synthesizer van begin tot eind. Bestudeer het schema hieronder goed — teken het daarna na in het tekenvak.</div>
+        <div style="margin-top:10px;background:#1a1208;border-radius:12px;padding:14px 10px;overflow-x:auto;">
+          <div style="display:flex;align-items:center;justify-content:center;gap:4px;min-width:480px;">
+            <div style="text-align:center;">
+              <div style="background:#7c6af7;border-radius:10px;padding:8px 12px;color:#fff;font-size:11px;font-weight:800;min-width:72px;">OSC<div style="font-size:9px;font-weight:400;opacity:.8;margin-top:2px;">Oscillator</div></div>
+            </div>
+            <div style="color:#FAC775;font-size:18px;font-weight:800;">→</div>
+            <div style="text-align:center;">
+              <div style="background:#FF6B35;border-radius:10px;padding:8px 12px;color:#fff;font-size:11px;font-weight:800;min-width:72px;">FILTER<div style="font-size:9px;font-weight:400;opacity:.8;margin-top:2px;">Cutoff / Res</div></div>
+            </div>
+            <div style="color:#FAC775;font-size:18px;font-weight:800;">→</div>
+            <div style="text-align:center;">
+              <div style="background:#2ECC8A;border-radius:10px;padding:8px 12px;color:#fff;font-size:11px;font-weight:800;min-width:72px;">ENV<div style="font-size:9px;font-weight:400;opacity:.8;margin-top:2px;">ADSR</div></div>
+            </div>
+            <div style="color:#FAC775;font-size:18px;font-weight:800;">→</div>
+            <div style="text-align:center;">
+              <div style="background:#3B9EE8;border-radius:10px;padding:8px 12px;color:#fff;font-size:11px;font-weight:800;min-width:72px;">OUTPUT<div style="font-size:9px;font-weight:400;opacity:.8;margin-top:2px;">Geluid</div></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;justify-content:center;gap:4px;min-width:480px;margin-top:8px;">
+            <div style="min-width:72px;text-align:center;font-size:9px;color:#9FE1CB;line-height:1.4;">Genereert de golfvorm</div>
+            <div style="min-width:22px;"></div>
+            <div style="min-width:72px;text-align:center;font-size:9px;color:#9FE1CB;line-height:1.4;">Vormt de klank</div>
+            <div style="min-width:22px;"></div>
+            <div style="min-width:72px;text-align:center;font-size:9px;color:#9FE1CB;line-height:1.4;">Bepaalt het verloop</div>
+            <div style="min-width:22px;"></div>
+            <div style="min-width:72px;text-align:center;font-size:9px;color:#9FE1CB;line-height:1.4;">Wat je hoort</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;background:#f0ece4;border-radius:10px;padding:8px 10px;border:1.5px solid #e0d4c0;">
+          <div style="font-size:10px;font-weight:800;color:#8a7a60;letter-spacing:.08em;margin-bottom:6px;">📐 BLOKSCHEMA SYMBOLEN — gebruik deze in je tekening</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+            <!-- Rechthoek = module -->
+            <div style="text-align:center;">
+              <svg width="52" height="32" viewBox="0 0 52 32"><rect x="2" y="4" width="48" height="24" rx="3" fill="none" stroke="#534AB7" stroke-width="2"/><text x="26" y="20" text-anchor="middle" font-size="9" font-family="Nunito,sans-serif" font-weight="800" fill="#534AB7">MODULE</text></svg>
+              <div style="font-size:9px;color:#8a7a60;">blok</div>
+            </div>
+            <!-- Pijl = signaalpad -->
+            <div style="text-align:center;">
+              <svg width="40" height="32" viewBox="0 0 40 32"><line x1="4" y1="16" x2="32" y2="16" stroke="#2d2a24" stroke-width="2"/><polygon points="32,10 40,16 32,22" fill="#2d2a24"/></svg>
+              <div style="font-size:9px;color:#8a7a60;">signaal</div>
+            </div>
+            <!-- Driehoek = versterker/amp -->
+            <div style="text-align:center;">
+              <svg width="36" height="32" viewBox="0 0 36 32"><polygon points="2,28 18,4 34,28" fill="none" stroke="#FF6B35" stroke-width="2"/></svg>
+              <div style="font-size:9px;color:#8a7a60;">versterker</div>
+            </div>
+            <!-- Cirkel = oscillator -->
+            <div style="text-align:center;">
+              <svg width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="none" stroke="#7c6af7" stroke-width="2"/><path d="M6,16 Q10,6 16,16 Q22,26 26,16" fill="none" stroke="#7c6af7" stroke-width="1.5"/></svg>
+              <div style="font-size:9px;color:#8a7a60;">oscillator</div>
+            </div>
+            <!-- X in rechthoek = filter -->
+            <div style="text-align:center;">
+              <svg width="36" height="32" viewBox="0 0 36 32"><rect x="2" y="4" width="32" height="24" rx="3" fill="none" stroke="#2ECC8A" stroke-width="2"/><line x1="8" y1="10" x2="28" y2="22" stroke="#2ECC8A" stroke-width="1.5"/><line x1="28" y1="10" x2="8" y2="22" stroke="#2ECC8A" stroke-width="1.5"/></svg>
+              <div style="font-size:9px;color:#8a7a60;">filter</div>
+            </div>
+            <!-- Envelope kromme -->
+            <div style="text-align:center;">
+              <svg width="52" height="32" viewBox="0 0 52 32"><path d="M4,28 L14,6 L22,16 L32,16 L42,28" fill="none" stroke="#3B9EE8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="4" y="32" font-size="7" font-family="Nunito,sans-serif" fill="#3B9EE8">A</text><text x="13" y="32" font-size="7" font-family="Nunito,sans-serif" fill="#3B9EE8">D</text><text x="22" y="32" font-size="7" font-family="Nunito,sans-serif" fill="#3B9EE8">S</text><text x="35" y="32" font-size="7" font-family="Nunito,sans-serif" fill="#3B9EE8">R</text></svg>
+              <div style="font-size:9px;color:#8a7a60;">envelope</div>
+            </div>
+            <!-- Luidspreker = output -->
+            <div style="text-align:center;">
+              <svg width="32" height="32" viewBox="0 0 32 32"><rect x="2" y="10" width="10" height="12" rx="1" fill="none" stroke="#FAC775" stroke-width="2"/><polygon points="12,10 22,4 22,28 12,22" fill="none" stroke="#FAC775" stroke-width="2"/><path d="M24,10 Q28,16 24,22" fill="none" stroke="#FAC775" stroke-width="2" stroke-linecap="round"/></svg>
+              <div style="font-size:9px;color:#8a7a60;">output</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:8px;background:#f8f4ee;border-radius:10px;padding:8px;border:1.5px solid #e8d8c0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:11px;font-weight:800;color:#8a7a60;letter-spacing:.05em;">✏️ TEKEN HET SIGNAALPAD</span>
+            <div style="display:flex;gap:5px;">
+              <button onclick="event.stopPropagation();clearCanvas('diagCanvas')" style="background:#ede5ff;border:none;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:800;color:#534AB7;cursor:pointer;">Wissen</button>
+              <select onchange="event.stopPropagation();setPenColor('diagCanvas',this.value)" style="background:#fff;border:1.5px solid #e8d8c0;border-radius:8px;padding:3px 6px;font-size:11px;cursor:pointer;" onclick="event.stopPropagation()">
+                <option value="#2d2a24">Zwart</option>
+                <option value="#7c6af7">Paars</option>
+                <option value="#2ECC8A">Groen</option>
+                <option value="#FF6B35">Oranje</option>
+              </select>
+              <select onchange="event.stopPropagation();setPenSize('diagCanvas',this.value)" style="background:#fff;border:1.5px solid #e8d8c0;border-radius:8px;padding:3px 6px;font-size:11px;cursor:pointer;" onclick="event.stopPropagation()">
+                <option value="2">Dun</option>
+                <option value="4" selected>Normaal</option>
+                <option value="8">Dik</option>
+              </select>
+            </div>
+          </div>
+          <canvas id="diagCanvas" width="700" height="180" style="width:100%;height:180px;border-radius:8px;background:#fff;cursor:crosshair;touch-action:none;display:block;"></canvas>
+        </div>
       </div>
     </div>
   </section>
@@ -3349,6 +3437,31 @@ function showPage(id, btn) {
     },50);
   }
 }
+// ===== CANVAS TEKENEN =====
+var canvasStates={};
+function initCanvas(id){
+  var canvas=document.getElementById(id);if(!canvas||canvasStates[id])return;
+  var ctx=canvas.getContext('2d');
+  var state={drawing:false,color:'#2d2a24',size:4,ctx:ctx};
+  canvasStates[id]=state;
+  function getPos(e,canvas){
+    var rect=canvas.getBoundingClientRect();
+    var scaleX=canvas.width/rect.width,scaleY=canvas.height/rect.height;
+    var clientX=e.touches?e.touches[0].clientX:e.clientX;
+    var clientY=e.touches?e.touches[0].clientY:e.clientY;
+    return{x:(clientX-rect.left)*scaleX,y:(clientY-rect.top)*scaleY};
+  }
+  function start(e){e.preventDefault();state.drawing=true;var p=getPos(e,canvas);ctx.beginPath();ctx.moveTo(p.x,p.y);}
+  function move(e){e.preventDefault();if(!state.drawing)return;var p=getPos(e,canvas);ctx.lineTo(p.x,p.y);ctx.strokeStyle=state.color;ctx.lineWidth=state.size;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();}
+  function stop(e){e.preventDefault();state.drawing=false;ctx.beginPath();}
+  canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);canvas.addEventListener('mouseup',stop);canvas.addEventListener('mouseleave',stop);
+  canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',move,{passive:false});canvas.addEventListener('touchend',stop,{passive:false});
+}
+function clearCanvas(id){var canvas=document.getElementById(id);if(!canvas)return;canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);}
+function setPenColor(id,color){if(canvasStates[id])canvasStates[id].color=color;}
+function setPenSize(id,size){if(canvasStates[id])canvasStates[id].size=parseInt(size);}
+setTimeout(function(){initCanvas('diagCanvas');},300);
+
 function checkDocentPw(){
   var pw=prompt('Voer het docentwachtwoord in:');
   if(pw==='3412'){showPage('docent',document.getElementById('synthDropBtn'));closeSynthDrop();}
