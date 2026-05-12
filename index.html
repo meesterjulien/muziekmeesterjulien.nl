@@ -630,7 +630,7 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
         <div style="font-size:.75rem;color:var(--mt);font-weight:800;">⏱ 0:15 – 0:35 minuten</div>
       </div>
     </div>
-    <p style="font-size:.875rem;color:var(--mt);line-height:1.7;margin-bottom:.75rem;">Je volgt mee op <strong style="color:var(--tx);">learningsynths.ableton.com</strong> terwijl de docent de parameters demonstreert. Je experimenteert zelf mee en schrijft op wat je hoort:</p>
+    <p style="font-size:.875rem;color:var(--mt);line-height:1.7;margin-bottom:.75rem;">Je experimenteert zelf met de ingebouwde synthesizer in de les en schrijft op wat je hoort:</p>
     <div style="display:flex;flex-direction:column;gap:.4rem;">
       <div style="background:#fff8f0;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🌊 <strong>Oscillator</strong> — beluister sine, sawtooth, square en noise en schets de waveforms</div>
       <div style="background:#fff8f0;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🎚️ <strong>Filter</strong> — sweep de cutoff en beschrijf wat er verandert</div>
@@ -648,7 +648,7 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
         <div style="font-size:.75rem;color:var(--mt);font-weight:800;">⏱ 0:35 – 1:10 minuten</div>
       </div>
     </div>
-    <p style="font-size:.875rem;color:var(--mt);line-height:1.7;margin-bottom:.75rem;">Het grote zelfstandige deel. Je opent <strong style="color:var(--tx);">audiotool.com</strong> en bouwt drie geluiden volgens een opdracht. Elke opdracht heeft verplichte technische eisen:</p>
+    <p style="font-size:.875rem;color:var(--mt);line-height:1.7;margin-bottom:.75rem;">Het grote zelfstandige deel. Je bouwt drie geluiden met de ingebouwde synthesizer in de les. Elke opdracht heeft verplichte technische eisen:</p>
     <div style="display:flex;flex-direction:column;gap:.4rem;">
       <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🅰️ <strong>Opdracht A</strong> — een specifiek geluid bouwen met verplichte instellingen</div>
       <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🅱️ <strong>Opdracht B</strong> — een tweede geluid met andere parameters</div>
@@ -1581,8 +1581,8 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
   <!-- Tools -->
   <div class="section-title">Jouw tools — open ze alvast</div>
   <div class="tools-row">
-    <a class="tool-link" href="https://learningsynths.ableton.com" target="_blank" rel="noopener"><span class="dot"></span>Ableton Learning Synths ↗</a>
-    <a class="tool-link" href="https://www.audiotool.com" target="_blank" rel="noopener"><span class="dot"></span>AudioTool ↗</a>
+    <span class="tool-link"><span class="dot"></span>Synthesizer — zie Fase 2 hieronder</span>
+    <span class="tool-link"><span class="dot"></span>Studio Synth — zie Fase 3 hieronder</span>
     <a class="tool-link" href="https://musiclab.chromeexperiments.com" target="_blank" rel="noopener"><span class="dot"></span>Chrome Music Lab ↗</a>
   </div>
 
@@ -3070,11 +3070,12 @@ drawScopes();
 
 document.addEventListener('keydown',e=>{
   if(e.repeat||e.ctrlKey||e.metaKey||e.altKey) return;
-  if(['SELECT','BUTTON','INPUT'].includes(document.activeElement?.tagName)) return;
+  if(_inputFocused)return;
   const idx=keyMap[e.key.toLowerCase()];
   if(idx!==undefined){playNote(idx);document.querySelectorAll('.wkey')[idx]?.classList.add('active');}
 });
 document.addEventListener('keyup',e=>{
+  if(_inputFocused)return;
   const idx=keyMap[e.key.toLowerCase()];
   if(idx!==undefined){stopNote(idx);document.querySelectorAll('.wkey')[idx]?.classList.remove('active');}
 });
@@ -3439,11 +3440,12 @@ drawScopes();
 
 document.addEventListener('keydown',e=>{
   if(e.repeat||e.ctrlKey||e.metaKey||e.altKey) return;
-  if(['SELECT','BUTTON','INPUT'].includes(document.activeElement?.tagName)) return;
+  if(_inputFocused)return;
   const idx=keyMap[e.key.toLowerCase()];
   if(idx!==undefined){playNote(idx);document.querySelectorAll('.wkey')[idx]?.classList.add('active');}
 });
 document.addEventListener('keyup',e=>{
+  if(_inputFocused)return;
   const idx=keyMap[e.key.toLowerCase()];
   if(idx!==undefined){stopNote(idx);document.querySelectorAll('.wkey')[idx]?.classList.remove('active');}
 });
@@ -3728,8 +3730,7 @@ function buildFilterPiano(){
 document.addEventListener('keydown',function(e){
   if(e.repeat)return;
   // Geen geluid als je in een tekstvak of textarea zit
-  var tag=document.activeElement&&document.activeElement.tagName;
-  if(tag==='INPUT'||tag==='TEXTAREA')return;
+  if(_inputFocused)return;
   var geluidActive=document.getElementById('geluid')&&document.getElementById('geluid').classList.contains('active');
   if(!geluidActive)return;
   // Waveform knoppen 1-4
@@ -3749,7 +3750,7 @@ document.addEventListener('keydown',function(e){
   if(f3idx>=0&&!f3KeysDown[e.key]){f3KeysDown[e.key]=true;gFAC();startF3Note(F3_FREQS[f3idx]);}
 });
 document.addEventListener('keyup',function(e){
-  var tag=document.activeElement&&document.activeElement.tagName;if(tag==='INPUT'||tag==='TEXTAREA')return;
+  if(_inputFocused)return;
   if(fNotes[e.key.toLowerCase()]&&fKeysDown[e.key]){fKeysDown[e.key]=false;stopFilterNote();}
 });
 setTimeout(function(){buildFilterPiano();moogRotate2('filterCutoffLine',1,32);moogRotate2('filterResLine',0,32);},400);
@@ -3921,15 +3922,28 @@ function buildF3Piano(){
 var f3KeysDown={};
 document.addEventListener('keydown',function(e){
   if(e.repeat||f3KeysDown[e.key])return;
+  if(_inputFocused)return;
   var idx=F3_KEYS.indexOf(e.key.toLowerCase());
   if(idx>=0&&document.getElementById('geluid').classList.contains('active')){f3KeysDown[e.key]=true;gFAC();startF3Note(F3_FREQS[idx]);}
 });
 document.addEventListener('keyup',function(e){
-  var tag=document.activeElement&&document.activeElement.tagName;if(tag==='INPUT'||tag==='TEXTAREA')return;
+  if(_inputFocused)return;
   var idx=F3_KEYS.indexOf(e.key.toLowerCase());
   if(idx>=0&&f3KeysDown[e.key]){f3KeysDown[e.key]=false;stopF3Note();}
 });
 setTimeout(function(){buildLFOPiano();buildF3Piano();},500);
+
+// ===== FOCUS TRACKER =====
+var _inputFocused = false;
+document.addEventListener('focusin', function(e) {
+  var tag = e.target && e.target.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') _inputFocused = true;
+});
+document.addEventListener('focusout', function(e) {
+  var tag = e.target && e.target.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') _inputFocused = false;
+});
+
 // ===== CANVAS TEKENEN =====
 var canvasStates={};
 function initCanvas(id){
