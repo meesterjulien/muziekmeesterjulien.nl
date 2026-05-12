@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kind in Klank</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400&display=swap" rel="stylesheet">
 <style>
@@ -298,6 +299,9 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
       <div class="nav-drop-menu" id="synthDropMenu">
         <button onclick="showPage('synth',document.getElementById('synthDropBtn'));closeSynthDrop()">🎛️ Eenvoudig</button>
         <button onclick="showPage('synthlab',document.getElementById('synthDropBtn'));closeSynthDrop()">🧪 Gevorderd</button>
+        <button onclick="showPage('geluid',document.getElementById('synthDropBtn'));closeSynthDrop()">📚 Geluid Les</button>
+        <button onclick="showPage('lesuitleg',document.getElementById('synthDropBtn'));closeSynthDrop()">📋 Lesuitleg</button>
+        <button onclick="checkDocentPw()">🔑 Antwoorden</button>
       </div>
     </div>
     <button class="nav-tab" onclick="showPage('game',this)">🎮 Piano Battle</button>
@@ -580,6 +584,1605 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
 </div>
 </div>
 
+<!-- LESUITLEG PAGINA -->
+<div id="lesuitleg" class="page">
+<div style="max-width:720px;margin:0 auto;padding:1.5rem 1rem 3rem;">
+
+  <div style="text-align:center;margin-bottom:2rem;">
+    <div style="font-size:2.5rem;margin-bottom:.5rem;">🎛️</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--tx);margin-bottom:.4rem;">Wat ga je vandaag doen?</div>
+    <p style="font-size:1rem;color:var(--mt);max-width:480px;margin:0 auto;line-height:1.6;">In deze les leer je hoe elektronisch geluid werkt — van nul af aan, met een echte synthesizer.</p>
+  </div>
+
+  <!-- INTRODUCTIE -->
+  <div style="background:#ede5ff;border-radius:20px;border:2.5px solid #c8b8ee;padding:1.25rem;margin-bottom:1rem;">
+    <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--pu);margin-bottom:.6rem;">💡 Waar gaat deze les over?</div>
+    <p style="font-size:.9rem;color:#534AB7;line-height:1.75;">Alle elektronische muziek — van pop tot film tot games — begint met één ding: een <strong>synthesizer</strong>. Een synth maakt geluid van nul. Geen gitaar, geen microfoon — alleen wiskunde en elektriciteit.</p>
+    <p style="font-size:.9rem;color:#534AB7;line-height:1.75;margin-top:.6rem;">Vandaag leer je hoe die klanken werken, hoe je ze zelf bouwt, en hoe je erover praat als een professional.</p>
+  </div>
+
+  <!-- FASE 1 -->
+  <div style="background:#fff;border-radius:20px;border:2.5px solid var(--bd);padding:1.25rem;margin-bottom:.75rem;box-shadow:0 3px 0 var(--bd);">
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+      <div style="background:#ede5ff;color:var(--pu);border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.1rem;flex-shrink:0;">1</div>
+      <div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:var(--tx);">De Geluidsontleding</div>
+        <div style="font-size:.75rem;color:var(--mt);font-weight:800;">⏱ 0:00 – 0:15 minuten</div>
+      </div>
+    </div>
+    <p style="font-size:.875rem;color:var(--mt);line-height:1.7;margin-bottom:.75rem;">Je luistert naar <strong style="color:var(--tx);">vier mysterieuze geluiden</strong>. Ze klinken heel anders — maar ze zijn allemaal gemaakt op dezelfde synthesizer. Jouw taak:</p>
+    <div style="display:flex;flex-direction:column;gap:.4rem;">
+      <div style="background:#f8f4ee;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🎧 Luister goed naar elk geluid</div>
+      <div style="background:#f8f4ee;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">✍️ Beschrijf elk geluid in gewone woorden (rond, scherp, donker, zacht...)</div>
+      <div style="background:#f8f4ee;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🤔 Bedenk: wat hebben ze allemaal gemeen?</div>
+      <div style="background:#f8f4ee;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">📐 Teken het signaalpad na: OSC → FILTER → ENVELOPE → OUTPUT</div>
+    </div>
+  </div>
+
+  <!-- FASE 2 -->
+  <div style="background:#fff;border-radius:20px;border:2.5px solid var(--bd);padding:1.25rem;margin-bottom:.75rem;box-shadow:0 3px 0 var(--bd);">
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+      <div style="background:#fff3e0;color:#E65100;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.1rem;flex-shrink:0;">2</div>
+      <div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:var(--tx);">Parameter Verdieping</div>
+        <div style="font-size:.75rem;color:var(--mt);font-weight:800;">⏱ 0:15 – 0:35 minuten</div>
+      </div>
+    </div>
+    <p style="font-size:.875rem;color:var(--mt);line-height:1.7;margin-bottom:.75rem;">Je volgt mee op <strong style="color:var(--tx);">learningsynths.ableton.com</strong> terwijl de docent de parameters demonstreert. Je experimenteert zelf mee en schrijft op wat je hoort:</p>
+    <div style="display:flex;flex-direction:column;gap:.4rem;">
+      <div style="background:#fff8f0;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🌊 <strong>Oscillator</strong> — beluister sine, sawtooth, square en noise en schets de waveforms</div>
+      <div style="background:#fff8f0;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🎚️ <strong>Filter</strong> — sweep de cutoff en beschrijf wat er verandert</div>
+      <div style="background:#fff8f0;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">⏱️ <strong>ADSR</strong> — voorspel eerst wat een lange attack doet, dan controleer je het</div>
+      <div style="background:#fff8f0;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">〰️ <strong>LFO</strong> — herken welk bekend effect de LFO op de filter maakt</div>
+    </div>
+  </div>
+
+  <!-- FASE 3 -->
+  <div style="background:#fff;border-radius:20px;border:2.5px solid var(--bd);padding:1.25rem;margin-bottom:.75rem;box-shadow:0 3px 0 var(--bd);">
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+      <div style="background:#d4f5e9;color:#1a9e68;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.1rem;flex-shrink:0;">3</div>
+      <div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:var(--tx);">Ontwerp Drie Geluiden</div>
+        <div style="font-size:.75rem;color:var(--mt);font-weight:800;">⏱ 0:35 – 1:10 minuten</div>
+      </div>
+    </div>
+    <p style="font-size:.875rem;color:var(--mt);line-height:1.7;margin-bottom:.75rem;">Het grote zelfstandige deel. Je opent <strong style="color:var(--tx);">audiotool.com</strong> en bouwt drie geluiden volgens een opdrachtenbrief. Elke brief heeft verplichte technische eisen:</p>
+    <div style="display:flex;flex-direction:column;gap:.4rem;">
+      <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🅰️ <strong>Brief A</strong> — een specifiek geluid bouwen met verplichte instellingen</div>
+      <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🅱️ <strong>Brief B</strong> — een tweede geluid met andere parameters</div>
+      <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">🅲️ <strong>Brief C</strong> — een derde geluid, experimenteler</div>
+      <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">📋 <strong>Patch sheet</strong> — documenteer alle instellingen van je drie geluiden</div>
+      <div style="background:#f0faf5;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">⭐ <strong>Bonus</strong> — voeg een tweede oscillator toe en ontdek het detune-effect</div>
+    </div>
+  </div>
+
+  <!-- FASE 4 -->
+  <div style="background:#fff;border-radius:20px;border:2.5px solid var(--bd);padding:1.25rem;margin-bottom:1rem;box-shadow:0 3px 0 var(--bd);">
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;">
+      <div style="background:#dff0ff;color:#1a5e99;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.1rem;flex-shrink:0;">4</div>
+      <div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:var(--tx);">Terugluistersessie</div>
+        <div style="font-size:.75rem;color:var(--mt);font-weight:800;">⏱ 1:10 – 1:30 minuten</div>
+      </div>
+    </div>
+    <p style="font-size:.875rem;color:var(--mt);line-height:1.7;margin-bottom:.75rem;">Een aantal leerlingen speelt hun geluid af voor de klas. Jij luistert en geeft feedback <strong style="color:var(--tx);">met vakwoorden</strong>:</p>
+    <div style="display:flex;flex-direction:column;gap:.4rem;">
+      <div style="background:#f0f7ff;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">👂 Luister en probeer de patch te reconstrueren in je hoofd</div>
+      <div style="background:#f0f7ff;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">💬 Geef feedback met minstens <strong>twee vakwoorden</strong></div>
+      <div style="background:#f0f7ff;border-radius:10px;padding:.6rem .85rem;font-size:.85rem;color:var(--tx);">✍️ Beantwoord de eindvraag en lever die in</div>
+    </div>
+  </div>
+
+  <!-- VAKWOORDEN -->
+  <div style="background:#fff9f0;border-radius:20px;border:2.5px solid var(--bd);padding:1.25rem;">
+    <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--tx);margin-bottom:.85rem;">📖 Vakwoorden die je vandaag leert</div>
+    <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
+      <span style="background:#ede5ff;color:var(--pu);border-radius:99px;padding:5px 14px;font-size:.82rem;font-weight:800;">Oscillator</span>
+      <span style="background:#ede5ff;color:var(--pu);border-radius:99px;padding:5px 14px;font-size:.82rem;font-weight:800;">Waveform</span>
+      <span style="background:#ede5ff;color:var(--pu);border-radius:99px;padding:5px 14px;font-size:.82rem;font-weight:800;">Filter</span>
+      <span style="background:#ede5ff;color:var(--pu);border-radius:99px;padding:5px 14px;font-size:.82rem;font-weight:800;">Cutoff</span>
+      <span style="background:#ede5ff;color:var(--pu);border-radius:99px;padding:5px 14px;font-size:.82rem;font-weight:800;">Resonance</span>
+      <span style="background:#ede5ff;color:var(--pu);border-radius:99px;padding:5px 14px;font-size:.82rem;font-weight:800;">ADSR</span>
+      <span style="background:#ede5ff;color:var(--pu);border-radius:99px;padding:5px 14px;font-size:.82rem;font-weight:800;">LFO</span>
+      <span style="background:#ede5ff;color:var(--pu);border-radius:99px;padding:5px 14px;font-size:.82rem;font-weight:800;">Envelope</span>
+      <span style="background:#ede5ff;color:var(--pu);border-radius:99px;padding:5px 14px;font-size:.82rem;font-weight:800;">Detune</span>
+      <span style="background:#ede5ff;color:var(--pu);border-radius:99px;padding:5px 14px;font-size:.82rem;font-weight:800;">Substractieve synthese</span>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- DOCENT ANTWOORDEN PAGINA -->
+<div id="docent" class="page">
+<div style="max-width:760px;margin:0 auto;padding:1.5rem 1rem 3rem;">
+
+  <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;">
+    <div style="font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--tx);">🔑 Antwoordenlijst</div>
+    <span style="background:#ede5ff;color:var(--pu);border-radius:99px;font-size:.75rem;font-weight:800;padding:3px 12px;">Geluidsontwerp & Synthese</span>
+  </div>
+
+  <!-- FASE 1 -->
+  <div style="background:#fff;border-radius:20px;border:2.5px solid var(--bd);padding:1.25rem;margin-bottom:1rem;box-shadow:0 3px 0 var(--bd);">
+    <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--pu);margin-bottom:.85rem;">Fase 1 — De Geluidsontleding (0:00–0:15)</div>
+
+    <div style="margin-bottom:1rem;">
+      <div style="font-weight:800;color:var(--tx);font-size:.9rem;margin-bottom:.4rem;">📝 Beschrijf de vier geluiden</div>
+      <div style="background:#f8f4ee;border-radius:10px;padding:.75rem;font-size:.875rem;color:var(--mt);line-height:1.7;">
+        <strong style="color:var(--tx);">Geluid A:</strong> Zacht, rond, warm — typische sine wave, langzame attack<br>
+        <strong style="color:var(--tx);">Geluid B:</strong> Scherp, helder, buzzend — sawtooth wave met open filter<br>
+        <strong style="color:var(--tx);">Geluid C:</strong> Donker, dof, warm — square wave of sine met gesloten filter<br>
+        <strong style="color:var(--tx);">Geluid D:</strong> Ruisend, atonaal, breed — noise oscillator of sterk gefilterde sawtooth
+      </div>
+    </div>
+
+    <div style="margin-bottom:.5rem;">
+      <div style="font-weight:800;color:var(--tx);font-size:.9rem;margin-bottom:.4rem;">📝 Wat hebben de vier geluiden gemeen?</div>
+      <div style="background:#f8f4ee;border-radius:10px;padding:.75rem;font-size:.875rem;color:var(--mt);line-height:1.7;">
+        Ze zijn allemaal <strong style="color:var(--tx);">elektronisch opgebouwd</strong> — geen echte instrumenten, geen opnames. Ze zijn gemaakt via een oscillator die een waveform genereert, vervormd door een filter en gevormd door een envelope. Gemeenschappelijke deler: <strong style="color:var(--tx);">substractieve synthese</strong>.
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 2 -->
+  <div style="background:#fff;border-radius:20px;border:2.5px solid var(--bd);padding:1.25rem;margin-bottom:1rem;box-shadow:0 3px 0 var(--bd);">
+    <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--pu);margin-bottom:.85rem;">Fase 2 — Parameter Verdieping (0:15–0:35)</div>
+
+    <div style="margin-bottom:1rem;">
+      <div style="font-weight:800;color:var(--tx);font-size:.9rem;margin-bottom:.4rem;">🌊 Oscillator — vier waveforms</div>
+      <div style="background:#f8f4ee;border-radius:10px;padding:.75rem;font-size:.875rem;color:var(--mt);line-height:1.7;">
+        <strong style="color:var(--tx);">Sine:</strong> Rond, zacht, puur — één frequentie, geen boventonen<br>
+        <strong style="color:var(--tx);">Sawtooth:</strong> Helder, scherp, rijk — alle boventonen aanwezig<br>
+        <strong style="color:var(--tx);">Square:</strong> Hol, nasaal, elektronisch — alleen oneven boventonen<br>
+        <strong style="color:var(--tx);">Noise:</strong> Ruisend, atonaal, zoals wind of regen
+      </div>
+    </div>
+
+    <div style="margin-bottom:1rem;">
+      <div style="font-weight:800;color:var(--tx);font-size:.9rem;margin-bottom:.4rem;">🎚️ Filter — sweep de cutoff</div>
+      <div style="background:#f8f4ee;border-radius:10px;padding:.75rem;font-size:.875rem;color:var(--mt);line-height:1.7;">
+        <strong style="color:var(--tx);">Cutoff omlaag:</strong> Het geluid wordt donkerder, doffer, minder helder — hoge frequenties verdwijnen<br>
+        <strong style="color:var(--tx);">Resonance omhoog:</strong> Een zoemende, piepende toon ontstaat rond de cutoff-frequentie — het geluid krijgt een karakter
+      </div>
+    </div>
+
+    <div style="margin-bottom:1rem;">
+      <div style="font-weight:800;color:var(--tx);font-size:.9rem;margin-bottom:.4rem;">⏱️ ADSR — attack lang maken</div>
+      <div style="background:#f8f4ee;border-radius:10px;padding:.75rem;font-size:.875rem;color:var(--mt);line-height:1.7;">
+        Het geluid komt langzaam op — in plaats van direct vol volume begint het zacht en zwelt het aan. Klinkt als strijkers of een pad. <strong style="color:var(--tx);">Goede voorspelling:</strong> "Het geluid fadedt in" of "het klinkt zachter aan het begin".
+      </div>
+    </div>
+
+    <div style="margin-bottom:.5rem;">
+      <div style="font-weight:800;color:var(--tx);font-size:.9rem;margin-bottom:.4rem;">〰️ LFO op filter — benoem het effect</div>
+      <div style="background:#f8f4ee;border-radius:10px;padding:.75rem;font-size:.875rem;color:var(--mt);line-height:1.7;">
+        Het effect klinkt als een <strong style="color:var(--tx);">wah-wah pedaal</strong> of een <strong style="color:var(--tx);">wobble bassline</strong> (zoals in dubstep). Bekende voorbeelden: Daft Punk — "Around the World", of typische dubstep/bass music.
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 3 -->
+  <div style="background:#fff;border-radius:20px;border:2.5px solid var(--bd);padding:1.25rem;margin-bottom:1rem;box-shadow:0 3px 0 var(--bd);">
+    <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--pu);margin-bottom:.85rem;">Fase 3 — Ontwerp Drie Geluiden (0:35–1:10)</div>
+    <div style="background:#f8f4ee;border-radius:10px;padding:.75rem;font-size:.875rem;color:var(--mt);line-height:1.7;margin-bottom:.85rem;">
+      Dit is een creatieve opdracht — er zijn geen vaste antwoorden. Let bij beoordeling op:<br><br>
+      <strong style="color:var(--tx);">Brief A (bas/kick):</strong> Sine of triangle, lage frequentie, snelle decay, weinig resonance<br>
+      <strong style="color:var(--tx);">Brief B (pad/sfeer):</strong> Sawtooth of meerdere oscillatoren, lange attack + release, filter half open<br>
+      <strong style="color:var(--tx);">Brief C (effect/textuur):</strong> Noise of detune, LFO actief, experimentele instellingen<br><br>
+      <strong style="color:var(--tx);">Detune bonus:</strong> Twee oscillatoren licht van elkaar afgestemd → fatter, breder geluid → dit heet <em>chorus-effect</em> of <em>unison detune</em>.
+    </div>
+  </div>
+
+  <!-- FASE 4 -->
+  <div style="background:#fff;border-radius:20px;border:2.5px solid var(--bd);padding:1.25rem;margin-bottom:1rem;box-shadow:0 3px 0 var(--bd);">
+    <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--pu);margin-bottom:.85rem;">Fase 4 — Terugluistersessie (1:10–1:30)</div>
+    <div style="background:#f8f4ee;border-radius:10px;padding:.75rem;font-size:.875rem;color:var(--mt);line-height:1.7;">
+      <strong style="color:var(--tx);">Goede feedback bevat:</strong> minimaal 2 vakwoorden (oscillator, filter, cutoff, resonance, attack, LFO, envelope, waveform, detune)<br><br>
+      <strong style="color:var(--tx);">Voorbeeld goede feedback:</strong> "De sawtooth wave met hoge resonance geeft het een scherp karakter. Ik zou de attack langer maken zodat het zachter inkomt."<br><br>
+      <strong style="color:var(--tx);">Voorbeeld slechte feedback:</strong> "Het klinkt cool" of "Ik vind het mooi" — niet concreet genoeg.
+    </div>
+  </div>
+
+  <!-- KERNVOCABULAIRE -->
+  <div style="background:#ede5ff;border-radius:20px;border:2.5px solid #c8b8ee;padding:1.25rem;">
+    <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--pu);margin-bottom:.85rem;">📖 Kernvocabulaire — verwachte kennis</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.6rem;">
+      <div style="background:#fff;border-radius:10px;padding:.75rem;font-size:.82rem;"><strong style="color:var(--pu);">Oscillator</strong><br><span style="color:var(--mt);">Genereert de basiswaveform (sine, sawtooth, square, noise)</span></div>
+      <div style="background:#fff;border-radius:10px;padding:.75rem;font-size:.82rem;"><strong style="color:var(--pu);">Filter (cutoff)</strong><br><span style="color:var(--mt);">Verwijdert frequenties — low-pass laat bas door</span></div>
+      <div style="background:#fff;border-radius:10px;padding:.75rem;font-size:.82rem;"><strong style="color:var(--pu);">Resonance (Q)</strong><br><span style="color:var(--mt);">Versterkt frequenties rond de cutoff</span></div>
+      <div style="background:#fff;border-radius:10px;padding:.75rem;font-size:.82rem;"><strong style="color:var(--pu);">ADSR</strong><br><span style="color:var(--mt);">Attack / Decay / Sustain / Release — vorm van het geluid</span></div>
+      <div style="background:#fff;border-radius:10px;padding:.75rem;font-size:.82rem;"><strong style="color:var(--pu);">LFO</strong><br><span style="color:var(--mt);">Lage frequentie die andere parameters laat bewegen</span></div>
+      <div style="background:#fff;border-radius:10px;padding:.75rem;font-size:.82rem;"><strong style="color:var(--pu);">Detune</strong><br><span style="color:var(--mt);">Twee oscillatoren licht versteld = breedte en diepte</span></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- GELUIDSONTWERP LES -->
+<div id="geluid" class="page" style="overflow:hidden;">
+<style>
+#geluid-inner {
+  overflow-x: hidden;
+  overflow-y: auto;
+  --bg: #fff9f0;
+  --surface: #fff3e0;
+  --surface2: #fdebd0;
+  --border: #e8d8c0;
+  --accent: #7c6af7;
+  --accent-glow: rgba(124,106,247,0.12);
+  --green: #2e9e5b;
+  --green-bg: rgba(46,158,91,0.08);
+  --amber: #c8820a;
+  --amber-bg: rgba(200,130,10,0.08);
+  --red: #d04040;
+  --text: #2d2a24;
+  --muted: #8a7a60;
+  --done: #f0e8d8;
+  --done-text: #a09070;
+  background: #fff9f0;
+  min-height: calc(100vh - 56px);
+}
+#geluid-inner * { box-sizing: border-box; margin: 0; padding: 0; }
+
+#geluid-inner {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  /* Top progress bar */
+#geluid-inner #progressbar {
+    position: sticky;
+    top: 0; left: 0;
+    height: 4px;
+    background: var(--accent);
+    transition: width 0.4s ease;
+    z-index: 10;
+    border-radius: 0 2px 2px 0;
+    margin-bottom: 0;
+  }
+
+#geluid-inner .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 24px 28px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+#geluid-inner .page-header {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    z-index: 1;
+    background: var(--bg);
+  }
+
+#geluid-inner .klas-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+#geluid-inner .klas-label::before { content: ''; width: 20px; height: 1px; background: var(--accent); }
+
+#geluid-inner h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(24px, 3.5vw, 40px);
+    line-height: 1.1;
+    letter-spacing: 0.02em;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    position: relative;
+    z-index: 1;
+  }
+
+#geluid-inner h1 span { color: var(--accent); display: inline; }
+
+#geluid-inner .intro-text {
+    margin-top: 16px;
+    font-size: 17px;
+    color: var(--text);
+    line-height: 1.75;
+    max-width: 100%;
+    font-weight: 400;
+  }
+
+  /* Progress counter */
+#geluid-inner .score-bar {
+    margin-top: 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+#geluid-inner .score-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+#geluid-inner .score-display span {
+    color: var(--accent);
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+#geluid-inner .progress-track {
+    flex: 1;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+#geluid-inner .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* Phase blocks */
+#geluid-inner .phase-block {
+    margin-bottom: 44px;
+  }
+
+#geluid-inner .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+#geluid-inner .phase-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .fase-1 .phase-dot { background: #00e5ff; }
+  .fase-2 .phase-dot { background: #ff3d6b; }
+  .fase-3 .phase-dot { background: #b8ff57; }
+  .fase-4 .phase-dot { background: #c77dff; }
+
+#geluid-inner .phase-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+#geluid-inner .phase-time-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 2px;
+    margin-left: auto;
+  }
+
+  .fase-1 .phase-time-badge { border-color: rgba(0,229,255,0.3); color: #00e5ff; }
+  .fase-2 .phase-time-badge { border-color: rgba(255,61,107,0.3); color: #ff3d6b; }
+  .fase-3 .phase-time-badge { border-color: rgba(184,255,87,0.3); color: #b8ff57; }
+  .fase-4 .phase-time-badge { border-color: rgba(199,125,255,0.3); color: #c77dff; }
+
+#geluid-inner h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 30px;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+
+#geluid-inner .phase-desc {
+    font-size: 14px;
+    color: #888899;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  /* Task cards */
+#geluid-inner .task-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 22px;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    user-select: none;
+  }
+
+  .task-card:hover { border-color: rgba(124,106,247,0.4); }
+
+#geluid-inner .task-card.done {
+    background: var(--done);
+    border-color: rgba(255,255,255,0.05);
+  }
+
+  .task-card.done .task-title { color: var(--done-text); text-decoration: line-through; }
+  .task-card.done .task-body { color: #3a3a55; }
+
+#geluid-inner .checkbox {
+    width: 20px; height: 20px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+    margin-top: 1px;
+  }
+
+#geluid-inner .task-card.done .checkbox {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+#geluid-inner .checkbox svg {
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .task-card.done .checkbox svg { opacity: 1; }
+
+  .task-content { flex: 1; }
+
+#geluid-inner .task-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 5px;
+    transition: color 0.2s;
+  }
+
+#geluid-inner .task-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    transition: color 0.2s;
+  }
+
+#geluid-inner .task-body a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .task-body a:hover { text-decoration: underline; }
+
+#geluid-inner .task-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 2px 8px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+
+  .tag-luisteren { background: rgba(0,229,255,0.1); color: #00e5ff; }
+  .tag-kijken { background: rgba(255,61,107,0.1); color: #ff3d6b; }
+  .tag-maken { background: rgba(184,255,87,0.1); color: #b8ff57; }
+  .tag-schrijven { background: rgba(199,125,255,0.1); color: #c77dff; }
+  .tag-nadenken { background: rgba(251,191,36,0.1); color: #fbbf24; }
+  .tag-bespreken { background: rgba(248,113,113,0.1); color: #f87171; }
+
+  /* Brief cards (studio phase) */
+#geluid-inner .brief-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 24px;
+    margin-bottom: 14px;
+  }
+
+#geluid-inner .brief-letter {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    line-height: 1;
+    color: var(--accent);
+    float: right;
+    margin-left: 16px;
+    margin-top: -4px;
+  }
+
+#geluid-inner .brief-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+#geluid-inner .brief-name {
+    font-weight: 500;
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+
+#geluid-inner .brief-eisen {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+#geluid-inner .brief-eisen li {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: #8888aa;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+#geluid-inner .brief-eisen li::before {
+    content: '▸';
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+#geluid-inner .brief-check {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+#geluid-inner .brief-check input[type="checkbox"] {
+    accent-color: var(--accent);
+    width: 15px; height: 15px;
+    cursor: pointer;
+  }
+
+#geluid-inner .brief-check label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* Vocabulary section */
+#geluid-inner .vocab-section {
+    margin-bottom: 44px;
+  }
+
+#geluid-inner .vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+  }
+
+#geluid-inner .vocab-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+
+#geluid-inner .vocab-item dt {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 5px;
+    letter-spacing: 0.05em;
+  }
+
+#geluid-inner .vocab-item dd {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* Exit ticket */
+#geluid-inner .exit-ticket {
+    background: var(--surface);
+    border: 1px solid rgba(124,106,247,0.3);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin-top: 12px;
+  }
+
+#geluid-inner .exit-ticket h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+#geluid-inner .exit-ticket p {
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 14px;
+    line-height: 1.7;
+  }
+
+#geluid-inner .exit-ticket textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.6;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .exit-ticket textarea:focus { border-color: var(--accent); }
+
+  /* Section divider */
+#geluid-inner .section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* Tools quick-links */
+#geluid-inner .tools-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 36px;
+  }
+
+#geluid-inner .tool-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .tool-link:hover { border-color: var(--accent); background: var(--accent-glow); color: var(--accent); }
+
+  .tool-link .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+
+  /* Completion banner */
+#geluid-inner #completion-banner {
+    display: none;
+    position: sticky;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    z-index: 200;
+    animation: slideup 0.4s ease;
+  }
+
+@keyframes slideup {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* Video cards */
+#geluid-inner .video-section {
+    margin-bottom: 44px;
+  }
+
+#geluid-inner .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+#geluid-inner .video-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .video-card:hover { border-color: rgba(124,106,247,0.4); }
+
+#geluid-inner .video-embed {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: #000;
+  }
+
+#geluid-inner .video-embed iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: none;
+  }
+
+#geluid-inner .video-thumb {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: opacity 0.2s;
+  }
+
+  .video-card:hover .video-thumb { opacity: 0.85; }
+
+#geluid-inner .play-btn {
+    width: 48px; height: 48px;
+    background: rgba(220, 20, 20, 0.9);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s;
+  }
+
+  .video-card:hover .play-btn { transform: scale(1.08); }
+
+#geluid-inner .video-dur {
+    position: absolute;
+    bottom: 9px; right: 11px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.55);
+  }
+
+#geluid-inner .video-info {
+    padding: 14px 16px;
+  }
+
+#geluid-inner .video-topic {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+#geluid-inner .video-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+
+#geluid-inner .video-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+#geluid-inner .video-lang {
+    display: inline-block;
+    margin-top: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    background: rgba(124,106,247,0.12);
+    color: var(--accent);
+  }
+
+  /* Sound players */
+#geluid-inner .sound-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+#geluid-inner .sound-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    transition: border-color 0.2s;
+  }
+
+  .sound-card:hover { border-color: rgba(124,106,247,0.35); }
+  .sound-card.playing { border-color: var(--accent); }
+
+#geluid-inner .sound-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+#geluid-inner .sound-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+#geluid-inner .sound-play-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 9px 14px;
+    cursor: pointer;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    width: 100%;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .sound-play-btn:hover { background: rgba(124,106,247,0.1); border-color: var(--accent); }
+  .sound-card.playing .sound-play-btn { background: rgba(124,106,247,0.15); border-color: var(--accent); color: var(--accent); }
+
+#geluid-inner .sound-waveform {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 12px;
+    height: 24px;
+  }
+
+#geluid-inner .sound-waveform span {
+    display: block;
+    width: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+
+#geluid-inner .sound-card.playing .sound-waveform span {
+    background: var(--accent);
+    animation: wvbar 0.8s ease-in-out infinite;
+  }
+
+  .sound-card.playing .sound-waveform span:nth-child(1)  { height: 8px;  animation-delay: 0.0s; }
+  .sound-card.playing .sound-waveform span:nth-child(2)  { height: 16px; animation-delay: 0.1s; }
+  .sound-card.playing .sound-waveform span:nth-child(3)  { height: 22px; animation-delay: 0.2s; }
+  .sound-card.playing .sound-waveform span:nth-child(4)  { height: 14px; animation-delay: 0.15s; }
+  .sound-card.playing .sound-waveform span:nth-child(5)  { height: 20px; animation-delay: 0.05s; }
+  .sound-card.playing .sound-waveform span:nth-child(6)  { height: 10px; animation-delay: 0.25s; }
+  .sound-card.playing .sound-waveform span:nth-child(7)  { height: 18px; animation-delay: 0.1s; }
+  .sound-card.playing .sound-waveform span:nth-child(8)  { height: 12px; animation-delay: 0.2s; }
+
+  .sound-waveform span:nth-child(1)  { height: 8px; }
+  .sound-waveform span:nth-child(2)  { height: 16px; }
+  .sound-waveform span:nth-child(3)  { height: 22px; }
+  .sound-waveform span:nth-child(4)  { height: 14px; }
+  .sound-waveform span:nth-child(5)  { height: 20px; }
+  .sound-waveform span:nth-child(6)  { height: 10px; }
+  .sound-waveform span:nth-child(7)  { height: 18px; }
+  .sound-waveform span:nth-child(8)  { height: 12px; }
+
+  /* Inline text inputs in tasks */
+#geluid-inner .task-input {
+    width: 100%;
+    margin-top: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 64px;
+    outline: none;
+    transition: border-color 0.2s;
+    display: block;
+  }
+  .task-input:focus { border-color: var(--accent); }
+  .task-input::placeholder { color: var(--muted); font-style: italic; }
+  .task-card.done .task-input { opacity: 0.4; pointer-events: none; }
+
+  /* Sound card inline input */
+#geluid-inner .sound-input {
+    width: 100%;
+    margin-top: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 8px 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    resize: none;
+    height: 48px;
+    outline: none;
+    transition: border-color 0.2s;
+    display: block;
+  }
+  .sound-input:focus { border-color: var(--accent); }
+  .sound-input::placeholder { color: var(--muted); font-style: italic; }
+
+@media (max-width: 560px) {
+    .container { padding: 40px 18px 80px; }
+    h1 { font-size: 44px; }
+    .sound-grid { grid-template-columns: 1fr; }
+  }
+
+</style>
+<div id="geluid-inner">
+
+
+<div id="progressbar" style="width:0%"></div>
+<div id="completion-banner">🎛️ Alle opdrachten afgerond — goed werk!</div>
+
+<div class="container">
+
+  <!-- Header -->
+  <header class="page-header" style="position:relative;z-index:1;background:var(--bg);">
+    <div class="klas-label">Muziekproductie · Leerlingenversie</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--text);margin-bottom:.5rem;line-height:1.2;">Geluidsontwerp &amp; Synthese</div>
+
+    <div class="score-bar">
+      <div class="score-display"><span id="done-count">0</span> / <span id="total-count">0</span> afgerond</div>
+      <div class="progress-track"><div class="progress-fill" id="pfill"></div></div>
+    </div>
+  </header>
+
+  <!-- Tools -->
+  <div class="section-title">Jouw tools — open ze alvast</div>
+  <div class="tools-row">
+    <a class="tool-link" href="https://learningsynths.ableton.com" target="_blank" rel="noopener"><span class="dot"></span>Ableton Learning Synths ↗</a>
+    <a class="tool-link" href="https://www.audiotool.com" target="_blank" rel="noopener"><span class="dot"></span>AudioTool ↗</a>
+    <a class="tool-link" href="https://musiclab.chromeexperiments.com" target="_blank" rel="noopener"><span class="dot"></span>Chrome Music Lab ↗</a>
+  </div>
+
+  <!-- Kernvocabulaire -->
+  <section class="vocab-section">
+    <div class="section-title">Kernvocabulaire — lees dit door voordat je begint</div>
+    <dl class="vocab-grid">
+      <div class="vocab-item"><dt>Oscillator</dt><dd>De geluidsbron — genereert ruwe waveforms (sine, sawtooth, square, noise)</dd></div>
+      <div class="vocab-item"><dt>Timbre</dt><dd>De "kleur" van een geluid — wat een gitaar anders maakt dan een piano op dezelfde noot</dd></div>
+      <div class="vocab-item"><dt>Filter (cutoff)</dt><dd>Verwijdert frequenties; een low-pass filter laat bas door en snijdt de highs weg</dd></div>
+      <div class="vocab-item"><dt>Resonance (Q)</dt><dd>Versterkt frequenties rond de cutoff — geeft een scherp, zoemend randje</dd></div>
+      <div class="vocab-item"><dt>ADSR</dt><dd>Attack / Decay / Sustain / Release — hoe een geluid begint, opbouwt, klinkt en uitsterft</dd></div>
+      <div class="vocab-item"><dt>LFO</dt><dd>Low Frequency Oscillator — laat andere parameters bewegen in een ritme (wah, wobble)</dd></div>
+    </dl>
+  </section>
+
+  <!-- Video: Introductie synthese -->
+  <section class="video-section">
+    <div class="section-title">Video — kijk dit vóór fase 1</div>
+    <div class="video-grid">
+      <a class="video-card" href="https://schooltv.nl/video-item/het-klokhuis-synthesizer" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;border-color:rgba(184,255,87,0.3);">
+        <div class="video-thumb" style="background:linear-gradient(135deg,#0f2010,#1a3a1a);">
+          <div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+          <span class="video-dur">~10 min</span>
+          <span style="position:absolute;top:10px;left:12px;font-family:'DM Mono',monospace;font-size:10px;background:rgba(184,255,87,0.2);color:#b8ff57;padding:3px 8px;border-radius:2px;letter-spacing:0.1em;">HET KLOKHUIS</span>
+        </div>
+        <div class="video-info">
+          <div class="video-topic">Introductie · Synthesizer in de praktijk</div>
+          <div class="video-title">Het Klokhuis: Synthesizer</div>
+          <div class="video-desc">DJ en producer Tom Trago legt uit hoe een synthesizer werkt. Perfecte Nederlandse introductie — kijk dit vóór de les begint.</div>
+          <span class="video-lang" style="background:rgba(184,255,87,0.12);color:#b8ff57;">Nederlands — SchoolTV ↗</span>
+        </div>
+      </a>
+      <a class="video-card" href="https://www.youtube.com/watch?v=iCeoFDBZhIA" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="video-thumb">
+          <div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+          <span class="video-dur">7 min</span>
+        </div>
+        <div class="video-info">
+          <div class="video-topic">Oscillator · Filter · ADSR · LFO</div>
+          <div class="video-title">Basic Components of Synthesizers</div>
+          <div class="video-desc">Overzicht van alle technische onderdelen die vandaag aan bod komen.</div>
+          <span class="video-lang">Engels — NL ondertitels via CC ↗</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Fase 1 -->
+  <section class="phase-block fase-1">
+    <div class="phase-header">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Fase 1</div>
+      <div class="phase-time-badge">0:00 – 0:15</div>
+    </div>
+    <h2>De Geluidsontleding</h2>
+    <p class="phase-desc">Luister naar de vier mysterieuze geluiden hieronder. Alle vier zijn gemaakt op dezelfde synthesizer — van nul af aan. Wat hebben ze gemeen?</p>
+
+    <!-- Sound players -->
+    <div class="sound-grid">
+      <div class="sound-card" id="sc1">
+        <div class="sound-number">01</div>
+        <div class="sound-label">Mysterie geluid A</div>
+        <button class="sound-play-btn" onclick="playSound(1)">
+          <svg class="sound-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <span id="btn-label-1">Afspelen</span>
+        </button>
+        <div class="sound-waveform"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <textarea class="sound-input" placeholder="Jouw woorden voor geluid A..."></textarea>
+      </div>
+      <div class="sound-card" id="sc2">
+        <div class="sound-number">02</div>
+        <div class="sound-label">Mysterie geluid B</div>
+        <button class="sound-play-btn" onclick="playSound(2)">
+          <svg class="sound-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <span id="btn-label-2">Afspelen</span>
+        </button>
+        <div class="sound-waveform"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <textarea class="sound-input" placeholder="Jouw woorden voor geluid B..."></textarea>
+      </div>
+      <div class="sound-card" id="sc3">
+        <div class="sound-number">03</div>
+        <div class="sound-label">Mysterie geluid C</div>
+        <button class="sound-play-btn" onclick="playSound(3)">
+          <svg class="sound-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <span id="btn-label-3">Afspelen</span>
+        </button>
+        <div class="sound-waveform"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <textarea class="sound-input" placeholder="Jouw woorden voor geluid C..."></textarea>
+      </div>
+      <div class="sound-card" id="sc4">
+        <div class="sound-number">04</div>
+        <div class="sound-label">Mysterie geluid D</div>
+        <button class="sound-play-btn" onclick="playSound(4)">
+          <svg class="sound-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <span id="btn-label-4">Afspelen</span>
+        </button>
+        <div class="sound-waveform"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <textarea class="sound-input" placeholder="Jouw woorden voor geluid D..."></textarea>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:20px;">Wat hebben alle vier gemeen?</p>
+
+    <div class="task-card" onclick="toggle(this)">
+      <div class="checkbox"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="task-content">
+        <div class="task-tag tag-luisteren">Luisteren</div>
+        <div class="task-title">Beschrijf de vier geluiden</div>
+        <div class="task-body">Gebruik gewone taal: rond, scherp, donker, bruisend, zacht, metallisch...</div>
+        <textarea class="task-input" placeholder="Geluid A: ... | Geluid B: ... | Geluid C: ... | Geluid D: ..." onclick="event.stopPropagation()"></textarea>
+      </div>
+    </div>
+
+    <div class="task-card" onclick="toggle(this)">
+      <div class="checkbox"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="task-content">
+        <div class="task-tag tag-nadenken">Nadenken</div>
+        <div class="task-title">Wat hebben de vier geluiden gemeen?</div>
+        <div class="task-body">Ze klinken heel anders — maar wat is de gemeenschappelijke deler? Schrijf je antwoord op voordat de docent het vertelt.</div>
+        <textarea class="task-input" placeholder="Mijn antwoord: ..." onclick="event.stopPropagation()"></textarea>
+      </div>
+    </div>
+
+    <div class="task-card" onclick="toggle(this)">
+      <div class="checkbox"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="task-content">
+        <div class="task-tag tag-kijken">Kijken</div>
+        <div class="task-title">Bekijk het signaaldiagram</div>
+        <div class="task-body">De docent laat het signaalpad zien: <strong>OSC → FILTER → AMP ENVELOPE → OUTPUT</strong>. Teken dit schema snel na in je schrift. Onthoud de volgorde.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fase 2 -->
+  <section class="phase-block fase-2">
+    <div class="phase-header">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Fase 2</div>
+      <div class="phase-time-badge">0:15 – 0:35</div>
+    </div>
+    <h2>Parameter Verdieping</h2>
+    <p class="phase-desc">Volg mee op <a href="https://learningsynths.ableton.com" target="_blank" rel="noopener" style="color:var(--accent)">learningsynths.ableton.com</a>. Verander elke parameter terwijl de docent dit demonstreert.</p>
+
+    <div class="task-card" onclick="toggle(this)">
+      <div class="checkbox"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="task-content">
+        <div class="task-tag tag-maken">Maken</div>
+        <div class="task-title">Oscillator — vier waveforms</div>
+        <div class="task-body">Laad de sine → sawtooth → square → noise. Schets voor elke waveform een snelle tekening in je schrift en schrijf één omschrijvend woord.</div>
+      </div>
+    </div>
+
+    <div class="task-card" onclick="toggle(this)">
+      <div class="checkbox"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="task-content">
+        <div class="task-tag tag-luisteren">Luisteren</div>
+        <div class="task-title">Filter — sweep de cutoff</div>
+        <div class="task-body">Begin met een volledig open low-pass filter. Sweep de cutoff langzaam omlaag. Beschrijf wat er met het geluid gebeurt. Draai daarna de resonance omhoog — wat hoor je?</div>
+        <textarea class="task-input" placeholder="Cutoff omlaag: ... | Resonance omhoog: ..." onclick="event.stopPropagation()"></textarea>
+      </div>
+    </div>
+
+    <div class="task-card" onclick="toggle(this)">
+      <div class="checkbox"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="task-content">
+        <div class="task-tag tag-nadenken">Nadenken</div>
+        <div class="task-title">ADSR — voorspel vóór je hoort</div>
+        <div class="task-body">De docent verandert de attack van kort naar lang. Voorspel eerst hoe het geluid verandert — schrijf het op, dan hoor je of je gelijk had.</div>
+        <textarea class="task-input" placeholder="Mijn voorspelling: ..." onclick="event.stopPropagation()"></textarea>
+      </div>
+    </div>
+
+    <div class="task-card" onclick="toggle(this)">
+      <div class="checkbox"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="task-content">
+        <div class="task-tag tag-luisteren">Luisteren</div>
+        <div class="task-title">LFO op filter — benoem het effect</div>
+        <div class="task-body">De docent koppelt een LFO aan de filter-cutoff. Welk bekend geluid of effect herken je? Ken je een nummer waarin dit effect gebruikt wordt?</div>
+        <textarea class="task-input" placeholder="Het effect klinkt als: ... | Ik ken dit van: ..." onclick="event.stopPropagation()"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video: ADSR en Filter verdieping -->
+  <section class="video-section">
+    <div class="section-title">Video — bekijk dit vóór je begint met ontwerpen</div>
+    <div class="video-grid">
+      <a class="video-card" href="https://www.youtube.com/watch?v=9niampRkFW0" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="video-thumb" style="background:linear-gradient(135deg,#1a0d2e,#2d1b4e);">
+          <div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+          <span class="video-dur">4 min</span>
+        </div>
+        <div class="video-info">
+          <div class="video-topic">ADSR Envelope</div>
+          <div class="video-title">ADSR Envelope Explained</div>
+          <div class="video-desc">Visuele uitleg van attack, decay, sustain en release. Laat precies zien hoe de curve de klank in de tijd vormt.</div>
+          <span class="video-lang">Engels — NL ondertitels via CC ↗</span>
+        </div>
+      </a>
+      <a class="video-card" href="https://www.youtube.com/watch?v=RKlqXnF8a_4" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="video-thumb" style="background:linear-gradient(135deg,#0d2a1a,#1b4030);">
+          <div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+          <span class="video-dur">6 min</span>
+        </div>
+        <div class="video-info">
+          <div class="video-topic">Filter · Resonance</div>
+          <div class="video-title">Filters & Resonance op een Synthesizer</div>
+          <div class="video-desc">Wat er gebeurt als je de cutoff sweept en de resonance opdraait — met zichtbare frequentiegrafiek.</div>
+          <span class="video-lang">Engels — NL ondertitels via CC ↗</span>
+        </div>
+      </a>
+    </div>
+    <div class="video-grid" style="margin-top:12px;">
+      <a class="video-card" href="https://www.youtube.com/watch?v=a0VJDtNW3qE" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="video-thumb" style="background:linear-gradient(135deg,#2a1a0d,#4e3010);">
+          <div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+          <span class="video-dur">5 min</span>
+        </div>
+        <div class="video-info">
+          <div class="video-topic">LFO — Modulatie</div>
+          <div class="video-title">Wat doet een LFO?</div>
+          <div class="video-desc">Hoe een LFO beweging toevoegt aan een statisch geluid — van subtiel vibrato tot dubstep wobble.</div>
+          <span class="video-lang">Engels — NL ondertitels via CC ↗</span>
+        </div>
+      </a>
+      <a class="video-card" href="https://www.youtube.com/watch?v=cHDpLFBhOBo" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+        <div class="video-thumb" style="background:linear-gradient(135deg,#0d2a0d,#1a401a);">
+          <div class="play-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+          <span class="video-dur">10 min</span>
+        </div>
+        <div class="video-info">
+          <div class="video-topic">Volledig overzicht</div>
+          <div class="video-title">Synthesizer voor Beginners</div>
+          <div class="video-desc">Nederlandstalige uitleg van oscillatoren, filters en envelopes. Handig als je de Engelse video's lastig vindt.</div>
+          <span class="video-lang" style="background:rgba(184,255,87,0.12);color:#b8ff57;">Nederlands ↗</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Fase 3 -->
+  <section class="phase-block fase-3">
+    <div class="phase-header">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Fase 3</div>
+      <div class="phase-time-badge">0:35 – 1:10</div>
+    </div>
+    <h2>Ontwerp Drie Geluiden</h2>
+    <p class="phase-desc">Open <a href="https://www.audiotool.com" target="_blank" rel="noopener" style="color:var(--accent)">audiotool.com</a> en bouw de drie geluiden hieronder. Elke brief heeft specifieke technische eisen — dit zijn geen suggesties, maar verplichtingen. Documenteer je instellingen op het patch-formulier.</p>
+
+    <!-- Brief A -->
+    <div class="brief-card">
+      <div class="brief-letter">A</div>
+      <div class="brief-title">Brief A</div>
+      <div class="brief-name">Pad — breed, traag, evoluerend</div>
+      <p style="font-size:13.5px; color:#888899; line-height:1.6;">Maak een pad-sound die aanvoelt als filmische spanning of ruimte. Hij moet langzaam opkomen en langzaam verdwijnen.</p>
+      <ul class="brief-eisen">
+        <li>Attack langer dan 500ms — de sound mag niet direct hoorbaar zijn</li>
+        <li>Langzame LFO op de filter cutoff verplicht</li>
+        <li>Kies een zachte waveform (sine of triangle aanbevolen)</li>
+        <li>Schrijf op je patch sheet: welk gevoel of beeld roept deze sound op?</li>
+      </ul>
+      <div class="brief-check">
+        <input type="checkbox" id="brief-a" onchange="briefDone(this)">
+        <label for="brief-a">Pad afgerond &amp; gedocumenteerd</label>
+      </div>
+    </div>
+
+    <!-- Brief B -->
+    <div class="brief-card">
+      <div class="brief-letter">B</div>
+      <div class="brief-title">Brief B</div>
+      <div class="brief-name">Lead — scherp, melodisch, aanwezig</div>
+      <p style="font-size:13.5px; color:#888899; line-height:1.6;">Maak een lead-sound die in een mix zou opvallen als een melodie-instrument. Hij moet "doorzetten".</p>
+      <ul class="brief-eisen">
+        <li>Kies een harmonisch rijke waveform (sawtooth of square aanbevolen)</li>
+        <li>Filter cutoff blijft boven 2kHz — de sound moet helder zijn</li>
+        <li>Korte attack (&lt;30ms), middellange sustain</li>
+        <li>Speel een kleine melodie van 4 noten — werkt de sound daarvoor?</li>
+      </ul>
+      <div class="brief-check">
+        <input type="checkbox" id="brief-b" onchange="briefDone(this)">
+        <label for="brief-b">Lead afgerond &amp; gedocumenteerd</label>
+      </div>
+    </div>
+
+    <!-- Brief C -->
+    <div class="brief-card">
+      <div class="brief-letter">C</div>
+      <div class="brief-title">Brief C</div>
+      <div class="brief-name">Hit — percussief, hard, kort</div>
+      <p style="font-size:13.5px; color:#888899; line-height:1.6;">Maak een percussieve hit van minder dan één seconde. Geen melodie, geen sustain — alleen een klap.</p>
+      <ul class="brief-eisen">
+        <li>Begin met noise of sine — kies bewust</li>
+        <li>Zero sustain: de release mag niet meer dan 200ms zijn</li>
+        <li>Gebruik een pitch envelope als dat beschikbaar is</li>
+        <li>De totale hit duurt minder dan 1 seconde</li>
+      </ul>
+      <div class="brief-check">
+        <input type="checkbox" id="brief-c" onchange="briefDone(this)">
+        <label for="brief-c">Hit afgerond &amp; gedocumenteerd</label>
+      </div>
+    </div>
+
+    <div class="task-card" onclick="toggle(this)">
+      <div class="checkbox"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="task-content">
+        <div class="task-tag tag-schrijven">Schrijven</div>
+        <div class="task-title">Patch sheet invullen</div>
+        <div class="task-body">Documenteer voor alle drie je sounds de instellingen: waveform, cutoff, resonance, attack, decay, sustain, release, LFO rate. Schrijf ook op: wat werkte niet en waarom?</div>
+      </div>
+    </div>
+
+    <div class="task-card" onclick="toggle(this)">
+      <div class="checkbox"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="task-content">
+        <div class="task-tag tag-maken">Bonus</div>
+        <div class="task-title">Klaar? Layer twee oscillatoren</div>
+        <div class="task-body">Voeg een tweede oscillator toe en stem hem licht af ten opzichte van de eerste (enkele cents). Wat gebeurt er? Dit heet <em>detune</em> — het creëert breedte en diepte.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fase 4 -->
+  <section class="phase-block fase-4">
+    <div class="phase-header">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Fase 4</div>
+      <div class="phase-time-badge">1:10 – 1:30</div>
+    </div>
+    <h2>Terugluistersessie</h2>
+    <p class="phase-desc">Een aantal leerlingen speelt één geluid af voor de klas. Gebruik het vocabulaire van vandaag — beschrijf eerst, beoordeel daarna.</p>
+
+    <div class="task-card" onclick="toggle(this)">
+      <div class="checkbox"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="task-content">
+        <div class="task-tag tag-luisteren">Luisteren</div>
+        <div class="task-title">Luister naar een medeleerling</div>
+        <div class="task-body">Welke waveform denk je dat gebruikt is? Wat doen de filter en envelope? Probeer de patch te reconstrueren in je hoofd.</div>
+        <textarea class="task-input" placeholder="Waveform: ... | Filter: ... | Envelope: ... | Mijn patch-reclassificatie: ..." onclick="event.stopPropagation()"></textarea>
+      </div>
+    </div>
+
+    <div class="task-card" onclick="toggle(this)">
+      <div class="checkbox"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="task-content">
+        <div class="task-tag tag-bespreken">Bespreken</div>
+        <div class="task-title">Geef feedback met vakbegrip</div>
+        <div class="task-body">Gebruik minstens twee vakwoorden. Zeg niet "het klinkt cool" — zeg wat de parameters doen en wat je zou veranderen.</div>
+        <textarea class="task-input" placeholder="Mijn feedback (gebruik vakwoorden): ..." onclick="event.stopPropagation()"></textarea>
+      </div>
+    </div>
+
+    <!-- Exit Ticket -->
+    <div class="task-card" onclick="toggle(this)">
+      <div class="checkbox"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="task-content">
+        <div class="task-tag tag-schrijven">Uitgangsticket</div>
+        <div class="task-title">Beantwoord de eindvraag</div>
+        <div class="task-body">Dit lever je in aan het einde van de les.</div>
+      </div>
+    </div>
+
+    <div class="exit-ticket">
+      <h3>// Uitgangsticket</h3>
+      <p>Beschrijf in 2 zinnen het verschil tussen een <strong>filter cutoff</strong> en een <strong>ADSR envelope</strong>. Gebruik een vergelijking uit het dagelijks leven (geen muziek) om het uit te leggen.</p>
+      <textarea class="task-input" style="min-height:90px;" placeholder="Schrijf hier je antwoord..." onclick="event.stopPropagation()"></textarea>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // ── Web Audio Synth Engine ──────────────────────────────────────────────
+  let audioCtx = null;
+  let activeSound = null;
+  let activeNodes = [];
+
+  function getCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function stopActive() {
+    activeNodes.forEach(n => { try { n.stop(); } catch(e){} try { n.disconnect(); } catch(e){} });
+    activeNodes = [];
+    if (activeSound !== null) {
+      document.getElementById('sc' + activeSound).classList.remove('playing');
+      document.getElementById('btn-label-' + activeSound).textContent = 'Afspelen';
+      activeSound = null;
+    }
+  }
+
+  // Sound 1: diepe sub-bas (sine, lange attack, LFO)
+  function makeSubBass(ctx) {
+    const dur = 3.5;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+    const lfo = ctx.createOscillator();
+    const lfoGain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.value = 55;
+    filter.type = 'lowpass';
+    filter.frequency.value = 300;
+    filter.Q.value = 2;
+    lfo.frequency.value = 0.5;
+    lfoGain.gain.value = 60;
+
+    lfo.connect(lfoGain);
+    lfoGain.connect(filter.frequency);
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.6, ctx.currentTime + 0.8);
+    gain.gain.setValueAtTime(0.6, ctx.currentTime + dur - 0.6);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
+
+    osc.start(); lfo.start();
+    osc.stop(ctx.currentTime + dur); lfo.stop(ctx.currentTime + dur);
+    return [osc, lfo, gain];
+  }
+
+  // Sound 2: scherpe sawtooth lead
+  function makeLead(ctx) {
+    const dur = 3.0;
+    const osc = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+
+    osc.type = 'sawtooth';
+    osc.frequency.value = 220;
+    osc2.type = 'sawtooth';
+    osc2.frequency.value = 220.8; // slight detune
+
+    filter.type = 'lowpass';
+    filter.frequency.value = 2800;
+    filter.Q.value = 6;
+    filter.frequency.linearRampToValueAtTime(600, ctx.currentTime + 0.05);
+    filter.frequency.setValueAtTime(600, ctx.currentTime + 0.05);
+
+    osc.connect(filter); osc2.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 0.01);
+    gain.gain.setValueAtTime(0.35, ctx.currentTime + dur - 0.3);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
+
+    osc.start(); osc2.start();
+    osc.stop(ctx.currentTime + dur); osc2.stop(ctx.currentTime + dur);
+    return [osc, osc2, gain];
+  }
+
+  // Sound 3: brede pad (slow attack, LFO on filter, detuned saws)
+  function makePad(ctx) {
+    const dur = 5.0;
+    const nodes = [];
+    const masterGain = ctx.createGain();
+    masterGain.connect(ctx.destination);
+    masterGain.gain.setValueAtTime(0, ctx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 1.8);
+    masterGain.gain.setValueAtTime(0.4, ctx.currentTime + dur - 1.2);
+    masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
+
+    const freqs = [130.81, 131.2, 130.4];
+    freqs.forEach(f => {
+      const osc = ctx.createOscillator();
+      const filter = ctx.createBiquadFilter();
+      const lfo = ctx.createOscillator();
+      const lfoG = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.value = f;
+      filter.type = 'lowpass';
+      filter.frequency.value = 900;
+      filter.Q.value = 1.5;
+      lfo.frequency.value = 0.3;
+      lfoG.gain.value = 200;
+
+      lfo.connect(lfoG);
+      lfoG.connect(filter.frequency);
+      osc.connect(filter);
+      filter.connect(masterGain);
+
+      osc.start(); lfo.start();
+      osc.stop(ctx.currentTime + dur); lfo.stop(ctx.currentTime + dur);
+      nodes.push(osc, lfo, lfoG);
+    });
+    nodes.push(masterGain);
+    return nodes;
+  }
+
+  // Sound 4: percussive hit (noise burst + sine click)
+  function makeHit(ctx) {
+    const dur = 0.8;
+    const bufSize = ctx.sampleRate * dur;
+    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = buf;
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.value = 3000;
+    noiseFilter.Q.value = 0.8;
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.5, ctx.currentTime);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+
+    // sine thump
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(180, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.1);
+    const oscGain = ctx.createGain();
+    oscGain.gain.setValueAtTime(0.8, ctx.currentTime);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+    noise.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+    osc.connect(oscGain);
+    oscGain.connect(ctx.destination);
+
+    noise.start(); osc.start();
+    noise.stop(ctx.currentTime + dur); osc.stop(ctx.currentTime + dur);
+    return [noise, osc, noiseGain, oscGain];
+  }
+
+  const soundMakers = { 1: makeSubBass, 2: makeLead, 3: makePad, 4: makeHit };
+  const soundDurations = { 1: 3500, 2: 3000, 3: 5000, 4: 800 };
+
+  function playSound(id) {
+    if (activeSound === id) { stopActive(); return; }
+    stopActive();
+    const ctx = getCtx();
+    const nodes = soundMakers[id](ctx);
+    activeNodes = nodes;
+    activeSound = id;
+    document.getElementById('sc' + id).classList.add('playing');
+    document.getElementById('btn-label-' + id).textContent = 'Stop';
+    setTimeout(() => {
+      if (activeSound === id) stopActive();
+    }, soundDurations[id]);
+  }
+</script>
+
+<script>
+  const checkboxCards = document.querySelectorAll('.task-card');
+  const briefCheckboxes = document.querySelectorAll('.brief-check input[type="checkbox"]');
+  const totalEl = document.getElementById('total-count');
+  const doneEl = document.getElementById('done-count');
+  const pfill = document.getElementById('pfill');
+  const progressbar = document.getElementById('progressbar');
+  const banner = document.getElementById('completion-banner');
+
+  const TOTAL = checkboxCards.length + briefCheckboxes.length;
+  totalEl.textContent = TOTAL;
+
+  function getCompleted() {
+    let n = 0;
+    checkboxCards.forEach(c => { if (c.classList.contains('done')) n++; });
+    briefCheckboxes.forEach(c => { if (c.checked) n++; });
+    return n;
+  }
+
+  function updateProgress() {
+    const n = getCompleted();
+    doneEl.textContent = n;
+    const pct = TOTAL > 0 ? (n / TOTAL) * 100 : 0;
+    pfill.style.width = pct + '%';
+    progressbar.style.width = pct + '%';
+    if (n === TOTAL && TOTAL > 0) {
+      banner.style.display = 'block';
+      setTimeout(() => { banner.style.display = 'none'; }, 4000);
+    }
+  }
+
+  function toggle(card) {
+    card.classList.toggle('done');
+    updateProgress();
+  }
+
+  function briefDone(cb) {
+    updateProgress();
+  }
+
+  updateProgress();
+</script>
+
+
+</div>
+</div>
+
 <!-- SYNTHLAB GEVORDERDE SYNTHESIZER -->
 <div id="synthlab" class="page">
 <style>
@@ -595,7 +2198,7 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
 #synthlab { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; }
 #synthlab-inner { min-height: 100vh; overflow-x: hidden; }
 #synthlab-inner::before {
-  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999;
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
   opacity: 0.5;
 }
@@ -1746,6 +3349,11 @@ function showPage(id, btn) {
     },50);
   }
 }
+function checkDocentPw(){
+  var pw=prompt('Voer het docentwachtwoord in:');
+  if(pw==='3412'){showPage('docent',document.getElementById('synthDropBtn'));closeSynthDrop();}
+  else if(pw!==null){alert('Onjuist wachtwoord.');}
+}
 function toggleSynthDrop(){document.getElementById('synthDropMenu').classList.toggle('open');}
 function closeSynthDrop(){document.getElementById('synthDropMenu').classList.remove('open');}
 document.addEventListener('click',function(e){if(!document.getElementById('synthDropdown').contains(e.target))closeSynthDrop();});
@@ -2176,6 +3784,191 @@ function moogRotate(id,val){
 }
 // Init knop posities
 setTimeout(function(){moogRotate('moogRevLine',.3);moogRotate('moogDelLine',0);moogRotate('moogOctLine',.5);moogRotate('moogVolLine',.7);},100);
+(function(){
+
+  // ── Web Audio Synth Engine ──────────────────────────────────────────────
+  let audioCtx = null;
+  let activeSound = null;
+  let activeNodes = [];
+
+  function getCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function stopActive() {
+    activeNodes.forEach(n => { try { n.stop(); } catch(e){} try { n.disconnect(); } catch(e){} });
+    activeNodes = [];
+    if (activeSound !== null) {
+      document.getElementById('sc' + activeSound).classList.remove('playing');
+      document.getElementById('btn-label-' + activeSound).textContent = 'Afspelen';
+      activeSound = null;
+    }
+  }
+
+  // Sound 1: diepe sub-bas (sine, lange attack, LFO)
+  function makeSubBass(ctx) {
+    const dur = 3.5;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+    const lfo = ctx.createOscillator();
+    const lfoGain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.value = 55;
+    filter.type = 'lowpass';
+    filter.frequency.value = 300;
+    filter.Q.value = 2;
+    lfo.frequency.value = 0.5;
+    lfoGain.gain.value = 60;
+
+    lfo.connect(lfoGain);
+    lfoGain.connect(filter.frequency);
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.6, ctx.currentTime + 0.8);
+    gain.gain.setValueAtTime(0.6, ctx.currentTime + dur - 0.6);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
+
+    osc.start(); lfo.start();
+    osc.stop(ctx.currentTime + dur); lfo.stop(ctx.currentTime + dur);
+    return [osc, lfo, gain];
+  }
+
+  // Sound 2: scherpe sawtooth lead
+  function makeLead(ctx) {
+    const dur = 3.0;
+    const osc = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+
+    osc.type = 'sawtooth';
+    osc.frequency.value = 220;
+    osc2.type = 'sawtooth';
+    osc2.frequency.value = 220.8; // slight detune
+
+    filter.type = 'lowpass';
+    filter.frequency.value = 2800;
+    filter.Q.value = 6;
+    filter.frequency.linearRampToValueAtTime(600, ctx.currentTime + 0.05);
+    filter.frequency.setValueAtTime(600, ctx.currentTime + 0.05);
+
+    osc.connect(filter); osc2.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 0.01);
+    gain.gain.setValueAtTime(0.35, ctx.currentTime + dur - 0.3);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
+
+    osc.start(); osc2.start();
+    osc.stop(ctx.currentTime + dur); osc2.stop(ctx.currentTime + dur);
+    return [osc, osc2, gain];
+  }
+
+  // Sound 3: brede pad (slow attack, LFO on filter, detuned saws)
+  function makePad(ctx) {
+    const dur = 5.0;
+    const nodes = [];
+    const masterGain = ctx.createGain();
+    masterGain.connect(ctx.destination);
+    masterGain.gain.setValueAtTime(0, ctx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 1.8);
+    masterGain.gain.setValueAtTime(0.4, ctx.currentTime + dur - 1.2);
+    masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
+
+    const freqs = [130.81, 131.2, 130.4];
+    freqs.forEach(f => {
+      const osc = ctx.createOscillator();
+      const filter = ctx.createBiquadFilter();
+      const lfo = ctx.createOscillator();
+      const lfoG = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.value = f;
+      filter.type = 'lowpass';
+      filter.frequency.value = 900;
+      filter.Q.value = 1.5;
+      lfo.frequency.value = 0.3;
+      lfoG.gain.value = 200;
+
+      lfo.connect(lfoG);
+      lfoG.connect(filter.frequency);
+      osc.connect(filter);
+      filter.connect(masterGain);
+
+      osc.start(); lfo.start();
+      osc.stop(ctx.currentTime + dur); lfo.stop(ctx.currentTime + dur);
+      nodes.push(osc, lfo, lfoG);
+    });
+    nodes.push(masterGain);
+    return nodes;
+  }
+
+  // Sound 4: percussive hit (noise burst + sine click)
+  function makeHit(ctx) {
+    const dur = 0.8;
+    const bufSize = ctx.sampleRate * dur;
+    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = buf;
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.value = 3000;
+    noiseFilter.Q.value = 0.8;
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.5, ctx.currentTime);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+
+    // sine thump
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(180, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.1);
+    const oscGain = ctx.createGain();
+    oscGain.gain.setValueAtTime(0.8, ctx.currentTime);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+    noise.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+    osc.connect(oscGain);
+    oscGain.connect(ctx.destination);
+
+    noise.start(); osc.start();
+    noise.stop(ctx.currentTime + dur); osc.stop(ctx.currentTime + dur);
+    return [noise, osc, noiseGain, oscGain];
+  }
+
+  const soundMakers = { 1: makeSubBass, 2: makeLead, 3: makePad, 4: makeHit };
+  const soundDurations = { 1: 3500, 2: 3000, 3: 5000, 4: 800 };
+
+  function playSound(id) {
+    if (activeSound === id) { stopActive(); return; }
+    stopActive();
+    const ctx = getCtx();
+    const nodes = soundMakers[id](ctx);
+    activeNodes = nodes;
+    activeSound = id;
+    document.getElementById('sc' + id).classList.add('playing');
+    document.getElementById('btn-label-' + id).textContent = 'Stop';
+    setTimeout(() => {
+      if (activeSound === id) stopActive();
+    }, soundDurations[id]);
+  }
+
+})();
+
 // ===== ALOHA UKELELE =====
 const UAC=new(window.AudioContext||window.webkitAudioContext)();
 let uVolMe=0.7,uVolBg=0.45,uBpm=80,uIsPlaying=false,uIsCounting=false;
