@@ -91,6 +91,8 @@ nav{background:#fff;border-bottom:2px solid var(--bd);padding:.75rem 1.5rem;disp
 .synth-wkey .synth-kl{font-family:'Nunito',sans-serif;font-size:10px;font-weight:800;color:#a07848;}
 .synth-bkey{position:absolute;top:0;background:#2d1f0a;border-radius:0 0 6px 6px;cursor:pointer;z-index:2;transition:background .06s;border:1px solid #1a0f04;}
 .synth-bkey.active{background:#FAC775;}
+.f3-wave{background:#1a0f04;border:1.5px solid #c8874a;color:#c8874a;border-radius:8px;padding:4px 10px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;cursor:pointer;}
+.f3-wave.active{background:#FAC775;border-color:#FAC775;color:#412402;}
 /* ===== UKELELE APP ===== */
 .scene{background:#1a6b8a;border-radius:16px;overflow:hidden;}
 .sun-u{width:64px;height:64px;border-radius:50%;background:#FAC775;position:absolute;top:28px;right:80px;}
@@ -1810,14 +1812,22 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
       <div class="phase-time-badge">0:15 – 0:35</div>
     </div>
     <h2>Parameter Verdieping</h2>
-    <p class="phase-desc">Volg mee op <a href="https://learningsynths.ableton.com" target="_blank" rel="noopener" style="color:var(--accent)">learningsynths.ableton.com</a>. Verander elke parameter terwijl de docent dit demonstreert.</p>
+    <p class="phase-desc">Speel hieronder met de synthesizer. Verander elke parameter en beschrijf wat je hoort.</p>
 
     <div class="task-card" onclick="toggle(this)">
       <div class="checkbox"><svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="task-content">
         <div class="task-tag tag-maken">Maken</div>
         <div class="task-title">Oscillator — vier waveforms</div>
-        <div class="task-body">Ga naar <a href="https://learningsynths.ableton.com" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700;">learningsynths.ableton.com</a> — de lessen staan direct op de pagina. Scroll omlaag naar het hoofdstuk <strong>"Oscillators"</strong> en klik op elke golfvorm om hem te beluisteren. Schrijf daarna in het vak eronder één woord dat beschrijft hoe het klinkt.</div>
+        <div class="task-body">Klik hieronder op elke waveform knop om het geluid te horen. Schrijf daarna in het vak eronder één woord dat beschrijft hoe het klinkt.</div>
+
+        <!-- WAVEFORM LUISTERAAR -->
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;margin-bottom:10px;">
+          <button onclick="event.stopPropagation();playWaveform('sine')" id="waveBtn-sine" style="background:#ede5ff;border:2px solid #7c6af7;color:#534AB7;border-radius:99px;padding:6px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">▶ Sine [1]</button>
+          <button onclick="event.stopPropagation();playWaveform('sawtooth')" id="waveBtn-sawtooth" style="background:#fff3ee;border:2px solid #FF6B35;color:#cc4e1a;border-radius:99px;padding:6px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">▶ Sawtooth [2]</button>
+          <button onclick="event.stopPropagation();playWaveform('square')" id="waveBtn-square" style="background:#d4f5e9;border:2px solid #2ECC8A;color:#1a9e68;border-radius:99px;padding:6px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">▶ Square [3]</button>
+          <button onclick="event.stopPropagation();playWaveform('noise')" id="waveBtn-noise" style="background:#fff8e0;border:2px solid #c8820a;color:#8a5500;border-radius:99px;padding:6px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">▶ Noise [4]</button>
+        </div>
 
         <!-- Vier waveform kaartjes met tekenvak -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
@@ -1859,31 +1869,67 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
       <div class="task-content">
         <div class="task-tag tag-luisteren">Luisteren</div>
         <div class="task-title">Filter — sweep de cutoff</div>
-        <div class="task-body">Volg deze stappen op <a href="https://learningsynths.ableton.com" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700;">learningsynths.ableton.com</a> → scroll naar het hoofdstuk <strong>"Filters"</strong>:</div>
+        <div class="task-body">Speel hieronder met de filter. Druk op een toets en draai dan aan de knoppen — hoor wat er gebeurt.</div>
 
-        <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
-          <div style="background:#f0eeff;border-radius:9px;padding:8px 12px;display:flex;gap:10px;align-items:flex-start;">
-            <div style="background:#7c6af7;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;">1</div>
-            <div style="font-size:.85rem;color:#2d2a24;">Zet de <strong>cutoff knop helemaal naar rechts</strong> (volledig open). Speel een noot. Hoor je hoe helder het klinkt?</div>
+        <div style="background:#1a0f04;border-radius:14px;padding:14px;margin-top:10px;">
+
+          <!-- MINI PIANO -->
+          <div style="font-size:10px;font-weight:800;color:#c8874a;letter-spacing:.1em;margin-bottom:6px;">🎹 SPEEL EEN NOOT — klik of gebruik A S D F G</div>
+          <div style="position:relative;height:80px;user-select:none;margin-bottom:12px;" id="filterPiano"></div>
+
+          <!-- CUTOFF KNOP -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div style="text-align:center;">
+              <div style="font-size:11px;font-weight:800;color:#4FC3F7;margin-bottom:6px;">🎚️ CUTOFF</div>
+              <div style="position:relative;width:64px;height:64px;margin:0 auto;">
+                <svg width="64" height="64" viewBox="0 0 64 64" id="filterCutoffSvg">
+                  <circle cx="32" cy="32" r="28" fill="#1a0f04" stroke="#4FC3F7" stroke-width="2.5"/>
+                  <circle cx="32" cy="32" r="12" fill="#0d0906" stroke="#4FC3F7" stroke-width="1.5"/>
+                  <line id="filterCutoffLine" x1="32" y1="32" x2="32" y2="8" stroke="#4FC3F7" stroke-width="3" stroke-linecap="round"/>
+                  <circle cx="32" cy="32" r="4" fill="#4FC3F7"/>
+                </svg>
+                <input type="range" min="200" max="8000" value="8000" step="10"
+                  style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:ns-resize;"
+                  id="filterCutoffSlider"
+                  oninput="updateFilter()"
+                  onclick="event.stopPropagation()">
+              </div>
+              <div style="font-size:12px;font-weight:800;color:#4FC3F7;margin-top:4px;" id="filterCutoffVal">8000 Hz</div>
+              <div style="font-size:10px;color:#8a6a3a;margin-top:2px;">← donker · helder →</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:11px;font-weight:800;color:#FF8A65;margin-bottom:6px;">〰️ RESONANCE</div>
+              <div style="position:relative;width:64px;height:64px;margin:0 auto;">
+                <svg width="64" height="64" viewBox="0 0 64 64">
+                  <circle cx="32" cy="32" r="28" fill="#1a0f04" stroke="#FF8A65" stroke-width="2.5"/>
+                  <circle cx="32" cy="32" r="12" fill="#0d0906" stroke="#FF8A65" stroke-width="1.5"/>
+                  <line id="filterResLine" x1="32" y1="32" x2="32" y2="56" stroke="#FF8A65" stroke-width="3" stroke-linecap="round"/>
+                  <circle cx="32" cy="32" r="4" fill="#FF8A65"/>
+                </svg>
+                <input type="range" min="0.5" max="20" value="0.5" step="0.1"
+                  style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:ns-resist;"
+                  id="filterResSlider"
+                  oninput="updateFilter()"
+                  onclick="event.stopPropagation()">
+              </div>
+              <div style="font-size:12px;font-weight:800;color:#FF8A65;margin-top:4px;" id="filterResVal">0.5</div>
+              <div style="font-size:10px;color:#8a6a3a;margin-top:2px;">← vlak · zoemend →</div>
+            </div>
           </div>
-          <div style="background:#f0eeff;border-radius:9px;padding:8px 12px;display:flex;gap:10px;align-items:flex-start;">
-            <div style="background:#7c6af7;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;">2</div>
-            <div style="font-size:.85rem;color:#2d2a24;">Draai de <strong>cutoff knop langzaam naar links</strong>. Luister hoe het geluid verandert. Schrijf hieronder op wat je hoort.</div>
-          </div>
-          <div style="background:#f0eeff;border-radius:9px;padding:8px 12px;display:flex;gap:10px;align-items:flex-start;">
-            <div style="background:#7c6af7;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;">3</div>
-            <div style="font-size:.85rem;color:#2d2a24;">Zet nu de <strong>resonance knop omhoog</strong>. Wat voor nieuw geluid hoor je? Schrijf ook dat op.</div>
-          </div>
+
+          <!-- VISUALIZER -->
+          <canvas id="filterViz" height="40" style="width:100%;display:block;border-radius:8px;background:#050e05;"></canvas>
         </div>
 
+        <!-- INVULVAKKEN -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
           <div>
-            <div style="font-size:11px;font-weight:800;color:#7c6af7;margin-bottom:4px;">Cutoff omlaag — wat hoor je?</div>
-            <textarea onclick="event.stopPropagation()" placeholder="Het geluid wordt..." style="width:100%;padding:7px 10px;border-radius:9px;border:1.5px solid #c8b8ee;font-family:'Nunito',sans-serif;font-size:13px;resize:none;height:70px;background:#f8f6ff;color:#2d2a24;"></textarea>
+            <div style="font-size:11px;font-weight:800;color:#4FC3F7;margin-bottom:4px;">Cutoff omlaag — wat hoor je?</div>
+            <textarea onclick="event.stopPropagation()" placeholder="Het geluid wordt..." style="width:100%;padding:7px 10px;border-radius:9px;border:1.5px solid #4FC3F7;font-family:'Nunito',sans-serif;font-size:13px;resize:none;height:70px;background:#f0f9ff;color:#2d2a24;"></textarea>
           </div>
           <div>
-            <div style="font-size:11px;font-weight:800;color:#FF6B35;margin-bottom:4px;">Resonance omhoog — wat hoor je?</div>
-            <textarea onclick="event.stopPropagation()" placeholder="Er ontstaat een..." style="width:100%;padding:7px 10px;border-radius:9px;border:1.5px solid #ffb89a;font-family:'Nunito',sans-serif;font-size:13px;resize:none;height:70px;background:#fff8f5;color:#2d2a24;"></textarea>
+            <div style="font-size:11px;font-weight:800;color:#FF8A65;margin-bottom:4px;">Resonance omhoog — wat hoor je?</div>
+            <textarea onclick="event.stopPropagation()" placeholder="Er ontstaat een..." style="width:100%;padding:7px 10px;border-radius:9px;border:1.5px solid #FF8A65;font-family:'Nunito',sans-serif;font-size:13px;resize:none;height:70px;background:#fff8f5;color:#2d2a24;"></textarea>
           </div>
         </div>
       </div>
@@ -1894,8 +1940,42 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
       <div class="task-content">
         <div class="task-tag tag-nadenken">Nadenken</div>
         <div class="task-title">ADSR — voorspel vóór je hoort</div>
-        <div class="task-body">De docent verandert de attack van kort naar lang. Voorspel eerst hoe het geluid verandert — schrijf het op, dan hoor je of je gelijk had.</div>
-        <textarea class="task-input" placeholder="Mijn voorspelling: ..." onclick="event.stopPropagation()"></textarea>
+        <div class="task-body">Schrijf eerst je voorspelling op. Speel daarna een noot en verander de Attack — had je het goed?</div>
+
+        <textarea class="task-input" placeholder="Mijn voorspelling: als de attack lang is, dan..." onclick="event.stopPropagation()"></textarea>
+
+        <!-- ADSR MINI SYNTH -->
+        <div style="background:#1a0f04;border-radius:14px;padding:14px;margin-top:10px;">
+          <div style="font-size:10px;font-weight:800;color:#c8874a;letter-spacing:.1em;margin-bottom:8px;">🎹 SPEEL EEN NOOT EN VERANDER DE ADSR</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;">
+            <div style="text-align:center;">
+              <div style="font-size:10px;font-weight:800;color:#4FC3F7;margin-bottom:4px;">ATTACK</div>
+              <input type="range" min="0.001" max="2" step="0.01" value="0.01" id="adsrAttack" onclick="event.stopPropagation()" oninput="event.stopPropagation();document.getElementById('adsrAval').textContent=parseFloat(this.value).toFixed(2)+'s'" style="width:100%;accent-color:#4FC3F7;">
+              <div style="font-size:11px;color:#4FC3F7;" id="adsrAval">0.01s</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:10px;font-weight:800;color:#FF8A65;margin-bottom:4px;">DECAY</div>
+              <input type="range" min="0.01" max="2" step="0.01" value="0.3" id="adsrDecay" onclick="event.stopPropagation()" oninput="event.stopPropagation();document.getElementById('adsrDval').textContent=parseFloat(this.value).toFixed(2)+'s'" style="width:100%;accent-color:#FF8A65;">
+              <div style="font-size:11px;color:#FF8A65;" id="adsrDval">0.30s</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:10px;font-weight:800;color:#2ECC8A;margin-bottom:4px;">SUSTAIN</div>
+              <input type="range" min="0" max="1" step="0.01" value="0.7" id="adsrSustain" onclick="event.stopPropagation()" oninput="event.stopPropagation();document.getElementById('adsrSval').textContent=Math.round(this.value*100)+'%'" style="width:100%;accent-color:#2ECC8A;">
+              <div style="font-size:11px;color:#2ECC8A;" id="adsrSval">70%</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:10px;font-weight:800;color:#CE93D8;margin-bottom:4px;">RELEASE</div>
+              <input type="range" min="0.01" max="3" step="0.01" value="0.5" id="adsrRelease" onclick="event.stopPropagation()" oninput="event.stopPropagation();document.getElementById('adsrRval').textContent=parseFloat(this.value).toFixed(2)+'s'" style="width:100%;accent-color:#CE93D8;">
+              <div style="font-size:11px;color:#CE93D8;" id="adsrRval">0.50s</div>
+            </div>
+          </div>
+          <button onclick="event.stopPropagation();playADSRNote()" style="background:#FAC775;border:none;border-radius:10px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:#412402;cursor:pointer;width:100%;">▶ Speel noot</button>
+        </div>
+
+        <div style="margin-top:8px;">
+          <div style="font-size:11px;font-weight:800;color:#2ECC8A;margin-bottom:4px;">Wat hoorde je? Had je het goed voorspeld?</div>
+          <textarea onclick="event.stopPropagation()" placeholder="Ik hoorde... | Mijn voorspelling was..." style="width:100%;padding:7px 10px;border-radius:9px;border:1.5px solid #90ddb8;font-family:'Nunito',sans-serif;font-size:13px;resize:none;height:60px;background:#f0faf5;color:#2d2a24;"></textarea>
+        </div>
       </div>
     </div>
 
@@ -1904,8 +1984,26 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
       <div class="task-content">
         <div class="task-tag tag-luisteren">Luisteren</div>
         <div class="task-title">LFO op filter — benoem het effect</div>
-        <div class="task-body">De docent koppelt een LFO aan de filter-cutoff. Welk bekend geluid of effect herken je? Ken je een nummer waarin dit effect gebruikt wordt?</div>
-        <textarea class="task-input" placeholder="Het effect klinkt als: ... | Ik ken dit van: ..." onclick="event.stopPropagation()"></textarea>
+        <div class="task-body">Speel een noot en zet de LFO aan. Draai aan de snelheid — wat voor geluid herken je?</div>
+
+        <!-- LFO MINI SYNTH -->
+        <div style="background:#1a0f04;border-radius:14px;padding:14px;margin-top:10px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <button id="lfoToggleBtn" onclick="event.stopPropagation();toggleLFO()" style="background:#2ECC8A;border:none;border-radius:10px;padding:7px 16px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:#fff;cursor:pointer;">LFO AAN</button>
+            <div style="flex:1;">
+              <div style="font-size:10px;font-weight:800;color:#CE93D8;margin-bottom:3px;">LFO SNELHEID</div>
+              <input type="range" min="0.2" max="10" step="0.1" value="2" id="lfoRate" onclick="event.stopPropagation()" oninput="event.stopPropagation();updateLFO();document.getElementById('lfoRateVal').textContent=parseFloat(this.value).toFixed(1)+' Hz'" style="width:100%;accent-color:#CE93D8;">
+              <div style="font-size:11px;color:#CE93D8;" id="lfoRateVal">2.0 Hz</div>
+            </div>
+          </div>
+          <div style="position:relative;height:70px;user-select:none;" id="lfoPiano"></div>
+          <canvas id="lfoViz" height="36" style="width:100%;display:block;border-radius:6px;background:#050e05;margin-top:8px;"></canvas>
+        </div>
+
+        <div style="margin-top:8px;">
+          <div style="font-size:11px;font-weight:800;color:#CE93D8;margin-bottom:4px;">Het effect klinkt als... Ken je een nummer met dit effect?</div>
+          <textarea onclick="event.stopPropagation()" placeholder="Het effect klinkt als: ... | Ik ken dit van: ..." style="width:100%;padding:7px 10px;border-radius:9px;border:1.5px solid #CE93D8;font-family:'Nunito',sans-serif;font-size:13px;resize:none;height:60px;background:#fdf6ff;color:#2d2a24;"></textarea>
+        </div>
       </div>
     </div>
   </section>
@@ -1975,7 +2073,68 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
       <div class="phase-time-badge">0:35 – 1:10</div>
     </div>
     <h2>Ontwerp Drie Geluiden</h2>
-    <p class="phase-desc">Open <a href="https://www.audiotool.com" target="_blank" rel="noopener" style="color:var(--accent)">audiotool.com</a> en bouw de drie geluiden hieronder. Elke brief heeft specifieke technische eisen — dit zijn geen suggesties, maar verplichtingen. Documenteer je instellingen op het patch-formulier.</p>
+    <p class="phase-desc">Bouw de drie geluiden hieronder met onze eigen synthesizer. Elke brief heeft specifieke technische eisen. Documenteer je instellingen op het patch-formulier.</p>
+
+    <!-- INGEBOUWDE SYNTH VOOR FASE 3 -->
+    <div style="background:#1a0f04;border-radius:16px;padding:1rem;margin-bottom:1.25rem;">
+      <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#FAC775;margin-bottom:.75rem;">🎛️ Jouw synthesizer</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px;">
+        <!-- WAVEFORM -->
+        <div>
+          <div style="font-size:10px;font-weight:800;color:#c8874a;letter-spacing:.1em;margin-bottom:5px;">GOLFVORM</div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;">
+            <button class="f3-wave active" onclick="event.stopPropagation();setF3Wave('sine',this)">~ Sine</button>
+            <button class="f3-wave" onclick="event.stopPropagation();setF3Wave('sawtooth',this)">⋀ Saw</button>
+            <button class="f3-wave" onclick="event.stopPropagation();setF3Wave('square',this)">⊓ Square</button>
+            <button class="f3-wave" onclick="event.stopPropagation();setF3Wave('noise',this)">≈ Noise</button>
+          </div>
+        </div>
+        <!-- OCTAAF -->
+        <div>
+          <div style="font-size:10px;font-weight:800;color:#c8874a;letter-spacing:.1em;margin-bottom:5px;">OCTAAF</div>
+          <input type="range" min="-2" max="2" step="1" value="0" id="f3Octave" onclick="event.stopPropagation()" oninput="event.stopPropagation();document.getElementById('f3OctVal').textContent=(this.value>0?'+':'')+this.value" style="width:100%;accent-color:#FAC775;">
+          <div style="font-size:11px;color:#FAC775;" id="f3OctVal">0</div>
+        </div>
+        <!-- FILTER -->
+        <div>
+          <div style="font-size:10px;font-weight:800;color:#4FC3F7;letter-spacing:.1em;margin-bottom:5px;">CUTOFF</div>
+          <input type="range" min="200" max="8000" value="8000" id="f3Cutoff" onclick="event.stopPropagation()" oninput="event.stopPropagation();updateF3Filter()" style="width:100%;accent-color:#4FC3F7;">
+          <div style="font-size:11px;color:#4FC3F7;" id="f3CutoffVal">8k Hz</div>
+        </div>
+        <!-- RESONANCE -->
+        <div>
+          <div style="font-size:10px;font-weight:800;color:#FF8A65;letter-spacing:.1em;margin-bottom:5px;">RESONANCE</div>
+          <input type="range" min="0.5" max="15" value="0.5" step="0.1" id="f3Res" onclick="event.stopPropagation()" oninput="event.stopPropagation();updateF3Filter()" style="width:100%;accent-color:#FF8A65;">
+          <div style="font-size:11px;color:#FF8A65;" id="f3ResVal">0.5</div>
+        </div>
+        <!-- ATTACK -->
+        <div>
+          <div style="font-size:10px;font-weight:800;color:#2ECC8A;letter-spacing:.1em;margin-bottom:5px;">ATTACK</div>
+          <input type="range" min="0.001" max="2" value="0.01" step="0.01" id="f3Attack" onclick="event.stopPropagation()" oninput="event.stopPropagation();document.getElementById('f3AtkVal').textContent=parseFloat(this.value).toFixed(2)+'s'" style="width:100%;accent-color:#2ECC8A;">
+          <div style="font-size:11px;color:#2ECC8A;" id="f3AtkVal">0.01s</div>
+        </div>
+        <!-- RELEASE -->
+        <div>
+          <div style="font-size:10px;font-weight:800;color:#CE93D8;letter-spacing:.1em;margin-bottom:5px;">RELEASE</div>
+          <input type="range" min="0.01" max="3" value="0.3" step="0.01" id="f3Release" onclick="event.stopPropagation()" oninput="event.stopPropagation();document.getElementById('f3RelVal').textContent=parseFloat(this.value).toFixed(2)+'s'" style="width:100%;accent-color:#CE93D8;">
+          <div style="font-size:11px;color:#CE93D8;" id="f3RelVal">0.30s</div>
+        </div>
+        <!-- LFO -->
+        <div>
+          <div style="font-size:10px;font-weight:800;color:#FFD54F;letter-spacing:.1em;margin-bottom:5px;">LFO SNELHEID</div>
+          <input type="range" min="0" max="10" value="0" step="0.1" id="f3Lfo" onclick="event.stopPropagation()" oninput="event.stopPropagation();updateF3LFO();document.getElementById('f3LfoVal').textContent=parseFloat(this.value).toFixed(1)+' Hz'" style="width:100%;accent-color:#FFD54F;">
+          <div style="font-size:11px;color:#FFD54F;" id="f3LfoVal">0.0 Hz</div>
+        </div>
+        <!-- VOLUME -->
+        <div>
+          <div style="font-size:10px;font-weight:800;color:#FAC775;letter-spacing:.1em;margin-bottom:5px;">VOLUME</div>
+          <input type="range" min="0" max="1" value="0.7" step="0.01" id="f3Volume" onclick="event.stopPropagation()" oninput="event.stopPropagation();document.getElementById('f3VolVal').textContent=Math.round(this.value*100)+'%'" style="width:100%;accent-color:#FAC775;">
+          <div style="font-size:11px;color:#FAC775;" id="f3VolVal">70%</div>
+        </div>
+      </div>
+      <div style="position:relative;height:75px;user-select:none;" id="f3Piano"></div>
+      <div style="font-size:10px;color:#8a6a3a;text-align:center;margin-top:4px;">klik of gebruik Z X C V B N M</div>
+    </div>
 
     <!-- Brief A -->
     <div class="brief-card">
@@ -3495,6 +3654,277 @@ function showPage(id, btn) {
     },50);
   }
 }
+// ===== FILTER MINI-SYNTH =====
+var FAC=null;
+function gFAC(){if(!FAC){FAC=new(window.AudioContext||window.webkitAudioContext)();}if(FAC.state==='suspended')FAC.resume();return FAC;}
+var fOsc=null,fGain=null,fFilter=null,fAnalyser=null,fVizRaf=null;
+var fNotes={a:261.63,s:293.66,d:329.63,f:349.23,g:392};
+var fKeysDown={};
+
+function startFilterNote(freq){
+  var ac=gFAC();
+  if(fOsc){try{fOsc.stop();}catch(e){}}
+  fFilter=ac.createBiquadFilter();fFilter.type='lowpass';
+  fFilter.frequency.value=parseFloat(document.getElementById('filterCutoffSlider').value);
+  fFilter.Q.value=parseFloat(document.getElementById('filterResSlider').value);
+  fGain=ac.createGain();fGain.gain.setValueAtTime(0,ac.currentTime);fGain.gain.linearRampToValueAtTime(0.5,ac.currentTime+0.01);
+  fOsc=ac.createOscillator();fOsc.type='sawtooth';fOsc.frequency.value=freq;
+  fAnalyser=ac.createAnalyser();fAnalyser.fftSize=256;
+  fOsc.connect(fFilter);fFilter.connect(fGain);fGain.connect(fAnalyser);fAnalyser.connect(ac.destination);
+  fOsc.start();startFilterViz();
+}
+function stopFilterNote(){
+  if(!fGain)return;var ac=gFAC();
+  fGain.gain.setTargetAtTime(0,ac.currentTime,0.05);
+  setTimeout(function(){if(fOsc){try{fOsc.stop();}catch(e){}}fOsc=null;},200);
+  cancelAnimationFrame(fVizRaf);
+}
+function updateFilter(){
+  var cutoff=parseFloat(document.getElementById('filterCutoffSlider').value);
+  var res=parseFloat(document.getElementById('filterResSlider').value);
+  document.getElementById('filterCutoffVal').textContent=cutoff>=1000?(cutoff/1000).toFixed(1)+'k Hz':Math.round(cutoff)+' Hz';
+  document.getElementById('filterResVal').textContent=res.toFixed(1);
+  var pct=(cutoff-200)/(8000-200);
+  moogRotate2('filterCutoffLine',pct,32);
+  moogRotate2('filterResLine',(res-0.5)/(20-0.5),32);
+  if(fFilter){fFilter.frequency.value=cutoff;fFilter.Q.value=res;}
+}
+function moogRotate2(id,val,cx){
+  var el=document.getElementById(id);if(!el)return;
+  var angle=-135+val*270,rad=(angle-90)*Math.PI/180,len=20;
+  var x2=cx+len*Math.cos(rad),y2=cx+len*Math.sin(rad);
+  el.setAttribute('x2',x2.toFixed(1));el.setAttribute('y2',y2.toFixed(1));
+}
+function startFilterViz(){
+  var canvas=document.getElementById('filterViz');if(!canvas||!fAnalyser)return;
+  var ctx=canvas.getContext('2d');
+  function draw(){
+    fVizRaf=requestAnimationFrame(draw);
+    canvas.width=canvas.offsetWidth*devicePixelRatio||300;canvas.height=40*devicePixelRatio;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    var buf=new Uint8Array(fAnalyser.frequencyBinCount);fAnalyser.getByteTimeDomainData(buf);
+    ctx.strokeStyle='#4FC3F7';ctx.lineWidth=2;ctx.beginPath();
+    for(var i=0;i<buf.length;i++){var x=i/buf.length*canvas.width,y=(buf[i]/128)*canvas.height/2;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+    ctx.stroke();
+  }draw();
+}
+function buildFilterPiano(){
+  var wrap=document.getElementById('filterPiano');if(!wrap)return;wrap.innerHTML='';
+  var whites=['a','s','d','f','g'],notes=[261.63,293.66,329.63,349.23,392];
+  var ww=Math.floor(wrap.offsetWidth/5)||60,wh=78;
+  whites.forEach(function(k,i){
+    var el=document.createElement('div');
+    el.style.cssText='position:absolute;bottom:0;left:'+(i*ww)+'px;width:'+(ww-2)+'px;height:'+wh+'px;background:#f5f0e8;border:1.5px solid #c8a87a;border-top:none;border-radius:0 0 8px 8px;cursor:pointer;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;transition:background .06s;';
+    el.innerHTML='<span style="font-family:Nunito,sans-serif;font-size:11px;font-weight:800;color:#a07848;">'+k.toUpperCase()+'</span>';
+    var freq=notes[i];
+    el.addEventListener('mousedown',function(e){e.preventDefault();gFAC();el.style.background='#4FC3F7';startFilterNote(freq);});
+    el.addEventListener('mouseup',function(){el.style.background='#f5f0e8';stopFilterNote();});
+    el.addEventListener('mouseleave',function(){el.style.background='#f5f0e8';stopFilterNote();});
+    el.addEventListener('touchstart',function(e){e.preventDefault();gFAC();el.style.background='#4FC3F7';startFilterNote(freq);},{passive:false});
+    el.addEventListener('touchend',function(e){e.preventDefault();el.style.background='#f5f0e8';stopFilterNote();},{passive:false});
+    wrap.appendChild(el);
+  });
+}
+document.addEventListener('keydown',function(e){
+  if(e.repeat)return;
+  var geluidActive=document.getElementById('geluid')&&document.getElementById('geluid').classList.contains('active');
+  if(!geluidActive)return;
+  // Waveform knoppen 1-4
+  if(e.key==='1'){gFAC();playWaveform('sine');var b=document.getElementById('waveBtn-sine');if(b){b.style.transform='scale(.93)';setTimeout(function(){b.style.transform='';},150);}}
+  if(e.key==='2'){gFAC();playWaveform('sawtooth');var b=document.getElementById('waveBtn-sawtooth');if(b){b.style.transform='scale(.93)';setTimeout(function(){b.style.transform='';},150);}}
+  if(e.key==='3'){gFAC();playWaveform('square');var b=document.getElementById('waveBtn-square');if(b){b.style.transform='scale(.93)';setTimeout(function(){b.style.transform='';},150);}}
+  if(e.key==='4'){gFAC();playWaveform('noise');var b=document.getElementById('waveBtn-noise');if(b){b.style.transform='scale(.93)';setTimeout(function(){b.style.transform='';},150);}}
+  // ADSR speel noot met spatiebalk
+  if(e.key===' '&&document.getElementById('adsrAttack')){e.preventDefault();gFAC();playADSRNote();}
+  // Filter piano A S D F G
+  var fNote=fNotes[e.key.toLowerCase()];
+  if(fNote&&!fKeysDown[e.key]){fKeysDown[e.key]=true;gFAC();startFilterNote(fNote);}
+  // LFO piano A S D F G (zelfde toetsen als filter, werkt op actieve synth)
+  if(fNotes[e.key.toLowerCase()]&&!lfoOscNode){gFAC();startLFONote(fNotes[e.key.toLowerCase()]);}
+  // Fase 3 piano Z X C V B N M
+  var f3idx=F3_KEYS.indexOf(e.key.toLowerCase());
+  if(f3idx>=0&&!f3KeysDown[e.key]){f3KeysDown[e.key]=true;gFAC();startF3Note(F3_FREQS[f3idx]);}
+});
+document.addEventListener('keyup',function(e){
+  if(fNotes[e.key.toLowerCase()]&&fKeysDown[e.key]){fKeysDown[e.key]=false;stopFilterNote();}
+});
+setTimeout(function(){buildFilterPiano();moogRotate2('filterCutoffLine',1,32);moogRotate2('filterResLine',0,32);},400);
+// ===== WAVEFORM LUISTERAAR =====
+function playWaveform(type){
+  var ac=gFAC(),t=ac.currentTime;
+  var osc=ac.createOscillator(),g=ac.createGain();
+  if(type==='noise'){
+    var bufSize=ac.sampleRate*0.8,buf=ac.createBuffer(1,bufSize,ac.sampleRate),d=buf.getChannelData(0);
+    for(var i=0;i<bufSize;i++)d[i]=Math.random()*2-1;
+    var src=ac.createBufferSource();src.buffer=buf;src.connect(g);
+    g.gain.setValueAtTime(0.3,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.8);
+    g.connect(ac.destination);src.start();src.stop(t+0.8);return;
+  }
+  osc.type=type;osc.frequency.value=440;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.4,t+0.02);g.gain.exponentialRampToValueAtTime(0.001,t+0.8);
+  osc.connect(g);g.connect(ac.destination);osc.start(t);osc.stop(t+0.8);
+}
+
+// ===== ADSR SYNTH =====
+var adsrOsc=null,adsrGain=null;
+function playADSRNote(){
+  var ac=gFAC(),t=ac.currentTime;
+  if(adsrOsc){try{adsrOsc.stop();}catch(e){}}
+  var atk=parseFloat(document.getElementById('adsrAttack').value);
+  var dec=parseFloat(document.getElementById('adsrDecay').value);
+  var sus=parseFloat(document.getElementById('adsrSustain').value);
+  var rel=parseFloat(document.getElementById('adsrRelease').value);
+  adsrGain=ac.createGain();adsrOsc=ac.createOscillator();
+  adsrOsc.type='sawtooth';adsrOsc.frequency.value=440;
+  adsrGain.gain.setValueAtTime(0,t);
+  adsrGain.gain.linearRampToValueAtTime(0.5,t+atk);
+  adsrGain.gain.linearRampToValueAtTime(sus*0.5,t+atk+dec);
+  adsrGain.gain.setValueAtTime(sus*0.5,t+atk+dec+0.5);
+  adsrGain.gain.exponentialRampToValueAtTime(0.001,t+atk+dec+0.5+rel);
+  adsrOsc.connect(adsrGain);adsrGain.connect(ac.destination);
+  adsrOsc.start(t);adsrOsc.stop(t+atk+dec+0.5+rel+0.1);
+}
+
+// ===== LFO SYNTH =====
+var lfoOscNode=null,lfoGainNode=null,lfoNode=null,lfoFilterNode=null,lfoAnalyser=null,lfoVizRaf=null,lfoOn=false;
+function buildLFOPiano(){
+  var wrap=document.getElementById('lfoPiano');if(!wrap)return;wrap.innerHTML='';
+  var whites=['a','s','d','f','g'],notes=[261.63,293.66,329.63,349.23,392];
+  var ww=Math.floor(wrap.offsetWidth/5)||60,wh=68;
+  whites.forEach(function(k,i){
+    var el=document.createElement('div');
+    el.style.cssText='position:absolute;bottom:0;left:'+(i*ww)+'px;width:'+(ww-2)+'px;height:'+wh+'px;background:#f5f0e8;border:1.5px solid #c8a87a;border-top:none;border-radius:0 0 8px 8px;cursor:pointer;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;transition:background .06s;';
+    el.innerHTML='<span style="font-family:Nunito,sans-serif;font-size:10px;font-weight:800;color:#a07848;">'+k.toUpperCase()+'</span>';
+    var freq=notes[i];
+    el.addEventListener('mousedown',function(e){e.preventDefault();el.style.background='#CE93D8';startLFONote(freq);});
+    el.addEventListener('mouseup',function(){el.style.background='#f5f0e8';stopLFONote();});
+    el.addEventListener('mouseleave',function(){el.style.background='#f5f0e8';stopLFONote();});
+    el.addEventListener('touchstart',function(e){e.preventDefault();el.style.background='#CE93D8';startLFONote(freq);},{passive:false});
+    el.addEventListener('touchend',function(e){e.preventDefault();el.style.background='#f5f0e8';stopLFONote();},{passive:false});
+    wrap.appendChild(el);
+  });
+}
+function startLFONote(freq){
+  var ac=gFAC();if(lfoOscNode){try{lfoOscNode.stop();}catch(e){}}
+  lfoFilterNode=ac.createBiquadFilter();lfoFilterNode.type='lowpass';lfoFilterNode.frequency.value=2000;lfoFilterNode.Q.value=5;
+  lfoGainNode=ac.createGain();lfoGainNode.gain.setValueAtTime(0,ac.currentTime);lfoGainNode.gain.linearRampToValueAtTime(0.4,ac.currentTime+0.02);
+  lfoOscNode=ac.createOscillator();lfoOscNode.type='sawtooth';lfoOscNode.frequency.value=freq;
+  lfoAnalyser=ac.createAnalyser();lfoAnalyser.fftSize=256;
+  lfoOscNode.connect(lfoFilterNode);lfoFilterNode.connect(lfoGainNode);lfoGainNode.connect(lfoAnalyser);lfoAnalyser.connect(ac.destination);
+  lfoOscNode.start();
+  if(lfoOn)applyLFO();
+  startLFOViz();
+}
+function stopLFONote(){
+  if(!lfoGainNode)return;var ac=gFAC();
+  lfoGainNode.gain.setTargetAtTime(0,ac.currentTime,0.05);
+  setTimeout(function(){if(lfoOscNode){try{lfoOscNode.stop();}catch(e){}}lfoOscNode=null;},200);
+  cancelAnimationFrame(lfoVizRaf);
+}
+function toggleLFO(){
+  lfoOn=!lfoOn;
+  var btn=document.getElementById('lfoToggleBtn');
+  btn.textContent=lfoOn?'LFO UIT':'LFO AAN';
+  btn.style.background=lfoOn?'#FF8A65':'#2ECC8A';
+  if(lfoOn&&lfoFilterNode)applyLFO();else if(lfoNode){lfoNode.stop();lfoNode=null;}
+}
+function applyLFO(){
+  if(!lfoFilterNode)return;
+  var ac=gFAC(),rate=parseFloat(document.getElementById('lfoRate').value);
+  if(lfoNode){try{lfoNode.stop();}catch(e){}}
+  lfoNode=ac.createOscillator();var lfoAmt=ac.createGain();
+  lfoNode.frequency.value=rate;lfoAmt.gain.value=1500;
+  lfoNode.connect(lfoAmt);lfoAmt.connect(lfoFilterNode.frequency);lfoNode.start();
+}
+function updateLFO(){if(lfoOn&&lfoNode){lfoNode.frequency.value=parseFloat(document.getElementById('lfoRate').value);}}
+function startLFOViz(){
+  var canvas=document.getElementById('lfoViz');if(!canvas||!lfoAnalyser)return;
+  var ctx=canvas.getContext('2d');
+  function draw(){
+    lfoVizRaf=requestAnimationFrame(draw);
+    canvas.width=canvas.offsetWidth*devicePixelRatio||300;canvas.height=36*devicePixelRatio;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    var buf=new Uint8Array(lfoAnalyser.frequencyBinCount);lfoAnalyser.getByteTimeDomainData(buf);
+    ctx.strokeStyle='#CE93D8';ctx.lineWidth=2;ctx.beginPath();
+    for(var i=0;i<buf.length;i++){var x=i/buf.length*canvas.width,y=(buf[i]/128)*canvas.height/2;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+    ctx.stroke();
+  }draw();
+}
+
+// ===== FASE 3 SYNTH =====
+var f3Wave='sine',f3OscNode=null,f3GainNode=null,f3FilterNode=null,f3LfoNode=null,f3LfoAmt=null;
+function setF3Wave(w,btn){f3Wave=w;document.querySelectorAll('.f3-wave').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');}
+function updateF3Filter(){
+  var cutoff=parseFloat(document.getElementById('f3Cutoff').value);
+  var res=parseFloat(document.getElementById('f3Res').value);
+  var cv=cutoff>=1000?(cutoff/1000).toFixed(1)+'k':'Math.round(cutoff)';
+  document.getElementById('f3CutoffVal').textContent=cutoff>=1000?(cutoff/1000).toFixed(1)+'k Hz':Math.round(cutoff)+' Hz';
+  document.getElementById('f3ResVal').textContent=res.toFixed(1);
+  if(f3FilterNode){f3FilterNode.frequency.value=cutoff;f3FilterNode.Q.value=res;}
+}
+function updateF3LFO(){
+  var rate=parseFloat(document.getElementById('f3Lfo').value);
+  if(f3LfoNode)f3LfoNode.frequency.value=rate;
+  if(f3LfoAmt)f3LfoAmt.gain.value=rate>0?1500:0;
+}
+function startF3Note(freq){
+  var ac=gFAC();if(f3OscNode){try{f3OscNode.stop();}catch(e){}}
+  var atk=parseFloat(document.getElementById('f3Attack').value);
+  var vol=parseFloat(document.getElementById('f3Volume').value);
+  var oct=parseFloat(document.getElementById('f3Octave').value);
+  var cutoff=parseFloat(document.getElementById('f3Cutoff').value);
+  var res=parseFloat(document.getElementById('f3Res').value);
+  f3FilterNode=ac.createBiquadFilter();f3FilterNode.type='lowpass';f3FilterNode.frequency.value=cutoff;f3FilterNode.Q.value=res;
+  f3GainNode=ac.createGain();f3GainNode.gain.setValueAtTime(0,ac.currentTime);f3GainNode.gain.linearRampToValueAtTime(vol*0.7,ac.currentTime+atk);
+  var lfoRate=parseFloat(document.getElementById('f3Lfo').value);
+  f3LfoNode=ac.createOscillator();f3LfoAmt=ac.createGain();f3LfoNode.frequency.value=lfoRate;f3LfoAmt.gain.value=lfoRate>0?1500:0;
+  f3LfoNode.connect(f3LfoAmt);f3LfoAmt.connect(f3FilterNode.frequency);f3LfoNode.start();
+  if(f3Wave==='noise'){
+    var bufSize=ac.sampleRate*2,buf=ac.createBuffer(1,bufSize,ac.sampleRate),d=buf.getChannelData(0);
+    for(var i=0;i<bufSize;i++)d[i]=Math.random()*2-1;
+    f3OscNode=ac.createBufferSource();f3OscNode.buffer=buf;f3OscNode.loop=true;
+  } else {
+    f3OscNode=ac.createOscillator();f3OscNode.type=f3Wave;f3OscNode.frequency.value=freq*Math.pow(2,oct);
+  }
+  f3OscNode.connect(f3FilterNode);f3FilterNode.connect(f3GainNode);f3GainNode.connect(ac.destination);
+  f3OscNode.start();
+}
+function stopF3Note(){
+  if(!f3GainNode)return;var ac=gFAC();
+  var rel=parseFloat(document.getElementById('f3Release').value);
+  f3GainNode.gain.setTargetAtTime(0,ac.currentTime,rel/3);
+  if(f3LfoNode){try{f3LfoNode.stop();}catch(e){}}
+  setTimeout(function(){if(f3OscNode){try{f3OscNode.stop();}catch(e){}}f3OscNode=null;},rel*1000+200);
+}
+var F3_KEYS='zxcvbnm',F3_FREQS=[261.63,293.66,329.63,349.23,392,440,493.88];
+function buildF3Piano(){
+  var wrap=document.getElementById('f3Piano');if(!wrap)return;wrap.innerHTML='';
+  var ww=Math.floor(wrap.offsetWidth/7)||52,wh=73;
+  for(var i=0;i<7;i++){
+    var el=document.createElement('div');
+    el.style.cssText='position:absolute;bottom:0;left:'+(i*ww)+'px;width:'+(ww-2)+'px;height:'+wh+'px;background:#f5f0e8;border:1.5px solid #c8a87a;border-top:none;border-radius:0 0 8px 8px;cursor:pointer;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;transition:background .06s;';
+    el.innerHTML='<span style="font-family:Nunito,sans-serif;font-size:10px;font-weight:800;color:#a07848;">'+F3_KEYS[i].toUpperCase()+'</span>';
+    (function(freq,e){
+      e.addEventListener('mousedown',function(ev){ev.preventDefault();e.style.background='#FAC775';startF3Note(freq);});
+      e.addEventListener('mouseup',function(){e.style.background='#f5f0e8';stopF3Note();});
+      e.addEventListener('mouseleave',function(){e.style.background='#f5f0e8';stopF3Note();});
+      e.addEventListener('touchstart',function(ev){ev.preventDefault();e.style.background='#FAC775';startF3Note(freq);},{passive:false});
+      e.addEventListener('touchend',function(ev){ev.preventDefault();e.style.background='#f5f0e8';stopF3Note();},{passive:false});
+    })(F3_FREQS[i],el);
+    wrap.appendChild(el);
+  }
+}
+var f3KeysDown={};
+document.addEventListener('keydown',function(e){
+  if(e.repeat||f3KeysDown[e.key])return;
+  var idx=F3_KEYS.indexOf(e.key.toLowerCase());
+  if(idx>=0&&document.getElementById('geluid').classList.contains('active')){f3KeysDown[e.key]=true;gFAC();startF3Note(F3_FREQS[idx]);}
+});
+document.addEventListener('keyup',function(e){
+  var idx=F3_KEYS.indexOf(e.key.toLowerCase());
+  if(idx>=0&&f3KeysDown[e.key]){f3KeysDown[e.key]=false;stopF3Note();}
+});
+setTimeout(function(){buildLFOPiano();buildF3Piano();},500);
 // ===== CANVAS TEKENEN =====
 var canvasStates={};
 function initCanvas(id){
