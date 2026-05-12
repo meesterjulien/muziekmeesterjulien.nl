@@ -668,16 +668,17 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
     </div>
     <div class="presets">
       <span>preset:</span>
-      <button class="btn" onclick="loadPreset('house')">house</button>
-      <button class="btn" onclick="loadPreset('hiphop')">hip-hop</button>
-      <button class="btn" onclick="loadPreset('jungle')">jungle</button>
-      <button class="btn" onclick="loadPreset('latin')">latin</button>
-      <button class="btn" onclick="loadPreset('techno')">techno</button>
+      <button class="btn" onclick="window._drumLoadPreset&&window._drumLoadPreset('house')">house</button>
+      <button class="btn" onclick="window._drumLoadPreset&&window._drumLoadPreset('hiphop')">hip-hop</button>
+      <button class="btn" onclick="window._drumLoadPreset&&window._drumLoadPreset('jungle')">jungle</button>
+      <button class="btn" onclick="window._drumLoadPreset&&window._drumLoadPreset('latin')">latin</button>
+      <button class="btn" onclick="window._drumLoadPreset&&window._drumLoadPreset('techno')">techno</button>
     </div>
   </div>
 </div>
 
 <script>
+(function(){
 const TRACKS = [
   { name: 'Kick',    grp: 'drums', on: '#E24B4A', off: '#2a1010', type: 'kick',    freq: 55  },
   { name: 'Snare',   grp: 'drums', on: '#378ADD', off: '#0d1f35', type: 'snare',   freq: 200 },
@@ -696,10 +697,11 @@ let pat = TRACKS.map(() => Array(STEPS).fill(false));
 let playing = false, step = 0, timerId = null;
 let vol = 0.7, bpm = 120, swing = 0, rvbAmt = 0.1;
 
-const actx = new (window.AudioContext || window.webkitAudioContext)();
-let reverbConv = null, reverbGain = null;
-
-(function makeReverb() {
+let actx = null, reverbConv = null, reverbGain = null;
+function initDrumAudio() {
+  if (actx) { if (actx.state === 'suspended') actx.resume(); return; }
+  actx = new (window.AudioContext || window.webkitAudioContext)();
+  // Maak reverb
   const len = actx.sampleRate * 1.8;
   const buf = actx.createBuffer(2, len, actx.sampleRate);
   for (let c = 0; c < 2; c++) {
@@ -712,7 +714,9 @@ let reverbConv = null, reverbGain = null;
   reverbGain.gain.value = rvbAmt;
   reverbConv.connect(reverbGain);
   reverbGain.connect(actx.destination);
-})();
+}
+
+// Reverb wordt geïnitialiseerd in initDrumAudio()
 
 document.getElementById('rvb').addEventListener('input', function () {
   rvbAmt = parseFloat(this.value);
@@ -837,6 +841,7 @@ function buildUI() {
       pad.style.background = padBg(ti, s);
       pad.style.borderColor = pat[ti][s] ? 'transparent' : 'rgba(255,255,255,0.08)';
       pad.addEventListener('click', () => {
+        initDrumAudio();
         pat[ti][s] = !pat[ti][s];
         pad.style.background = padBg(ti, s);
         pad.style.borderColor = pat[ti][s] ? 'transparent' : 'rgba(255,255,255,0.08)';
@@ -868,7 +873,7 @@ function tick() {
 }
 
 function startSeq() {
-  if (actx.state === 'suspended') actx.resume();
+  initDrumAudio();
   timerId = setInterval(tick, (60 / bpm / 4) * 1000);
 }
 function stopSeq() {
@@ -878,6 +883,7 @@ function stopSeq() {
 }
 
 document.getElementById('playbtn').addEventListener('click', function () {
+  initDrumAudio();
   playing = !playing;
   this.innerHTML = playing ? '&#9646;&#9646; stop' : '&#9654; play';
   playing ? startSeq() : stopSeq();
@@ -899,6 +905,8 @@ document.getElementById('swing').addEventListener('input', function () {
 
 buildUI();
 loadPreset('house');
+window._drumLoadPreset = loadPreset;
+})();
 </script>
 
 </div>
@@ -2787,10 +2795,11 @@ loadPreset('house');
 </div>
 
 <script>
+(function(){
   // ── Web Audio Synth Engine ──────────────────────────────────────────────
-  let audioCtx = null;
-  let activeSound = null;
-  let activeNodes = [];
+  var audioCtx = null;
+  var activeSound = null;
+  var activeNodes = [];
 
   function getCtx() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -2810,12 +2819,12 @@ loadPreset('house');
 
   // Sound 1: diepe sub-bas (sine, lange attack, LFO)
   function makeSubBass(ctx) {
-    const dur = 3.5;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    const filter = ctx.createBiquadFilter();
-    const lfo = ctx.createOscillator();
-    const lfoGain = ctx.createGain();
+    var dur = 3.5;
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    var filter = ctx.createBiquadFilter();
+    var lfo = ctx.createOscillator();
+    var lfoGain = ctx.createGain();
 
     osc.type = 'sine';
     osc.frequency.value = 55;
@@ -2843,11 +2852,11 @@ loadPreset('house');
 
   // Sound 2: scherpe sawtooth lead
   function makeLead(ctx) {
-    const dur = 3.0;
-    const osc = ctx.createOscillator();
-    const osc2 = ctx.createOscillator();
-    const gain = ctx.createGain();
-    const filter = ctx.createBiquadFilter();
+    var dur = 3.0;
+    var osc = ctx.createOscillator();
+    var osc2 = ctx.createOscillator();
+    var gain = ctx.createGain();
+    var filter = ctx.createBiquadFilter();
 
     osc.type = 'sawtooth';
     osc.frequency.value = 220;
@@ -2876,21 +2885,21 @@ loadPreset('house');
 
   // Sound 3: brede pad (slow attack, LFO on filter, detuned saws)
   function makePad(ctx) {
-    const dur = 5.0;
-    const nodes = [];
-    const masterGain = ctx.createGain();
+    var dur = 5.0;
+    var nodes = [];
+    var masterGain = ctx.createGain();
     masterGain.connect(ctx.destination);
     masterGain.gain.setValueAtTime(0, ctx.currentTime);
     masterGain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 1.8);
     masterGain.gain.setValueAtTime(0.4, ctx.currentTime + dur - 1.2);
     masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + dur);
 
-    const freqs = [130.81, 131.2, 130.4];
+    var freqs = [130.81, 131.2, 130.4];
     freqs.forEach(f => {
-      const osc = ctx.createOscillator();
-      const filter = ctx.createBiquadFilter();
-      const lfo = ctx.createOscillator();
-      const lfoG = ctx.createGain();
+      var osc = ctx.createOscillator();
+      var filter = ctx.createBiquadFilter();
+      var lfo = ctx.createOscillator();
+      var lfoG = ctx.createGain();
 
       osc.type = 'sawtooth';
       osc.frequency.value = f;
@@ -2915,28 +2924,28 @@ loadPreset('house');
 
   // Sound 4: percussive hit (noise burst + sine click)
   function makeHit(ctx) {
-    const dur = 0.8;
-    const bufSize = ctx.sampleRate * dur;
-    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+    var dur = 0.8;
+    var bufSize = ctx.sampleRate * dur;
+    var buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    var data = buf.getChannelData(0);
+    for (var i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
 
-    const noise = ctx.createBufferSource();
+    var noise = ctx.createBufferSource();
     noise.buffer = buf;
-    const noiseFilter = ctx.createBiquadFilter();
+    var noiseFilter = ctx.createBiquadFilter();
     noiseFilter.type = 'bandpass';
     noiseFilter.frequency.value = 3000;
     noiseFilter.Q.value = 0.8;
-    const noiseGain = ctx.createGain();
+    var noiseGain = ctx.createGain();
     noiseGain.gain.setValueAtTime(0.5, ctx.currentTime);
     noiseGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
 
     // sine thump
-    const osc = ctx.createOscillator();
+    var osc = ctx.createOscillator();
     osc.type = 'sine';
     osc.frequency.setValueAtTime(180, ctx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.1);
-    const oscGain = ctx.createGain();
+    var oscGain = ctx.createGain();
     oscGain.gain.setValueAtTime(0.8, ctx.currentTime);
     oscGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
 
@@ -2951,14 +2960,14 @@ loadPreset('house');
     return [noise, osc, noiseGain, oscGain];
   }
 
-  const soundMakers = { 1: makeSubBass, 2: makeLead, 3: makePad, 4: makeHit };
-  const soundDurations = { 1: 3500, 2: 3000, 3: 5000, 4: 800 };
+  var soundMakers = { 1: makeSubBass, 2: makeLead, 3: makePad, 4: makeHit };
+  var soundDurations = { 1: 3500, 2: 3000, 3: 5000, 4: 800 };
 
   function playSound(id) {
     if (activeSound === id) { stopActive(); return; }
     stopActive();
-    const ctx = getCtx();
-    const nodes = soundMakers[id](ctx);
+    var ctx = getCtx();
+    var nodes = soundMakers[id](ctx);
     activeNodes = nodes;
     activeSound = id;
     document.getElementById('sc' + id).classList.add('playing');
@@ -2967,31 +2976,33 @@ loadPreset('house');
       if (activeSound === id) stopActive();
     }, soundDurations[id]);
   }
+})();
 </script>
 
 <script>
-  const checkboxCards = document.querySelectorAll('.task-card');
-  const briefCheckboxes = document.querySelectorAll('.opdracht-check input[type="checkbox"]');
-  const totalEl = document.getElementById('total-count');
-  const doneEl = document.getElementById('done-count');
-  const pfill = document.getElementById('pfill');
-  const progressbar = document.getElementById('progressbar');
-  const banner = document.getElementById('completion-banner');
+(function(){
+  var checkboxCards = document.querySelectorAll('.task-card');
+  var briefCheckboxes = document.querySelectorAll('.opdracht-check input[type="checkbox"]');
+  var totalEl = document.getElementById('total-count');
+  var doneEl = document.getElementById('done-count');
+  var pfill = document.getElementById('pfill');
+  var progressbar = document.getElementById('progressbar');
+  var banner = document.getElementById('completion-banner');
 
-  const TOTAL = checkboxCards.length + briefCheckboxes.length;
+  var TOTAL = checkboxCards.length + briefCheckboxes.length;
   totalEl.textContent = TOTAL;
 
   function getCompleted() {
-    let n = 0;
+    var n = 0;
     checkboxCards.forEach(c => { if (c.classList.contains('done')) n++; });
     briefCheckboxes.forEach(c => { if (c.checked) n++; });
     return n;
   }
 
   function updateProgress() {
-    const n = getCompleted();
+    var n = getCompleted();
     doneEl.textContent = n;
-    const pct = TOTAL > 0 ? (n / TOTAL) * 100 : 0;
+    var pct = TOTAL > 0 ? (n / TOTAL) * 100 : 0;
     pfill.style.width = pct + '%';
     progressbar.style.width = pct + '%';
     if (n === TOTAL && TOTAL > 0) {
@@ -3010,6 +3021,7 @@ loadPreset('house');
   }
 
   updateProgress();
+})();
 </script>
 
 
@@ -4501,10 +4513,11 @@ let pat = TRACKS.map(() => Array(STEPS).fill(false));
 let playing = false, step = 0, timerId = null;
 let vol = 0.7, bpm = 120, swing = 0, rvbAmt = 0.1;
 
-const actx = new (window.AudioContext || window.webkitAudioContext)();
-let reverbConv = null, reverbGain = null;
-
-(function makeReverb() {
+let actx = null, reverbConv = null, reverbGain = null;
+function initDrumAudio() {
+  if (actx) { if (actx.state === 'suspended') actx.resume(); return; }
+  actx = new (window.AudioContext || window.webkitAudioContext)();
+  // Maak reverb
   const len = actx.sampleRate * 1.8;
   const buf = actx.createBuffer(2, len, actx.sampleRate);
   for (let c = 0; c < 2; c++) {
@@ -4517,7 +4530,9 @@ let reverbConv = null, reverbGain = null;
   reverbGain.gain.value = rvbAmt;
   reverbConv.connect(reverbGain);
   reverbGain.connect(actx.destination);
-})();
+}
+
+// Reverb wordt geïnitialiseerd in initDrumAudio()
 
 document.getElementById('rvb').addEventListener('input', function () {
   rvbAmt = parseFloat(this.value);
@@ -4642,6 +4657,7 @@ function buildUI() {
       pad.style.background = padBg(ti, s);
       pad.style.borderColor = pat[ti][s] ? 'transparent' : 'rgba(255,255,255,0.08)';
       pad.addEventListener('click', () => {
+        initDrumAudio();
         pat[ti][s] = !pat[ti][s];
         pad.style.background = padBg(ti, s);
         pad.style.borderColor = pat[ti][s] ? 'transparent' : 'rgba(255,255,255,0.08)';
@@ -4673,7 +4689,7 @@ function tick() {
 }
 
 function startSeq() {
-  if (actx.state === 'suspended') actx.resume();
+  initDrumAudio();
   timerId = setInterval(tick, (60 / bpm / 4) * 1000);
 }
 function stopSeq() {
@@ -4683,6 +4699,7 @@ function stopSeq() {
 }
 
 document.getElementById('playbtn').addEventListener('click', function () {
+  initDrumAudio();
   playing = !playing;
   this.innerHTML = playing ? '&#9646;&#9646; stop' : '&#9654; play';
   playing ? startSeq() : stopSeq();
