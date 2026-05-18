@@ -874,7 +874,7 @@ function buildUI() {
         pad.style.background = padBg(ti, s);
         pad.style.borderColor = pat[ti][s] ? 'transparent' : 'rgba(255,255,255,0.08)';
         if (pat[ti][s]) playSound(t);
-        if(window.fbPush) setTimeout(window.fbPush, 50);
+        setTimeout(fbPush,50);
       });
       row.appendChild(pad);
     }
@@ -934,86 +934,93 @@ document.getElementById('swing').addEventListener('input', function () {
 
 if(document.getElementById('playbtn')){buildUI();loadPreset('house');}
 window._drumLoadPreset = loadPreset;
-window._fbGetPat = function(){ return pat; };
-window._fbSetPat = function(newPat){ pat = newPat; renderPads(); };
-window._fbGetBpm = function(){ return bpm; };
-window._fbSetBpm = function(newBpm){ bpm = newBpm; var e=document.getElementById('bpm'); var v=document.getElementById('bpmv'); if(e)e.value=bpm; if(v)v.textContent=bpm; };
 
-})();
-</script>
-
-</div>
-</div>
-
-<!-- FIREBASE SAMENWERKING -->
-<script>
-(function(){
-var FB_URL = 'https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app';
+// ===== FIREBASE REALTIME SDK =====
+var FB_DB = null;
 var fbRoom = null;
-var fbTimer = null;
 var fbMyId = Math.random().toString(36).slice(2,8);
-var fbLastTs = 0;
+var fbListener = null;
 
-function fbSetStatus(txt, color){
-  var el = document.getElementById('roomStatus');
-  if(el){ el.textContent = txt; el.style.color = color; }
+function fbStatus(t,c){var e=document.getElementById('roomStatus');if(e){e.textContent=t;e.style.color=c;}}
+
+function fbInit(cb){
+  if(FB_DB){cb();return;}
+  // Laad Firebase SDK dynamisch
+  var s1=document.createElement('script');
+  s1.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
+  s1.onload=function(){
+    var s2=document.createElement('script');
+    s2.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
+    s2.onload=function(){
+      var app=firebase.initializeApp({
+        apiKey:"AIzaSyB6BttL8uOgBcsuS_ODLzZC2FFB2DckbMw",
+        databaseURL:"https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app"
+      });
+      FB_DB=firebase.database();
+      cb();
+    };
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s1);
 }
-
-window.joinRoom = function(){
-  var input = document.getElementById('roomInput');
-  var name = (input ? input.value : '').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
-  if(!name){ if(input) input.focus(); return; }
-  fbRoom = name;
-  fbLastTs = 0;
-  fbSetStatus('● verbinden...', '#FAC775');
-  document.getElementById('joinRoomBtn').textContent = 'Verlaten';
-  document.getElementById('joinRoomBtn').onclick = window.leaveRoom;
-  // Push huidige staat
-  fbPush();
-  // Start polling
-  fbTimer = setInterval(fbPoll, 600);
-};
-
-window.leaveRoom = function(){
-  if(fbTimer) clearInterval(fbTimer);
-  fbTimer = null; fbRoom = null;
-  fbSetStatus('● offline', '#666');
-  document.getElementById('joinRoomBtn').textContent = 'Verbinden';
-  document.getElementById('joinRoomBtn').onclick = window.joinRoom;
-};
 
 function fbPush(){
-  if(!fbRoom) return;
-  var pat = window._fbGetPat ? window._fbGetPat() : null;
-  var bpm = window._fbGetBpm ? window._fbGetBpm() : 80;
-  if(!pat) return;
-  var ts = Date.now();
-  fetch(FB_URL + '/rooms/' + fbRoom + '.json', {
-    method: 'PUT',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({pat: pat, bpm: bpm, ts: ts, id: fbMyId})
-  }).then(function(){ fbLastTs = ts; })
-    .catch(function(e){ console.error('push fout:', e); });
+  if(!fbRoom||!FB_DB)return;
+  FB_DB.ref('rooms/'+fbRoom).set({
+    pat:JSON.parse(JSON.stringify(pat)),
+    bpm:bpm,
+    ts:Date.now(),
+    id:fbMyId
+  }).catch(function(e){console.error('push:',e);});
 }
-window.fbPush = fbPush;
 
-function fbPoll(){
-  if(!fbRoom) return;
-  fetch(FB_URL + '/rooms/' + fbRoom + '.json')
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      fbSetStatus('● live', '#4ade80');
-      if(!data || !data.pat || !data.ts) return;
-      if(data.id === fbMyId) return;
-      if(data.ts <= fbLastTs) return;
-      fbLastTs = data.ts;
-      if(window._fbSetPat) window._fbSetPat(data.pat);
-      if(window._fbSetBpm && data.bpm) window._fbSetBpm(data.bpm);
-    })
-    .catch(function(){ fbSetStatus('● fout', '#f87171'); });
-}
+window.joinRoom=function(){
+  var inp=document.getElementById('roomInput');
+  var name=(inp?inp.value:'').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
+  if(!name){if(inp)inp.focus();return;}
+  fbStatus('● verbinden...','#FAC775');
+  fbInit(function(){
+    fbRoom=name;
+    var btn=document.getElementById('joinRoomBtn');
+    if(btn){btn.textContent='Verlaten';btn.onclick=window.leaveRoom;}
+    // Realtime listener
+    if(fbListener){fbListener();fbListener=null;}
+    var ref=FB_DB.ref('rooms/'+fbRoom);
+    fbListener=ref.on('value',function(snap){
+      var d=snap.val();
+      if(!d||!d.pat)return;
+      if(d.id===fbMyId)return;
+      pat=JSON.parse(JSON.stringify(d.pat));
+      if(d.bpm&&d.bpm!==bpm){
+        bpm=d.bpm;
+        var be=document.getElementById('bpm');
+        var bv=document.getElementById('bpmv');
+        if(be)be.value=bpm;
+        if(bv)bv.textContent=bpm;
+        if(playing){stopSeq();startSeq();}
+      }
+      renderPads();
+      fbStatus('● live','#4ade80');
+    });
+    fbPush();
+  });
+};
+
+window.leaveRoom=function(){
+  if(fbListener&&FB_DB&&fbRoom){
+    FB_DB.ref('rooms/'+fbRoom).off('value',fbListener);
+  }
+  fbListener=null;fbRoom=null;
+  fbStatus('● offline','#666');
+  var btn=document.getElementById('joinRoomBtn');
+  if(btn){btn.textContent='Verbinden';btn.onclick=window.joinRoom;}
+};
+
 })();
 </script>
+
+</div>
+</div>
 
 
 <!-- OVER ONS PAGINA -->
@@ -4807,7 +4814,6 @@ function buildUI() {
         pad.style.background = padBg(ti, s);
         pad.style.borderColor = pat[ti][s] ? 'transparent' : 'rgba(255,255,255,0.08)';
         if (pat[ti][s]) playSound(t);
-        if(window.fbPush) setTimeout(window.fbPush, 50);
       });
       row.appendChild(pad);
     }
