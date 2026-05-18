@@ -982,15 +982,20 @@ function setRoomStatus(txt, color) {
   if (el) { el.textContent = txt; el.style.color = color; }
 }
 
+var _getPatForPush = null;
+var _getBpmForPush = null;
 function pushRoom() {
   if (!currentRoom || isReceiving) return;
-  const hash = patHash();
+  var curPat = _getPatForPush ? _getPatForPush() : null;
+  var curBpm = _getBpmForPush ? _getBpmForPush() : 80;
+  if (!curPat) return;
+  const hash = JSON.stringify(curPat);
   if (hash === lastSentHash) return;
   lastSentHash = hash;
   fetch(FB_URL + '/rooms/' + currentRoom + '/beat.json', {
     method: 'PUT',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ pat: pat, bpm: bpm, ts: Date.now() })
+    body: JSON.stringify({ pat: curPat, bpm: curBpm, ts: Date.now() })
   }).catch(() => {});
 }
 window.pushRoom = pushRoom;
@@ -1004,19 +1009,10 @@ function fetchRoom() {
       if (!data || !data.pat) return;
       const remoteHash = JSON.stringify(data.pat);
       if (remoteHash === lastSentHash) return;
-      isReceiving = true;
-      pat = data.pat;
-      if (data.bpm && data.bpm !== bpm) {
-        bpm = data.bpm;
-        const bpmEl = document.getElementById('bpm');
-        const bpmvEl = document.getElementById('bpmv');
-        if (bpmEl) bpmEl.value = bpm;
-        if (bpmvEl) bpmvEl.textContent = bpm;
-        if (playing) { stopSeq(); startSeq(); }
+      if (window._setPatFromRemote) {
+        window._setPatFromRemote(data.pat, data.bpm);
       }
-      renderPads();
       lastSentHash = remoteHash;
-      isReceiving = false;
       setRoomStatus('● live', '#4ade80');
     })
     .catch(() => setRoomStatus('● fout', '#f87171'));
@@ -1027,6 +1023,23 @@ function pushAfterChange() {
   if (!isReceiving) setTimeout(pushRoom, 80);
 }
 window.pushAfterChange = pushAfterChange;
+// Registreer getters zodat pushRoom pat en bpm kan lezen
+_getPatForPush = function() { return pat; };
+_getBpmForPush = function() { return bpm; };
+window._setPatFromRemote = function(newPat, newBpm) {
+  isReceiving = true;
+  pat = newPat;
+  if (newBpm && newBpm !== bpm) {
+    bpm = newBpm;
+    var bpmEl = document.getElementById('bpm');
+    var bpmvEl = document.getElementById('bpmv');
+    if (bpmEl) bpmEl.value = bpm;
+    if (bpmvEl) bpmvEl.textContent = bpm;
+    if (playing) { stopSeq(); startSeq(); }
+  }
+  renderPads();
+  isReceiving = false;
+};
 })();
 </script>
 
