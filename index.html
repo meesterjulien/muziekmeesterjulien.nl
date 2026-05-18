@@ -686,6 +686,7 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
 </div>
 
 <script>
+if(!window._beatMyId)window._beatMyId=Math.random().toString(36).slice(2,8);
 (function(){
 const TRACKS = [
   { name: 'Kick',    grp: 'drums', on: '#E24B4A', off: '#2a1010', type: 'kick',    freq: 55  },
@@ -940,7 +941,7 @@ var FB_DB = null;
 var fbRoom = null;
 var fbTimer = null;
 var fbListener = null;
-var fbMyId = Math.random().toString(36).slice(2,8);
+var fbMyId = window._beatMyId;
 var fbListener = null;
 
 function fbStatus(t,c){var e=document.getElementById('roomStatus');if(e){e.textContent=t;e.style.color=c;}}
@@ -953,18 +954,16 @@ function fbInit(cb){
 var FB_URL='https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app';
 var fbLastTs=0;
 function fbPush(){
-  console.log('fbPush aangeroepen, fbRoom=',fbRoom,'pat=',pat?'ok':'null');
   if(!fbRoom)return;
   var ts=Date.now();
   fetch(FB_URL+'/rooms/'+fbRoom+'.json',{
     method:'PUT',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({pat:JSON.parse(JSON.stringify(pat)),bpm:bpm,ts:ts,id:fbMyId})
-  }).then(function(r){console.log('push OK status:',r.status);fbLastTs=ts;}).catch(function(e){console.error('push FOUT:',e);});
+  }).then(function(){fbLastTs=ts;}).catch(function(e){console.error('push FOUT:',e);});
 }
 
 window.joinRoom=function(){
-  console.log('joinRoom aangeroepen!');
   var inp=document.getElementById('roomInput');
   var val=inp&&inp.value?inp.value:'';
   var name=val.trim().toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -972,22 +971,18 @@ window.joinRoom=function(){
   fbStatus('● verbinden...','#FAC775');
   fbInit(function(){
     fbRoom=name;
-    console.log('Verbonden met kamer:',fbRoom);
     var btn=document.getElementById('joinRoomBtn');
     if(btn){btn.textContent='Verlaten';btn.onclick=window.leaveRoom;}
     fbPush();
     if(fbTimer)clearInterval(fbTimer);
-    console.log('Poll gestart voor kamer:',fbRoom);
     fbTimer=setInterval(function(){
       fetch(FB_URL+'/rooms/'+fbRoom+'.json')
         .then(function(r){return r.json();})
         .then(function(d){
           fbStatus('● live','#4ade80');
-          console.log('Poll data:',d?'ts='+d.ts+' id='+d.id:'null','mijnId:',fbMyId,'fbLastTs:',fbLastTs);
           if(!d||!d.pat)return;
           if(d.id===fbMyId&&d.ts===fbLastTs)return;
           if(d.ts<=fbLastTs)return;
-          console.log('Update ontvangen van',d.id,'ts:',d.ts);
           fbLastTs=d.ts;
           pat=JSON.parse(JSON.stringify(d.pat));
           if(d.bpm&&d.bpm!==bpm){
