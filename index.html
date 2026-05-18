@@ -641,6 +641,14 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
       <button class="btn play" id="playbtn">&#9654; play</button>
       <button class="btn" id="clearbtn">clear</button>
       <button class="btn" id="randbtn">shuffle</button>
+      <div style="display:flex;align-items:center;gap:6px;background:#1a1a1a;border:2px solid rgba(255,255,255,0.3);border-radius:8px;padding:6px 12px;">
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:#aaa;white-space:nowrap;">🔗 KAMER:</span>
+        <input id="roomInput" type="text" placeholder="klas3a" maxlength="20"
+          style="background:transparent;border:none;outline:none;font-family:'Space Mono',monospace;font-size:13px;color:#fff;width:80px;"
+          onclick="event.stopPropagation()">
+        <button id="joinRoomBtn" onclick="joinRoom()" style="background:#7C4DFF;border:none;border-radius:6px;padding:4px 10px;font-family:'Space Mono',monospace;font-size:11px;color:#fff;cursor:pointer;white-space:nowrap;">Verbinden</button>
+        <div id="roomStatus" style="font-family:'Space Mono',monospace;font-size:10px;color:#666;">● offline</div>
+      </div>
       <div class="bpmbox">
         <label>bpm</label>
         <input type="range" id="bpm" min="60" max="200" value="120" step="1" style="width:90px">
@@ -866,6 +874,7 @@ function buildUI() {
         pad.style.background = padBg(ti, s);
         pad.style.borderColor = pat[ti][s] ? 'transparent' : 'rgba(255,255,255,0.08)';
         if (pat[ti][s]) playSound(t);
+        pushAfterChange();
       });
       row.appendChild(pad);
     }
@@ -925,6 +934,89 @@ document.getElementById('swing').addEventListener('input', function () {
 
 if(document.getElementById('playbtn')){buildUI();loadPreset('house');}
 window._drumLoadPreset = loadPreset;
+
+// ===== FIREBASE REAL-TIME SAMENWERKING =====
+const FB_URL = 'https://beatlab-da2a3-default-rtdb.firebaseio.com';
+let currentRoom = null;
+let fbPollInterval = null;
+let lastSentHash = null;
+let isReceiving = false;
+
+function patHash() { return JSON.stringify(pat); }
+
+function joinRoom() {
+  const input = document.getElementById('roomInput');
+  const name = (input.value||'').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
+  if (!name) { input.focus(); return; }
+  if (currentRoom) leaveRoom();
+  currentRoom = name;
+  setRoomStatus('● verbinden...', '#FAC775');
+  document.getElementById('joinRoomBtn').textContent = 'Verlaten';
+  document.getElementById('joinRoomBtn').onclick = leaveRoom;
+  fbPollInterval = setInterval(fetchRoom, 800);
+  fetchRoom();
+  pushRoom();
+}
+window.joinRoom = joinRoom;
+
+function leaveRoom() {
+  if (fbPollInterval) clearInterval(fbPollInterval);
+  fbPollInterval = null; currentRoom = null; lastSentHash = null;
+  setRoomStatus('● offline', '#666');
+  document.getElementById('joinRoomBtn').textContent = 'Verbinden';
+  document.getElementById('joinRoomBtn').onclick = joinRoom;
+}
+window.leaveRoom = leaveRoom;
+
+function setRoomStatus(txt, color) {
+  const el = document.getElementById('roomStatus');
+  if (el) { el.textContent = txt; el.style.color = color; }
+}
+
+function pushRoom() {
+  if (!currentRoom || isReceiving) return;
+  const hash = patHash();
+  if (hash === lastSentHash) return;
+  lastSentHash = hash;
+  fetch(FB_URL + '/rooms/' + currentRoom + '/beat.json', {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ pat: pat, bpm: bpm, ts: Date.now() })
+  }).catch(() => {});
+}
+window.pushRoom = pushRoom;
+
+function fetchRoom() {
+  if (!currentRoom) return;
+  fetch(FB_URL + '/rooms/' + currentRoom + '/beat.json')
+    .then(r => r.json())
+    .then(data => {
+      if (!data || !data.pat) return;
+      const remoteHash = JSON.stringify(data.pat);
+      if (remoteHash === lastSentHash) return;
+      isReceiving = true;
+      pat = data.pat;
+      if (data.bpm && data.bpm !== bpm) {
+        bpm = data.bpm;
+        const bpmEl = document.getElementById('bpm');
+        const bpmvEl = document.getElementById('bpmv');
+        if (bpmEl) bpmEl.value = bpm;
+        if (bpmvEl) bpmvEl.textContent = bpm;
+        if (playing) { stopSeq(); startSeq(); }
+      }
+      renderPads();
+      lastSentHash = remoteHash;
+      isReceiving = false;
+      setRoomStatus('● live', '#4ade80');
+    })
+    .catch(() => setRoomStatus('● fout', '#f87171'));
+}
+
+// Push na elke wijziging
+function pushAfterChange() {
+  if (!isReceiving) setTimeout(pushRoom, 80);
+}
+window.pushAfterChange = pushAfterChange;
 })();
 </script>
 
@@ -4722,6 +4814,7 @@ function buildUI() {
         pad.style.background = padBg(ti, s);
         pad.style.borderColor = pat[ti][s] ? 'transparent' : 'rgba(255,255,255,0.08)';
         if (pat[ti][s]) playSound(t);
+        pushAfterChange();
       });
       row.appendChild(pad);
     }
