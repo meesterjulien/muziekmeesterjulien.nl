@@ -938,79 +938,71 @@ window._drumLoadPreset = loadPreset;
 // ===== FIREBASE REALTIME SDK =====
 var FB_DB = null;
 var fbRoom = null;
+var fbTimer = null;
+var fbListener = null;
 var fbMyId = Math.random().toString(36).slice(2,8);
 var fbListener = null;
 
 function fbStatus(t,c){var e=document.getElementById('roomStatus');if(e){e.textContent=t;e.style.color=c;}}
 
 function fbInit(cb){
-  if(FB_DB){cb();return;}
-  // Laad Firebase SDK dynamisch
-  var s1=document.createElement('script');
-  s1.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
-  s1.onload=function(){
-    var s2=document.createElement('script');
-    s2.src='https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
-    s2.onload=function(){
-      var app=firebase.initializeApp({
-        apiKey:"AIzaSyB6BttL8uOgBcsuS_ODLzZC2FFB2DckbMw",
-        databaseURL:"https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app"
-      });
-      FB_DB=firebase.database();
-      cb();
-    };
-    document.head.appendChild(s2);
-  };
-  document.head.appendChild(s1);
+  FB_DB = true; // gebruik fetch-based approach
+  cb();
 }
 
+var FB_URL='https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app';
+var fbLastTs=0;
 function fbPush(){
-  if(!fbRoom||!FB_DB)return;
-  FB_DB.ref('rooms/'+fbRoom).set({
-    pat:JSON.parse(JSON.stringify(pat)),
-    bpm:bpm,
-    ts:Date.now(),
-    id:fbMyId
-  }).catch(function(e){console.error('push:',e);});
+  if(!fbRoom)return;
+  var ts=Date.now();
+  fetch(FB_URL+'/rooms/'+fbRoom+'.json',{
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({pat:JSON.parse(JSON.stringify(pat)),bpm:bpm,ts:ts,id:fbMyId})
+  }).then(function(){fbLastTs=ts;}).catch(function(e){console.error('push:',e);});
 }
 
 window.joinRoom=function(){
+  if(!document.getElementById('beatlab').classList.contains('active'))return;
   var inp=document.getElementById('roomInput');
-  var name=(inp?inp.value:'').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
+  var val=inp&&inp.value?inp.value:'';
+  var name=val.trim().toLowerCase().replace(/[^a-z0-9]/g,'');
   if(!name){if(inp)inp.focus();return;}
   fbStatus('● verbinden...','#FAC775');
   fbInit(function(){
     fbRoom=name;
     var btn=document.getElementById('joinRoomBtn');
     if(btn){btn.textContent='Verlaten';btn.onclick=window.leaveRoom;}
-    // Realtime listener
-    if(fbListener){fbListener();fbListener=null;}
-    var ref=FB_DB.ref('rooms/'+fbRoom);
-    fbListener=ref.on('value',function(snap){
-      var d=snap.val();
-      if(!d||!d.pat)return;
-      if(d.id===fbMyId)return;
-      pat=JSON.parse(JSON.stringify(d.pat));
-      if(d.bpm&&d.bpm!==bpm){
-        bpm=d.bpm;
-        var be=document.getElementById('bpm');
-        var bv=document.getElementById('bpmv');
-        if(be)be.value=bpm;
-        if(bv)bv.textContent=bpm;
-        if(playing){stopSeq();startSeq();}
-      }
-      renderPads();
-      fbStatus('● live','#4ade80');
-    });
     fbPush();
+    if(fbTimer)clearInterval(fbTimer);
+    fbTimer=setInterval(function(){
+      fetch(FB_URL+'/rooms/'+fbRoom+'.json')
+        .then(function(r){return r.json();})
+        .then(function(d){
+          fbStatus('● live','#4ade80');
+          if(!d||!d.pat)return;
+          if(d.id===fbMyId)return;
+          if(d.ts<=fbLastTs)return;
+          fbLastTs=d.ts;
+          pat=JSON.parse(JSON.stringify(d.pat));
+          if(d.bpm&&d.bpm!==bpm){
+            bpm=d.bpm;
+            var be=document.getElementById('bpm');
+            var bv=document.getElementById('bpmv');
+            if(be)be.value=bpm;
+            if(bv)bv.textContent=bpm;
+            if(playing){stopSeq();startSeq();}
+          }
+          renderPads();
+        })
+        .catch(function(){fbStatus('● fout','#f87171');});
+    },300);
   });
 };
 
 window.leaveRoom=function(){
-  if(fbListener&&FB_DB&&fbRoom){
-    FB_DB.ref('rooms/'+fbRoom).off('value',fbListener);
-  }
-  fbListener=null;fbRoom=null;
+  if(fbTimer)clearInterval(fbTimer);
+  fbTimer=null;fbRoom=null;
   fbStatus('● offline','#666');
   var btn=document.getElementById('joinRoomBtn');
   if(btn){btn.textContent='Verbinden';btn.onclick=window.joinRoom;}
@@ -3730,12 +3722,12 @@ drawScopes();}
 document.addEventListener('keydown',e=>{
   if(e.repeat||e.ctrlKey||e.metaKey||e.altKey) return;
   if(_inputFocused)return;
-  const idx=keyMap[e.key.toLowerCase()];
+  const idx=keyMap[(e.key||'').toLowerCase()];
   if(idx!==undefined){playNote(idx);document.querySelectorAll('.wkey')[idx]?.classList.add('active');}
 });
 document.addEventListener('keyup',e=>{
   if(_inputFocused)return;
-  const idx=keyMap[e.key.toLowerCase()];
+  const idx=keyMap[(e.key||'').toLowerCase()];
   if(idx!==undefined){stopNote(idx);document.querySelectorAll('.wkey')[idx]?.classList.remove('active');}
 });
 
@@ -4100,12 +4092,12 @@ drawScopes();
 document.addEventListener('keydown',e=>{
   if(e.repeat||e.ctrlKey||e.metaKey||e.altKey) return;
   if(_inputFocused)return;
-  const idx=keyMap[e.key.toLowerCase()];
+  const idx=keyMap[(e.key||'').toLowerCase()];
   if(idx!==undefined){playNote(idx);document.querySelectorAll('.wkey')[idx]?.classList.add('active');}
 });
 document.addEventListener('keyup',e=>{
   if(_inputFocused)return;
-  const idx=keyMap[e.key.toLowerCase()];
+  const idx=keyMap[(e.key||'').toLowerCase()];
   if(idx!==undefined){stopNote(idx);document.querySelectorAll('.wkey')[idx]?.classList.remove('active');}
 });
 
@@ -4401,7 +4393,7 @@ function buildFilterPiano(){
   });
 }
 document.addEventListener('keydown',function(e){
-  if(e.repeat)return;
+  if(e.repeat||!e.key)return;
   // Geen geluid als je in een tekstvak of textarea zit
   if(_inputFocused)return;
   var geluidActive=document.getElementById('geluid')&&document.getElementById('geluid').classList.contains('active');
@@ -4414,17 +4406,17 @@ document.addEventListener('keydown',function(e){
   // ADSR speel noot met spatiebalk
   if(e.key===' '&&document.getElementById('adsrAttack')){e.preventDefault();gFAC();playADSRNote();}
   // Filter piano A S D F G
-  var fNote=fNotes[e.key.toLowerCase()];
+  var fNote=fNotes[(e.key||'').toLowerCase()];
   if(fNote&&!fKeysDown[e.key]){fKeysDown[e.key]=true;gFAC();startFilterNote(fNote);}
   // LFO piano A S D F G (zelfde toetsen als filter, werkt op actieve synth)
-  if(fNotes[e.key.toLowerCase()]&&!lfoOscNode){gFAC();startLFONote(fNotes[e.key.toLowerCase()]);}
+  if(fNotes[(e.key||'').toLowerCase()]&&!lfoOscNode){gFAC();startLFONote(fNotes[(e.key||'').toLowerCase()]);}
   // Fase 3 piano Z X C V B N M
-  var f3idx=F3_KEYS.indexOf(e.key.toLowerCase());
+  var f3idx=F3_KEYS.indexOf((e.key||'').toLowerCase());
   if(f3idx>=0&&!f3KeysDown[e.key]){f3KeysDown[e.key]=true;gFAC();startF3Note(F3_FREQS[f3idx]);}
 });
 document.addEventListener('keyup',function(e){
   if(_inputFocused)return;
-  if(fNotes[e.key.toLowerCase()]&&fKeysDown[e.key]){fKeysDown[e.key]=false;stopFilterNote();}
+  if(fNotes[(e.key||'').toLowerCase()]&&fKeysDown[e.key]){fKeysDown[e.key]=false;stopFilterNote();}
 });
 setTimeout(function(){buildFilterPiano();moogRotate2('filterCutoffLine',1,32);moogRotate2('filterResLine',0,32);},400);
 
@@ -4615,12 +4607,12 @@ var f3KeysDown={};
 document.addEventListener('keydown',function(e){
   if(e.repeat||f3KeysDown[e.key])return;
   if(_inputFocused)return;
-  var idx=F3_KEYS.indexOf(e.key.toLowerCase());
+  var idx=F3_KEYS.indexOf((e.key||'').toLowerCase());
   if(idx>=0&&document.getElementById('geluid').classList.contains('active')){f3KeysDown[e.key]=true;gFAC();startF3Note(F3_FREQS[idx]);}
 });
 document.addEventListener('keyup',function(e){
   if(_inputFocused)return;
-  var idx=F3_KEYS.indexOf(e.key.toLowerCase());
+  var idx=F3_KEYS.indexOf((e.key||'').toLowerCase());
   if(idx>=0&&f3KeysDown[e.key]){f3KeysDown[e.key]=false;stopF3Note();}
 });
 setTimeout(function(){buildLFOPiano();buildF3Piano();},500);
@@ -5190,7 +5182,7 @@ function hKey(k){
     for(var j=0;j<10;j++){if(KN[j]===pressed)flKey(j,'hw');}playErr();setSt('\u274C Fout! Verwacht: '+exp+' \u2014 probeer opnieuw!','er');
   }
 }
-document.addEventListener('keydown',function(e){if(e.repeat)return;hKey(e.key.toLowerCase());});
+document.addEventListener('keydown',function(e){if(e.repeat||!e.key)return;hKey((e.key||'').toLowerCase());});
 
 (function(){
   var sel=document.getElementById('ssel');
@@ -5291,14 +5283,14 @@ function synthBuildPiano(){
 var synthKeysDown={};
 document.addEventListener('keydown',function(e){
   if(e.repeat)return;
-  var note=SKEYMAP[e.key.toLowerCase()];
+  var note=SKEYMAP[(e.key||'').toLowerCase()];
   if(note&&document.getElementById('synth')&&document.getElementById('synth').classList.contains('active')){
-    gSAC();if(!synthMaster)synthInitAudio();synthPlayNote(note);synthKeysDown[e.key.toLowerCase()]=true;
+    gSAC();if(!synthMaster)synthInitAudio();synthPlayNote(note);synthKeysDown[(e.key||'').toLowerCase()]=true;
   }
 });
 document.addEventListener('keyup',function(e){
-  var note=SKEYMAP[e.key.toLowerCase()];
-  if(note)synthStopNote(note);synthKeysDown[e.key.toLowerCase()]=false;
+  var note=SKEYMAP[(e.key||'').toLowerCase()];
+  if(note)synthStopNote(note);synthKeysDown[(e.key||'').toLowerCase()]=false;
 });
 
 function synthToggleRec(){
@@ -5346,7 +5338,7 @@ function synthClearRec(){synthRecData=[];synthRecording=false;synthPlayTO.forEac
     }draw();
   }
   document.getElementById('synthPiano').addEventListener('mousedown',function(){gSAC();if(!synthMaster)synthInitAudio();if(!analyser)startViz();});
-  document.addEventListener('keydown',function(e){if(SKEYMAP[e.key.toLowerCase()]&&document.getElementById('synth').classList.contains('active')){gSAC();if(!synthMaster)synthInitAudio();if(!analyser)startViz();}});
+  document.addEventListener('keydown',function(e){if(SKEYMAP[(e.key||'').toLowerCase()]&&document.getElementById('synth').classList.contains('active')){gSAC();if(!synthMaster)synthInitAudio();if(!analyser)startViz();}});
 })();
 
 setTimeout(function(){synthBuildPiano();},200);
