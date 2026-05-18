@@ -934,84 +934,87 @@ document.getElementById('swing').addEventListener('input', function () {
 
 if(document.getElementById('playbtn')){buildUI();loadPreset('house');}
 window._drumLoadPreset = loadPreset;
-
-// ===== FIREBASE REAL-TIME SAMENWERKING =====
-const FB_URL = 'https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app';
-let fbRoom = null;
-let fbTimer = null;
-let fbMyId = Math.random().toString(36).slice(2, 8);
-let fbLastRemoteTs = 0;
-
-function fbJoin() {
-  const input = document.getElementById('roomInput');
-  const name = (input ? input.value : '').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
-  if (!name) { if(input) input.focus(); return; }
-  fbRoom = name;
-  fbSetStatus('● live', '#4ade80');
-  document.getElementById('joinRoomBtn').textContent = 'Verlaten';
-  document.getElementById('joinRoomBtn').onclick = fbLeave;
-  fbTimer = setInterval(fbPoll, 500);
-  fbPush();
-}
-window.joinRoom = fbJoin;
-
-function fbLeave() {
-  clearInterval(fbTimer);
-  fbRoom = null;
-  fbSetStatus('● offline', '#666');
-  document.getElementById('joinRoomBtn').textContent = 'Verbinden';
-  document.getElementById('joinRoomBtn').onclick = fbJoin;
-}
-window.leaveRoom = fbLeave;
-
-function fbSetStatus(txt, color) {
-  const el = document.getElementById('roomStatus');
-  if (el) { el.textContent = txt; el.style.color = color; }
-}
-
-function fbPush() {
-  if (!fbRoom) return;
-  const ts = Date.now();
-  const data = { pat: JSON.parse(JSON.stringify(pat)), bpm: bpm, ts: ts, id: fbMyId };
-  fetch(FB_URL + '/rooms/' + fbRoom + '.json', {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  }).then(() => {
-    fbLastRemoteTs = ts;
-  }).catch(e => console.warn('Firebase push error:', e));
-}
-window.fbPush = fbPush;
-
-function fbPoll() {
-  if (!fbRoom) return;
-  fetch(FB_URL + '/rooms/' + fbRoom + '.json')
-    .then(r => r.json())
-    .then(data => {
-      fbSetStatus('● live', '#4ade80');
-      if (!data || !data.pat) return;
-      if (data.id === fbMyId) return;
-      if (data.ts <= fbLastRemoteTs) return;
-      fbLastRemoteTs = data.ts;
-      pat = JSON.parse(JSON.stringify(data.pat));
-      if (data.bpm && data.bpm !== bpm) {
-        bpm = data.bpm;
-        const bpmEl = document.getElementById('bpm');
-        const bpmvEl = document.getElementById('bpmv');
-        if (bpmEl) bpmEl.value = bpm;
-        if (bpmvEl) bpmvEl.textContent = bpm;
-        if (playing) { stopSeq(); startSeq(); }
-      }
-      renderPads();
-    })
-    .catch(e => { fbSetStatus('● fout', '#f87171'); console.error('fbPoll error:', e); });
-}
+window._fbGetPat = function(){ return pat; };
+window._fbSetPat = function(newPat){ pat = newPat; renderPads(); };
+window._fbGetBpm = function(){ return bpm; };
+window._fbSetBpm = function(newBpm){ bpm = newBpm; var e=document.getElementById('bpm'); var v=document.getElementById('bpmv'); if(e)e.value=bpm; if(v)v.textContent=bpm; };
 
 })();
 </script>
 
 </div>
 </div>
+
+<!-- FIREBASE SAMENWERKING -->
+<script>
+(function(){
+var FB_URL = 'https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app';
+var fbRoom = null;
+var fbTimer = null;
+var fbMyId = Math.random().toString(36).slice(2,8);
+var fbLastTs = 0;
+
+function fbSetStatus(txt, color){
+  var el = document.getElementById('roomStatus');
+  if(el){ el.textContent = txt; el.style.color = color; }
+}
+
+window.joinRoom = function(){
+  var input = document.getElementById('roomInput');
+  var name = (input ? input.value : '').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
+  if(!name){ if(input) input.focus(); return; }
+  fbRoom = name;
+  fbLastTs = 0;
+  fbSetStatus('● verbinden...', '#FAC775');
+  document.getElementById('joinRoomBtn').textContent = 'Verlaten';
+  document.getElementById('joinRoomBtn').onclick = window.leaveRoom;
+  // Push huidige staat
+  fbPush();
+  // Start polling
+  fbTimer = setInterval(fbPoll, 600);
+};
+
+window.leaveRoom = function(){
+  if(fbTimer) clearInterval(fbTimer);
+  fbTimer = null; fbRoom = null;
+  fbSetStatus('● offline', '#666');
+  document.getElementById('joinRoomBtn').textContent = 'Verbinden';
+  document.getElementById('joinRoomBtn').onclick = window.joinRoom;
+};
+
+function fbPush(){
+  if(!fbRoom) return;
+  var pat = window._fbGetPat ? window._fbGetPat() : null;
+  var bpm = window._fbGetBpm ? window._fbGetBpm() : 80;
+  if(!pat) return;
+  var ts = Date.now();
+  fetch(FB_URL + '/rooms/' + fbRoom + '.json', {
+    method: 'PUT',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({pat: pat, bpm: bpm, ts: ts, id: fbMyId})
+  }).then(function(){ fbLastTs = ts; })
+    .catch(function(e){ console.error('push fout:', e); });
+}
+window.fbPush = fbPush;
+
+function fbPoll(){
+  if(!fbRoom) return;
+  fetch(FB_URL + '/rooms/' + fbRoom + '.json')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      fbSetStatus('● live', '#4ade80');
+      if(!data || !data.pat || !data.ts) return;
+      if(data.id === fbMyId) return;
+      if(data.ts <= fbLastTs) return;
+      fbLastTs = data.ts;
+      if(window._fbSetPat) window._fbSetPat(data.pat);
+      if(window._fbSetBpm && data.bpm) window._fbSetBpm(data.bpm);
+    })
+    .catch(function(){ fbSetStatus('● fout', '#f87171'); });
+}
+})();
+</script>
+
 
 <!-- OVER ONS PAGINA -->
 <div id="over" class="page">
