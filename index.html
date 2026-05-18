@@ -964,7 +964,7 @@ function fbPush(){
 }
 
 window.joinRoom=function(){
-  if(!document.getElementById('beatlab').classList.contains('active'))return;
+  console.log('joinRoom aangeroepen!');
   var inp=document.getElementById('roomInput');
   var val=inp&&inp.value?inp.value:'';
   var name=val.trim().toLowerCase().replace(/[^a-z0-9]/g,'');
