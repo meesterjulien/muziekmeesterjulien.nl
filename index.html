@@ -992,10 +992,11 @@ function pushRoom() {
   const hash = JSON.stringify(curPat);
   if (hash === lastSentHash) return;
   lastSentHash = hash;
+  lastPushedTs = Date.now();
   fetch(FB_URL + '/rooms/' + currentRoom + '/beat.json', {
     method: 'PUT',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ pat: curPat, bpm: curBpm, ts: Date.now() })
+    body: JSON.stringify({ pat: curPat, bpm: curBpm, ts: lastPushedTs })
   }).catch(() => {});
 }
 window.pushRoom = pushRoom;
