@@ -903,8 +903,7 @@ document.getElementById('swing').addEventListener('input', function () {
   swing = parseFloat(this.value); document.getElementById('swingv').textContent = Math.round(swing * 1000) + '%';
 });
 
-buildUI();
-loadPreset('house');
+if(document.getElementById('playbtn')){buildUI();loadPreset('house');}
 window._drumLoadPreset = loadPreset;
 })();
 </script>
@@ -2976,6 +2975,11 @@ window._drumLoadPreset = loadPreset;
       if (activeSound === id) stopActive();
     }, soundDurations[id]);
   }
+  window.playSound = playSound;
+  window.stopActive = stopActive;
+  // Stop geluid als pagina verlaten wordt
+  window.addEventListener('blur', function(){ stopActive(); });
+  document.addEventListener('visibilitychange', function(){ if(document.hidden) stopActive(); });
 })();
 </script>
 
@@ -3015,10 +3019,13 @@ window._drumLoadPreset = loadPreset;
     card.classList.toggle('done');
     updateProgress();
   }
+  window.toggle = toggle;
+  window.stopActive = stopActive;
 
   function opdrachtDone(cb) {
     updateProgress();
   }
+  window.opdrachtDone = opdrachtDone;
 
   updateProgress();
 })();
@@ -3593,7 +3600,7 @@ function loadPreset(name,btn){
 }
 
 // ── BOOT ─────────────────────────────────────────────────────────────────────
-makeKnob('kw-octave', 'octave', 'Octaaf',   -2,  2,   0,    0, updateSynth);
+if(document.getElementById('kw-octave')){makeKnob('kw-octave', 'octave', 'Octaaf',   -2,  2,   0,    0, updateSynth);
 makeKnob('kw-detune', 'detune', 'Detune',  -50, 50,   0,    0, updateSynth);
 makeKnob('kw-gain',   'gain',   'Volume',    0,  1,   0.6,  2, updateSynth);
 makeKnob('kw-cutoff', 'cutoff', 'Afsnij',   80, 8000, 4000, 0, updateSynth);
@@ -3606,7 +3613,7 @@ makeKnob('kw-lfoRate','lfoRate','Snelheid', 0.1, 20,  4,    1, updateSynth);
 makeKnob('kw-lfoDepth','lfoDepth','Diepte',  0,  1,   0.3,  2, updateSynth);
 
 buildKb();
-drawScopes();
+drawScopes();}
 
 document.addEventListener('keydown',e=>{
   if(e.repeat||e.ctrlKey||e.metaKey||e.altKey) return;
@@ -4719,8 +4726,7 @@ document.getElementById('swing').addEventListener('input', function () {
   swing = parseFloat(this.value); document.getElementById('swingv').textContent = Math.round(swing * 1000) + '%';
 });
 
-buildUI();
-loadPreset('house');
+if(document.getElementById('playbtn')){buildUI();loadPreset('house');}
 
 })();
 
@@ -4795,20 +4801,20 @@ var SNG = [
   {n:'Slaap Kindje Slaap',        s:1, q:'G E E R F D D R E F G A G R'},
   {n:'In het oerwoud',            s:1, q:'E E F G E R E E F G E R G A G R'},
   {n:'Doe Re Mi',                 s:2, q:'C D E C R E C R D E F D R F D R'},
-  {n:'Happy Birthday',            s:2, q:'G G A G C B R G G A G D C R'},
-  {n:'Jingle Bells',              s:2, q:'E E E R E E E R E G C D E R R'},
+  {n:'Happy Birthday',            s:2, q:'C C D C F E R C C D C G F R C C C A F E D A A G F R R'},
+  {n:'Jingle Bells',              s:2, q:'E E E R E E E R E G C D E R E E E R E E E R E G C D C R'},
   {n:'Wiegenlied Brahms',         s:2, q:'D D G R G F E C R E F G A G R'},
   {n:'Zwanenmeer',                s:2, q:'E D C D E E E R D D D R E G G R'},
-  {n:'Ode aan de Vreugde',        s:2, q:'E E F G G F E D C C D E E D D R'},
+  {n:'Ode aan de Vreugde',        s:2, q:'E E F G G F E D C C D E D C C R E E F G G F E D C C D E D C C R'},
   {n:'Hakuna Matata',             s:2, q:'G E G A G R E R C D E G R E R'},
-  {n:'Seven Nation Army',         s:2, q:'E E G E R D C R B R C R D R'},
+  {n:'Seven Nation Army',         s:2, q:'E E G E D C B R E E G E D C D R'},
   {n:'Ocean Eyes',                s:3, q:'B A G E R A G E R G A B A G R'},
-  {n:'Over the Rainbow',          s:3, q:'C G R F E D C R E G R D F E R'},
-  {n:'Let It Go',                 s:3, q:'A A B A R F R E R A G F E D C R'},
+  {n:'Over the Rainbow',          s:3, q:'C G F E D C R E C G R F E D C R G E C D E F G E R'},
+  {n:'Let It Go',                 s:3, q:'A G A R E R F E F R C R D E F G A R A G A R F E D C R'},
   {n:'A Sky Full of Stars',       s:3, q:'G A B A G R E R G A B C R B A R'},
   {n:'Happy - Pharrell',          s:3, q:'G G A G R C R B R G G A G R D R'},
   {n:'Counting Stars',            s:3, q:'E G A B R A G R E G A B R C B R'},
-  {n:'Shape of You',              s:3, q:'B A G E R A G R B A G E R A G R'},
+  {n:'Shape of You',              s:3, q:'A G E C R A G E C R A G E C A R C D E C R D E F E D R E D C D E R A G E R'},
   {n:'Ode aan de Vreugde (lang)', s:3, q:'E E F G G F E D C C D E D C C R E E F G G F E D C C D E C R'},
   {n:'Fur Elise',                 s:4, q:'E D E D E B D C A R A C E A B R'},
   {n:'Fur Elise (deel 2)',        s:4, q:'E G B C R B R E A C R A R E D F R A B R'},
