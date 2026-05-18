@@ -983,8 +983,11 @@ window.joinRoom=function(){
         .then(function(d){
           fbStatus('● live','#4ade80');
           if(!d||!d.pat)return;
-          if(d.id===fbMyId)return;
+          // Skip als dit onze eigen laatste push was
+          if(d.id===fbMyId&&d.ts===fbLastTs)return;
+          // Altijd updaten als de remote ts nieuwer is
           if(d.ts<=fbLastTs)return;
+          console.log('Update ontvangen van',d.id,'ts:',d.ts);
           fbLastTs=d.ts;
           pat=JSON.parse(JSON.stringify(d.pat));
           if(d.bpm&&d.bpm!==bpm){
