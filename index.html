@@ -874,7 +874,7 @@ function buildUI() {
         pad.style.background = padBg(ti, s);
         pad.style.borderColor = pat[ti][s] ? 'transparent' : 'rgba(255,255,255,0.08)';
         if (pat[ti][s]) playSound(t);
-        pushAfterChange();
+        if(fbRoom) setTimeout(fbPush, 50);
       });
       row.appendChild(pad);
     }
@@ -937,110 +937,76 @@ window._drumLoadPreset = loadPreset;
 
 // ===== FIREBASE REAL-TIME SAMENWERKING =====
 const FB_URL = 'https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app';
-let currentRoom = null;
-let fbPollInterval = null;
-let lastSentHash = null;
-let isReceiving = false;
+let fbRoom = null;
+let fbTimer = null;
+let fbMyId = Math.random().toString(36).slice(2, 8);
+let fbLastRemoteTs = 0;
 
-function patHash() { return JSON.stringify(pat); }
-
-function joinRoom() {
+function fbJoin() {
   const input = document.getElementById('roomInput');
-  const name = (input.value||'').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
-  if (!name) { input.focus(); return; }
-  if (currentRoom) leaveRoom();
-  currentRoom = name;
-  setRoomStatus('● verbinden...', '#FAC775');
+  const name = (input ? input.value : '').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
+  if (!name) { if(input) input.focus(); return; }
+  fbRoom = name;
+  fbSetStatus('● live', '#4ade80');
   document.getElementById('joinRoomBtn').textContent = 'Verlaten';
-  document.getElementById('joinRoomBtn').onclick = leaveRoom;
-  fbPollInterval = setInterval(fetchRoom, 800);
-  // Push eerst om kamer aan te maken, dan fetch
-  fetch(FB_URL + '/rooms/' + name + '/beat.json', {
-    method: 'PUT',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ pat: pat, bpm: bpm, ts: Date.now() })
-  }).then(() => {
-    setRoomStatus('● live', '#4ade80');
-    fetchRoom();
-  }).catch(() => {
-    setRoomStatus('● fout - check Firebase regels', '#f87171');
-  });
+  document.getElementById('joinRoomBtn').onclick = fbLeave;
+  fbTimer = setInterval(fbPoll, 500);
+  fbPush();
 }
-window.joinRoom = joinRoom;
+window.joinRoom = fbJoin;
 
-function leaveRoom() {
-  if (fbPollInterval) clearInterval(fbPollInterval);
-  fbPollInterval = null; currentRoom = null; lastSentHash = null;
-  setRoomStatus('● offline', '#666');
+function fbLeave() {
+  clearInterval(fbTimer);
+  fbRoom = null;
+  fbSetStatus('● offline', '#666');
   document.getElementById('joinRoomBtn').textContent = 'Verbinden';
-  document.getElementById('joinRoomBtn').onclick = joinRoom;
+  document.getElementById('joinRoomBtn').onclick = fbJoin;
 }
-window.leaveRoom = leaveRoom;
+window.leaveRoom = fbLeave;
 
-function setRoomStatus(txt, color) {
+function fbSetStatus(txt, color) {
   const el = document.getElementById('roomStatus');
   if (el) { el.textContent = txt; el.style.color = color; }
 }
 
-var _getPatForPush = null;
-var _getBpmForPush = null;
-function pushRoom() {
-  if (!currentRoom || isReceiving) return;
-  var curPat = _getPatForPush ? _getPatForPush() : null;
-  var curBpm = _getBpmForPush ? _getBpmForPush() : 80;
-  if (!curPat) return;
-  const hash = JSON.stringify(curPat);
-  if (hash === lastSentHash) return;
-  lastSentHash = hash;
-  lastPushedTs = Date.now();
-  fetch(FB_URL + '/rooms/' + currentRoom + '/beat.json', {
+function fbPush() {
+  if (!fbRoom) return;
+  const ts = Date.now();
+  const data = { pat: JSON.parse(JSON.stringify(pat)), bpm: bpm, ts: ts, id: fbMyId };
+  fetch(FB_URL + '/rooms/' + fbRoom + '.json', {
     method: 'PUT',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ pat: curPat, bpm: curBpm, ts: lastPushedTs })
-  }).catch(() => {});
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(() => {
+    fbLastRemoteTs = ts;
+  }).catch(e => console.warn('Firebase push error:', e));
 }
-window.pushRoom = pushRoom;
+window.fbPush = fbPush;
 
-function fetchRoom() {
-  if (!currentRoom) return;
-  fetch(FB_URL + '/rooms/' + currentRoom + '/beat.json')
+function fbPoll() {
+  if (!fbRoom) return;
+  fetch(FB_URL + '/rooms/' + fbRoom + '.json')
     .then(r => r.json())
     .then(data => {
-      setRoomStatus('● live', '#4ade80');
+      fbSetStatus('● live', '#4ade80');
       if (!data || !data.pat) return;
-      const remoteHash = JSON.stringify(data.pat);
-      if (remoteHash === lastSentHash) return;
-      if (window._setPatFromRemote) {
-        window._setPatFromRemote(data.pat, data.bpm);
+      if (data.id === fbMyId) return;
+      if (data.ts <= fbLastRemoteTs) return;
+      fbLastRemoteTs = data.ts;
+      pat = JSON.parse(JSON.stringify(data.pat));
+      if (data.bpm && data.bpm !== bpm) {
+        bpm = data.bpm;
+        const bpmEl = document.getElementById('bpm');
+        const bpmvEl = document.getElementById('bpmv');
+        if (bpmEl) bpmEl.value = bpm;
+        if (bpmvEl) bpmvEl.textContent = bpm;
+        if (playing) { stopSeq(); startSeq(); }
       }
-      lastSentHash = remoteHash;
-      setRoomStatus('● live', '#4ade80');
+      renderPads();
     })
-    .catch(() => setRoomStatus('● fout', '#f87171'));
+    .catch(e => { fbSetStatus('● fout', '#f87171'); console.error('fbPoll error:', e); });
 }
 
-// Push na elke wijziging
-function pushAfterChange() {
-  if (!isReceiving) setTimeout(pushRoom, 80);
-}
-window.pushAfterChange = pushAfterChange;
-// Registreer getters zodat pushRoom pat en bpm kan lezen
-_getPatForPush = function() { return pat; };
-_getBpmForPush = function() { return bpm; };
-window._setPatFromRemote = function(newPat, newBpm) {
-  isReceiving = true;
-  pat = newPat;
-  if (newBpm && newBpm !== bpm) {
-    bpm = newBpm;
-    var bpmEl = document.getElementById('bpm');
-    var bpmvEl = document.getElementById('bpmv');
-    if (bpmEl) bpmEl.value = bpm;
-    if (bpmvEl) bpmvEl.textContent = bpm;
-    if (playing) { stopSeq(); startSeq(); }
-  }
-  renderPads();
-  isReceiving = false;
-};
 })();
 </script>
 
@@ -4838,7 +4804,7 @@ function buildUI() {
         pad.style.background = padBg(ti, s);
         pad.style.borderColor = pat[ti][s] ? 'transparent' : 'rgba(255,255,255,0.08)';
         if (pat[ti][s]) playSound(t);
-        pushAfterChange();
+        if(fbRoom) setTimeout(fbPush, 50);
       });
       row.appendChild(pad);
     }
