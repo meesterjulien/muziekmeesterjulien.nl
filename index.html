@@ -954,8 +954,17 @@ function joinRoom() {
   document.getElementById('joinRoomBtn').textContent = 'Verlaten';
   document.getElementById('joinRoomBtn').onclick = leaveRoom;
   fbPollInterval = setInterval(fetchRoom, 800);
-  fetchRoom();
-  pushRoom();
+  // Push eerst om kamer aan te maken, dan fetch
+  fetch(FB_URL + '/rooms/' + name + '/beat.json', {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ pat: pat, bpm: bpm, ts: Date.now() })
+  }).then(() => {
+    setRoomStatus('● live', '#4ade80');
+    fetchRoom();
+  }).catch(() => {
+    setRoomStatus('● fout - check Firebase regels', '#f87171');
+  });
 }
 window.joinRoom = joinRoom;
 
@@ -991,6 +1000,7 @@ function fetchRoom() {
   fetch(FB_URL + '/rooms/' + currentRoom + '/beat.json')
     .then(r => r.json())
     .then(data => {
+      setRoomStatus('● live', '#4ade80');
       if (!data || !data.pat) return;
       const remoteHash = JSON.stringify(data.pat);
       if (remoteHash === lastSentHash) return;
