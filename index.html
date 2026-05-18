@@ -690,6 +690,10 @@ const TRACKS = [
   { name: 'Shaker',  grp: 'perc',  on: '#D85A30', off: '#321000', type: 'shaker',  freq: 0   },
   { name: 'Tom hi',  grp: 'toms',  on: '#D4537E', off: '#300d20', type: 'tom',     freq: 180 },
   { name: 'Tom lo',  grp: 'toms',  on: '#993556', off: '#280815', type: 'tom',     freq: 80  },
+  { name: 'Bas C',   grp: 'bass',  on: '#7C4DFF', off: '#1a0a3a', type: 'sub',     freq: 130.8 },
+  { name: 'Bas F',   grp: 'bass',  on: '#651FFF', off: '#160830', type: 'sub',     freq: 174.6 },
+  { name: 'Bas G',   grp: 'bass',  on: '#D500F9', off: '#2a0035', type: 'sub',     freq: 196.0 },
+  { name: 'Bas A',   grp: 'bass',  on: '#AA00FF', off: '#200040', type: 'sub',     freq: 220.0 },
 ];
 
 const STEPS = 16;
@@ -782,15 +786,31 @@ function playSound(t, when) {
     o.frequency.setValueAtTime(t.freq * 2, now);
     o.frequency.exponentialRampToValueAtTime(t.freq * 0.5, now + 0.22);
     g.gain.exponentialRampToValueAtTime(0.001, now + 0.28); o.start(now); o.stop(now + 0.28);
+  } else if (t.type === 'sub') {
+    const dur = (60 / bpm) * 0.88;
+    const o = actx.createOscillator();
+    const o2 = actx.createOscillator();
+    const filt = actx.createBiquadFilter();
+    filt.type = 'lowpass'; filt.frequency.value = 800; filt.Q.value = 0.8;
+    o.type = 'sine'; o.frequency.value = t.freq;
+    o2.type = 'sine'; o2.frequency.value = t.freq * 2;
+    const og2 = actx.createGain(); og2.gain.value = 0.12;
+    o.connect(filt); o2.connect(og2); og2.connect(filt); filt.connect(g);
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(vol * 1.2, now + 0.012);
+    g.gain.setValueAtTime(vol * 1.2, now + dur * 0.65);
+    g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    o.start(now); o2.start(now);
+    o.stop(now + dur + 0.05); o2.stop(now + dur + 0.05);
   }
 }
 
 const PRESETS = {
-  house:  { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 3:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 6:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0] },
-  hiphop: { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1], 3:[1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1], 6:[0,0,1,0,0,0,1,0,0,1,0,0,0,0,1,0] },
-  jungle: { 0:[1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0], 1:[0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,0], 3:[0,1,0,1,1,0,1,0,1,1,0,1,0,1,1,0], 4:[0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0], 8:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0] },
-  latin:  { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0], 7:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0], 9:[1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1] },
-  techno: { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 2:[0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0], 3:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,0,0,1,0,0,1,0,0,0,0,1,0,1,0] },
+  house:  { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 3:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 6:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 10:[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0], 11:[0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0] },
+  hiphop: { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1], 3:[1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1], 6:[0,0,1,0,0,0,1,0,0,1,0,0,0,0,1,0], 10:[1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0], 13:[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0] },
+  jungle: { 0:[1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0], 1:[0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,0], 3:[0,1,0,1,1,0,1,0,1,1,0,1,0,1,1,0], 4:[0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0], 8:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0], 10:[1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0] },
+  latin:  { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0], 7:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0], 9:[1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1], 10:[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0], 12:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0] },
+  techno: { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 2:[0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0], 3:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,0,0,1,0,0,1,0,0,0,0,1,0,1,0], 10:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0] },
 };
 
 function loadPreset(name) {
@@ -4237,8 +4257,9 @@ function startFilterNote(freq){
 }
 function stopFilterNote(){
   if(!fGain)return;var ac=gFAC();
-  fGain.gain.setTargetAtTime(0,ac.currentTime,0.05);
-  setTimeout(function(){if(fOsc){try{fOsc.stop();}catch(e){}}fOsc=null;},200);
+  fGain.gain.cancelScheduledValues(ac.currentTime);
+  fGain.gain.setTargetAtTime(0,ac.currentTime,0.03);
+  setTimeout(function(){if(fOsc){try{fOsc.stop();}catch(e){}}fOsc=null;cancelAnimationFrame(fVizRaf);},150);
   cancelAnimationFrame(fVizRaf);
 }
 function updateFilter(){
@@ -4314,6 +4335,18 @@ document.addEventListener('keyup',function(e){
   if(fNotes[e.key.toLowerCase()]&&fKeysDown[e.key]){fKeysDown[e.key]=false;stopFilterNote();}
 });
 setTimeout(function(){buildFilterPiano();moogRotate2('filterCutoffLine',1,32);moogRotate2('filterResLine',0,32);},400);
+
+// Stop filter noot als muis/vinger buiten piano losgelaten wordt
+document.addEventListener('mouseup', function(){
+  if(fOsc) stopFilterNote();
+  if(lfoOscNode) stopLFONote();
+  if(f3OscNode) stopF3Note();
+});
+document.addEventListener('touchend', function(){
+  if(fOsc) stopFilterNote();
+  if(lfoOscNode) stopLFONote();
+  if(f3OscNode) stopF3Note();
+});
 // ===== WAVEFORM LUISTERAAR =====
 var waveOscNode=null,waveGainNode=null;
 function playWaveform(type){
@@ -4513,6 +4546,10 @@ const TRACKS = [
   { name: 'Shaker',  grp: 'perc',  on: '#D85A30', off: '#321000', type: 'shaker',  freq: 0   },
   { name: 'Tom hi',  grp: 'toms',  on: '#D4537E', off: '#300d20', type: 'tom',     freq: 180 },
   { name: 'Tom lo',  grp: 'toms',  on: '#993556', off: '#280815', type: 'tom',     freq: 80  },
+  { name: 'Bas C',   grp: 'bass',  on: '#7C4DFF', off: '#1a0a3a', type: 'sub',     freq: 130.8 },
+  { name: 'Bas F',   grp: 'bass',  on: '#651FFF', off: '#160830', type: 'sub',     freq: 174.6 },
+  { name: 'Bas G',   grp: 'bass',  on: '#D500F9', off: '#2a0035', type: 'sub',     freq: 196.0 },
+  { name: 'Bas A',   grp: 'bass',  on: '#AA00FF', off: '#200040', type: 'sub',     freq: 220.0 },
 ];
 
 const STEPS = 16;
@@ -4605,15 +4642,31 @@ function playSound(t, when) {
     o.frequency.setValueAtTime(t.freq * 2, now);
     o.frequency.exponentialRampToValueAtTime(t.freq * 0.5, now + 0.22);
     g.gain.exponentialRampToValueAtTime(0.001, now + 0.28); o.start(now); o.stop(now + 0.28);
+  } else if (t.type === 'sub') {
+    const dur = (60 / bpm) * 0.88;
+    const o = actx.createOscillator();
+    const o2 = actx.createOscillator();
+    const filt = actx.createBiquadFilter();
+    filt.type = 'lowpass'; filt.frequency.value = 800; filt.Q.value = 0.8;
+    o.type = 'sine'; o.frequency.value = t.freq;
+    o2.type = 'sine'; o2.frequency.value = t.freq * 2;
+    const og2 = actx.createGain(); og2.gain.value = 0.12;
+    o.connect(filt); o2.connect(og2); og2.connect(filt); filt.connect(g);
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(vol * 1.2, now + 0.012);
+    g.gain.setValueAtTime(vol * 1.2, now + dur * 0.65);
+    g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    o.start(now); o2.start(now);
+    o.stop(now + dur + 0.05); o2.stop(now + dur + 0.05);
   }
 }
 
 const PRESETS = {
-  house:  { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 3:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 6:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0] },
-  hiphop: { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1], 3:[1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1], 6:[0,0,1,0,0,0,1,0,0,1,0,0,0,0,1,0] },
-  jungle: { 0:[1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0], 1:[0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,0], 3:[0,1,0,1,1,0,1,0,1,1,0,1,0,1,1,0], 4:[0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0], 8:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0] },
-  latin:  { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0], 7:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0], 9:[1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1] },
-  techno: { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 2:[0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0], 3:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,0,0,1,0,0,1,0,0,0,0,1,0,1,0] },
+  house:  { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 3:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 6:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 10:[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0], 11:[0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0] },
+  hiphop: { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1], 3:[1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1], 6:[0,0,1,0,0,0,1,0,0,1,0,0,0,0,1,0], 10:[1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0], 13:[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0] },
+  jungle: { 0:[1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0], 1:[0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,0], 3:[0,1,0,1,1,0,1,0,1,1,0,1,0,1,1,0], 4:[0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0], 8:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0], 10:[1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0] },
+  latin:  { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0], 7:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0], 9:[1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1], 10:[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0], 12:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0] },
+  techno: { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 2:[0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0], 3:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,0,0,1,0,0,1,0,0,0,0,1,0,1,0], 10:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0] },
 };
 
 function loadPreset(name) {
