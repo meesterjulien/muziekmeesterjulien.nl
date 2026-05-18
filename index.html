@@ -874,7 +874,7 @@ function buildUI() {
         pad.style.background = padBg(ti, s);
         pad.style.borderColor = pat[ti][s] ? 'transparent' : 'rgba(255,255,255,0.08)';
         if (pat[ti][s]) playSound(t);
-        if(fbRoom) setTimeout(fbPush, 50);
+        if(window.fbPush) setTimeout(window.fbPush, 50);
       });
       row.appendChild(pad);
     }
@@ -4807,7 +4807,7 @@ function buildUI() {
         pad.style.background = padBg(ti, s);
         pad.style.borderColor = pat[ti][s] ? 'transparent' : 'rgba(255,255,255,0.08)';
         if (pat[ti][s]) playSound(t);
-        if(fbRoom) setTimeout(fbPush, 50);
+        if(window.fbPush) setTimeout(window.fbPush, 50);
       });
       row.appendChild(pad);
     }
