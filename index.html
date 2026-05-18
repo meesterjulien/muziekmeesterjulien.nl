@@ -953,13 +953,14 @@ function fbInit(cb){
 var FB_URL='https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app';
 var fbLastTs=0;
 function fbPush(){
+  console.log('fbPush aangeroepen, fbRoom=',fbRoom,'pat=',pat?'ok':'null');
   if(!fbRoom)return;
   var ts=Date.now();
   fetch(FB_URL+'/rooms/'+fbRoom+'.json',{
     method:'PUT',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({pat:JSON.parse(JSON.stringify(pat)),bpm:bpm,ts:ts,id:fbMyId})
-  }).then(function(){fbLastTs=ts;}).catch(function(e){console.error('push:',e);});
+  }).then(function(r){console.log('push OK status:',r.status);fbLastTs=ts;}).catch(function(e){console.error('push FOUT:',e);});
 }
 
 window.joinRoom=function(){
@@ -971,6 +972,7 @@ window.joinRoom=function(){
   fbStatus('● verbinden...','#FAC775');
   fbInit(function(){
     fbRoom=name;
+    console.log('Verbonden met kamer:',fbRoom);
     var btn=document.getElementById('joinRoomBtn');
     if(btn){btn.textContent='Verlaten';btn.onclick=window.leaveRoom;}
     fbPush();
