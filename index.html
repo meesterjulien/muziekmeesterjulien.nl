@@ -977,15 +977,15 @@ window.joinRoom=function(){
     if(btn){btn.textContent='Verlaten';btn.onclick=window.leaveRoom;}
     fbPush();
     if(fbTimer)clearInterval(fbTimer);
+    console.log('Poll gestart voor kamer:',fbRoom);
     fbTimer=setInterval(function(){
       fetch(FB_URL+'/rooms/'+fbRoom+'.json')
         .then(function(r){return r.json();})
         .then(function(d){
           fbStatus('● live','#4ade80');
+          console.log('Poll data:',d?'ts='+d.ts+' id='+d.id:'null','mijnId:',fbMyId,'fbLastTs:',fbLastTs);
           if(!d||!d.pat)return;
-          // Skip als dit onze eigen laatste push was
           if(d.id===fbMyId&&d.ts===fbLastTs)return;
-          // Altijd updaten als de remote ts nieuwer is
           if(d.ts<=fbLastTs)return;
           console.log('Update ontvangen van',d.id,'ts:',d.ts);
           fbLastTs=d.ts;
