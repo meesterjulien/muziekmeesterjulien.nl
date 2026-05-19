@@ -914,6 +914,17 @@ document.getElementById('swing').addEventListener('input', function () {
 buildUI();
 loadPreset('house');
 window._drumLoadPreset = loadPreset;
+window._blGetPat = function(){ return pat; };
+window._blGetBpm = function(){ return bpm; };
+window._blSet = function(newPat, newBpm){
+  pat = newPat;
+  if(newBpm) bpm = newBpm;
+  renderPads();
+  var be = document.getElementById('bpm');
+  var bv = document.getElementById('bpmv');
+  if(be && newBpm) be.value = bpm;
+  if(bv && newBpm) bv.textContent = bpm;
+};
 })();
 </script>
 
@@ -5544,62 +5555,40 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
   var FB = 'https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app';
   var room = null;
   var timer = null;
-  var pauseUntil = 0;
+  var lastPushTs = 0;
 
   function status(t,c){
     var e=document.getElementById('roomStatus');
     if(e){e.textContent=t;e.style.color=c;}
   }
 
-  function getState(){
-    // Lees de huidige staat van de pads direct uit de DOM
-    var state = [];
-    var rows = document.querySelectorAll('#app .track-row');
-    rows.forEach(function(row){
-      var rowState = [];
-      row.querySelectorAll('.pad').forEach(function(pad){
-        // Pad is actief als de achtergrond niet donker is
-        var bg = pad.style.background;
-        rowState.push(bg && bg !== '' && !bg.startsWith('#0') && !bg.startsWith('#1') && !bg.startsWith('#2') && !bg.startsWith('rgba'));
-      });
-      state.push(rowState);
-    });
-    return state;
-  }
-
-  function applyState(state){
-    var rows = document.querySelectorAll('#app .track-row');
-    rows.forEach(function(row, ti){
-      if(!state[ti]) return;
-      var pads = row.querySelectorAll('.pad');
-      pads.forEach(function(pad, s){
-        var shouldBeOn = state[ti][s];
-        var isOn = pad.style.background && !pad.style.background.startsWith('#0') && !pad.style.background.startsWith('#1') && !pad.style.background.startsWith('#2') && !pad.style.background.startsWith('rgba');
-        if(shouldBeOn !== isOn){
-          pad.click();
-        }
-      });
-    });
-  }
-
   function push(){
-    if(!room) return;
-    pauseUntil = Date.now() + 2000;
+    if(!room || !window._blGetPat) return;
+    var ts = Date.now();
+    lastPushTs = ts;
     fetch(FB+'/rooms/'+room+'.json', {
       method: 'PUT',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({state: getState(), ts: Date.now()})
+      body: JSON.stringify({
+        pat: JSON.parse(JSON.stringify(window._blGetPat())),
+        bpm: window._blGetBpm ? window._blGetBpm() : 80,
+        ts: ts
+      })
     }).catch(function(e){ console.error('push:', e); });
   }
 
   function poll(){
-    if(!room || Date.now() < pauseUntil) return;
+    if(!room) return;
     fetch(FB+'/rooms/'+room+'.json')
       .then(function(r){ return r.json(); })
       .then(function(d){
         status('● live', '#4ade80');
-        if(!d || !d.state) return;
-        applyState(d.state);
+        if(!d || !d.pat || !d.ts) return;
+        // Sla onze eigen push over
+        if(d.ts === lastPushTs) return;
+        // Alleen nieuwere data
+        if(d.ts <= lastPushTs) return;
+        if(window._blSet) window._blSet(d.pat, d.bpm);
       })
       .catch(function(){ status('● fout', '#f87171'); });
   }
@@ -5610,12 +5599,12 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
     if(!name){ if(inp) inp.focus(); return; }
     if(timer) clearInterval(timer);
     room = name;
-    pauseUntil = 0;
+    lastPushTs = 0;
     status('● live', '#4ade80');
     var btn = document.getElementById('joinRoomBtn');
     if(btn){ btn.textContent = 'Verlaten'; btn.onclick = window.leaveRoom; }
     push();
-    timer = setInterval(poll, 500);
+    timer = setInterval(poll, 300);
   };
 
   window.leaveRoom = function(){
@@ -5626,7 +5615,6 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
     if(btn){ btn.textContent = 'Verbinden'; btn.onclick = window.joinRoom; }
   };
 
-  // Push na elke pad klik
   document.addEventListener('click', function(e){
     if(room && e.target && e.target.classList && e.target.classList.contains('pad')){
       setTimeout(push, 100);
