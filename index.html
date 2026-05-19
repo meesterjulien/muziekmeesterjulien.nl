@@ -5614,11 +5614,11 @@ document.addEventListener('click',function(e){
 
 <script>
 // ===== FIREBASE SAMENWERKING =====
-// Staat buiten alle IIFEs - heeft toegang tot globale window functies
 (function(){
   var FB = 'https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app';
   var room = null;
   var timer = null;
+  var myPushTs = 0;
 
   function status(t,c){
     var e=document.getElementById('roomStatus');
@@ -5626,38 +5626,36 @@ document.addEventListener('click',function(e){
   }
 
   function push(){
-    if(!room)return;
-    // Haal pat op via de pad elementen zelf
-    var pads = document.querySelectorAll('[id^="p"]');
-    var data = {};
-    pads.forEach(function(p){
-      var id = p.id; // bijv "p0-3"
-      var match = id.match(/^p(\d+)-(\d+)$/);
-      if(match){
-        var ti = parseInt(match[1]);
-        var s = parseInt(match[2]);
-        if(!data[ti]) data[ti] = {};
-        // Check of pad actief is via achtergrondkleur
-        data[ti][s] = p.style.background !== '' && !p.style.background.includes('rgb(42') && !p.style.background.includes('#1');
-      }
-    });
+    if(!room||!window._bl_pat)return;
+    var p = window._bl_pat();
+    var b = window._bl_bpm ? window._bl_bpm() : 80;
+    myPushTs = Date.now();
     fetch(FB+'/rooms/'+room+'.json',{
       method:'PUT',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({pads:data, ts:Date.now()})
+      body:JSON.stringify({pat:JSON.parse(JSON.stringify(p)),bpm:b,ts:myPushTs})
     }).catch(function(e){console.error('push:',e);});
   }
 
-  function applyRemote(data){
-    if(!data||!data.pads)return;
-    Object.keys(data.pads).forEach(function(ti){
-      Object.keys(data.pads[ti]).forEach(function(s){
-        var el = document.getElementById('p'+ti+'-'+s);
-        if(!el)return;
-        var active = data.pads[ti][s];
-        el.click(); // Simuleer klik om state te togglen... 
-      });
-    });
+  var lastRemoteTs = 0;
+
+  function poll(){
+    if(!room)return;
+    fetch(FB+'/rooms/'+room+'.json')
+      .then(function(r){return r.json();})
+      .then(function(d){
+        status('● live','#4ade80');
+        if(!d||!d.ts)return;
+        // Sla over als dit onze eigen push was
+        if(d.ts === myPushTs)return;
+        // Sla over als we dit al verwerkt hebben
+        if(d.ts <= lastRemoteTs)return;
+        lastRemoteTs = d.ts;
+        if(d.pat && window._bl_setPat){
+          window._bl_setPat(d.pat, d.bpm);
+        }
+      })
+      .catch(function(){status('● fout','#f87171');});
   }
 
   window.joinRoom = function(){
@@ -5667,25 +5665,13 @@ document.addEventListener('click',function(e){
     if(!name){if(inp)inp.focus();return;}
     if(timer)clearInterval(timer);
     room = name;
+    lastRemoteTs = 0;
+    myPushTs = 0;
     status('● live','#4ade80');
     var btn = document.getElementById('joinRoomBtn');
     if(btn){btn.textContent='Verlaten';btn.onclick=window.leaveRoom;}
-    // Start polling
-    var lastTs = 0;
-    timer = setInterval(function(){
-      fetch(FB+'/rooms/'+room+'.json')
-        .then(function(r){return r.json();})
-        .then(function(d){
-          if(!d||!d.ts||d.ts<=lastTs)return;
-          lastTs = d.ts;
-          if(!d.pat)return;
-          // Gebruik de globale pat en renderPads als beschikbaar
-          if(window._bl_setPat){
-            window._bl_setPat(d.pat, d.bpm);
-          }
-        })
-        .catch(function(){status('● fout','#f87171');});
-    }, 300);
+    push();
+    timer = setInterval(poll, 300);
   };
 
   window.leaveRoom = function(){
@@ -5696,25 +5682,12 @@ document.addEventListener('click',function(e){
     if(btn){btn.textContent='Verbinden';btn.onclick=window.joinRoom;}
   };
 
-  // Push bij elke pad klik
+  // Push na elke pad klik
   document.addEventListener('click',function(e){
-    if(room && e.target && e.target.id && e.target.id.match(/^p\d+-\d+$/)){
-      setTimeout(function(){
-        if(window._bl_pat){
-          var p = window._bl_pat();
-          var b = window._bl_bpm ? window._bl_bpm() : 80;
-          fetch(FB+'/rooms/'+room+'.json',{
-            method:'PUT',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({pat:JSON.parse(JSON.stringify(p)),bpm:b,ts:Date.now()})
-          }).catch(function(e){console.error('push:',e);});
-        }
-      },50);
+    if(room && e.target && e.target.id && /^p\d+-\d+$/.test(e.target.id)){
+      setTimeout(push, 80);
     }
   });
 
 })();
-</script>
-
-</body>
-</html>
+>
