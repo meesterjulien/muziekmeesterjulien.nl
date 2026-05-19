@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Firebase Test</title></head>
+<body>
+<h2>Firebase Test</h2>
+<button onclick="schrijf()">Schrijf naar Firebase</button>
+<button onclick="lees()">Lees van Firebase</button>
+<div id="out" style="margin-top:20px;font-family:monospace;"></div>
+<script>
+var URL = 'https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app';
+
+function log(msg){
+  document.getElementById('out').innerHTML += '<br>' + new Date().toLocaleTimeString() + ': ' + msg;
+}
+
+function schrijf(){
+  fetch(URL + '/test.json', {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({msg: 'hallo', ts: Date.now()})
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){ log('Geschreven: ' + JSON.stringify(d)); })
+  .catch(function(e){ log('FOUT schrijven: ' + e); });
+}
+
+function lees(){
+  fetch(URL + '/test.json')
+  .then(function(r){ return r.json(); })
+  .then(function(d){ log('Gelezen: ' + JSON.stringify(d)); })
+  .catch(function(e){ log('FOUT lezen: ' + e); });
+}
+
+// Poll elke seconde
+setInterval(function(){
+  fetch(URL + '/test.json')
+  .then(function(r){ return r.json(); })
+  .then(function(d){ if(d) log('Poll: ' + JSON.stringify(d)); })
+  .catch(function(){});
+}, 1000);
+</script>
+</body>
+</html>
