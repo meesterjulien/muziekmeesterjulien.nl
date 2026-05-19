@@ -914,17 +914,6 @@ document.getElementById('swing').addEventListener('input', function () {
 buildUI();
 loadPreset('house');
 window._drumLoadPreset = loadPreset;
-window._blGetPat = function(){ return pat; };
-window._blGetBpm = function(){ return bpm; };
-window._blSet = function(newPat, newBpm){
-  pat = newPat;
-  if(newBpm) bpm = newBpm;
-  renderPads();
-  var be = document.getElementById('bpm');
-  var bv = document.getElementById('bpmv');
-  if(be && newBpm) be.value = bpm;
-  if(bv && newBpm) bv.textContent = bpm;
-};
 })();
 </script>
 
@@ -4740,6 +4729,19 @@ document.getElementById('swing').addEventListener('input', function () {
 
 buildUI();
 loadPreset('house');
+
+window._drumLoadPreset = loadPreset;
+window._blGetPat = function(){ return pat; };
+window._blGetBpm = function(){ return bpm; };
+window._blSet = function(newPat, newBpm){
+  pat = newPat;
+  if(newBpm) bpm = newBpm;
+  renderPads();
+  var be = document.getElementById('bpm');
+  var bv = document.getElementById('bpmv');
+  if(be && newBpm) be.value = bpm;
+  if(bv && newBpm) bv.textContent = bpm;
+};
 
 })();
 
