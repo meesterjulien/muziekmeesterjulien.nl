@@ -5670,6 +5670,71 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
   USONGS.forEach((s,i)=>{const t=document.createElement('div');t.className='u-stab'+(i===0?' active':'');t.textContent=s.title;t.onclick=()=>uSelectSong(i);tabsEl.appendChild(t);});
   uBuildStrumVis();uRenderSeq();uRenderNeck(null);document.getElementById('uNpSong').textContent=USONGS[0].title;
 })();
+
+// ===== FIREBASE =====
+var FB_URL = 'https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app';
+var fbRoom = null;
+var fbTimer = null;
+
+function fbStatus(t,c){
+  var e=document.getElementById('roomStatus');
+  if(e){e.textContent=t;e.style.color=c;}
+}
+
+function fbPush(){
+  if(!fbRoom)return;
+  fetch(FB_URL+'/rooms/'+fbRoom+'.json',{
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({pat:JSON.parse(JSON.stringify(pat)),bpm:bpm,ts:Date.now()})
+  }).catch(function(e){console.error('push:',e);});
+}
+
+window.joinRoom=function(){
+  var inp=document.getElementById('roomInput');
+  var val=inp&&inp.value?inp.value:'';
+  var name=val.trim().toLowerCase().replace(/[^a-z0-9]/g,'');
+  if(!name){if(inp)inp.focus();return;}
+  if(fbTimer)clearInterval(fbTimer);
+  fbRoom=name;
+  fbStatus('● verbinden...','#FAC775');
+  var btn=document.getElementById('joinRoomBtn');
+  if(btn){btn.textContent='Verlaten';btn.onclick=window.leaveRoom;}
+  fbPush();
+  fbTimer=setInterval(function(){
+    if(!fbRoom)return;
+    fetch(FB_URL+'/rooms/'+fbRoom+'.json')
+      .then(function(r){return r.json();})
+      .then(function(d){
+        fbStatus('● live','#4ade80');
+        if(!d||!d.pat)return;
+        pat=JSON.parse(JSON.stringify(d.pat));
+        bpm=d.bpm||bpm;
+        var be=document.getElementById('bpm');
+        var bv=document.getElementById('bpmv');
+        if(be)be.value=bpm;
+        if(bv)bv.textContent=bpm;
+        renderPads();
+      })
+      .catch(function(){fbStatus('● fout','#f87171');});
+  },300);
+};
+
+window.leaveRoom=function(){
+  if(fbTimer)clearInterval(fbTimer);
+  fbTimer=null;fbRoom=null;
+  fbStatus('● offline','#666');
+  var btn=document.getElementById('joinRoomBtn');
+  if(btn){btn.textContent='Verbinden';btn.onclick=window.joinRoom;}
+};
+
+// Push na elke pad klik - hook in via pad event delegation
+document.addEventListener('click',function(e){
+  if(e.target&&e.target.classList&&e.target.classList.contains('pad')&&fbRoom){
+    setTimeout(fbPush,50);
+  }
+});
+
 </script>
 </body>
 </html>// ===== FIREBASE =====
@@ -5715,19 +5780,13 @@ window.joinRoom=function(){
       .then(function(d){
         fbStatus('● live','#4ade80');
         if(!d||!d.pat)return;
-        var remoteStr=JSON.stringify(d.pat);
-        // Alleen updaten als remote anders is dan wat wij hadden
-        if(remoteStr===fbLastPat)return;
-        fbLastPat=remoteStr;
-        pat=JSON.parse(remoteStr);
-        if(d.bpm&&d.bpm!==bpm){
-          bpm=d.bpm;
-          var be=document.getElementById('bpm');
-          var bv=document.getElementById('bpmv');
-          if(be)be.value=bpm;
-          if(bv)bv.textContent=bpm;
-          if(playing){stopSeq();startSeq();}
-        }
+        // Altijd updaten - geen checks
+        pat=JSON.parse(JSON.stringify(d.pat));
+        bpm=d.bpm||bpm;
+        var be=document.getElementById('bpm');
+        var bv=document.getElementById('bpmv');
+        if(be)be.value=bpm;
+        if(bv)bv.textContent=bpm;
         renderPads();
       })
       .catch(function(){fbStatus('● fout','#f87171');});
