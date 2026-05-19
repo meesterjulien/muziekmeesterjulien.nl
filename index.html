@@ -5556,36 +5556,43 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
   var room = null;
   var timer = null;
   var myId = Math.random().toString(36).slice(2,10);
+  var lastSeenTs = 0;
 
   function status(t,c){
     var e=document.getElementById('roomStatus');
     if(e){e.textContent=t;e.style.color=c;}
   }
 
-  function push(){
-    if(!room || !window._blGetPat) return;
-    fetch(FB+'/rooms/'+room+'.json', {
-      method: 'PUT',
+  // Push alleen een enkele pad wijziging
+  window.blPushPad = function(ti, s, val){
+    if(!room) return;
+    fetch(FB+'/rooms/'+room+'/changes.json', {
+      method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        pat: JSON.parse(JSON.stringify(window._blGetPat())),
-        bpm: window._blGetBpm ? window._blGetBpm() : 80,
-        ts: Date.now(),
-        id: myId
-      })
+      body: JSON.stringify({ti:ti, s:s, val:val, ts:Date.now(), id:myId})
     }).catch(function(e){ console.error('push:', e); });
-  }
+  };
 
   function poll(){
     if(!room) return;
-    fetch(FB+'/rooms/'+room+'.json')
+    fetch(FB+'/rooms/'+room+'/changes.json?orderBy="ts"&startAt='+lastSeenTs+'&limitToLast=20')
       .then(function(r){ return r.json(); })
       .then(function(d){
         status('● live', '#4ade80');
-        if(!d || !d.pat) return;
-        // Sla alleen onze EIGEN pushes over
-        if(d.id === myId) return;
-        if(window._blSet) window._blSet(d.pat, d.bpm);
+        if(!d) return;
+        Object.values(d).forEach(function(change){
+          if(change.id === myId) return; // eigen wijziging
+          if(change.ts <= lastSeenTs) return;
+          lastSeenTs = Math.max(lastSeenTs, change.ts);
+          // Pas de wijziging toe
+          if(window._blGetPat){
+            var pat = window._blGetPat();
+            if(pat[change.ti] !== undefined){
+              pat[change.ti][change.s] = change.val;
+              if(window._blSet) window._blSet(pat, null);
+            }
+          }
+        });
       })
       .catch(function(){ status('● fout', '#f87171'); });
   }
@@ -5596,11 +5603,10 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
     if(!name){ if(inp) inp.focus(); return; }
     if(timer) clearInterval(timer);
     room = name;
-    lastPushTs = 0;
+    lastSeenTs = Date.now();
     status('● live', '#4ade80');
     var btn = document.getElementById('joinRoomBtn');
     if(btn){ btn.textContent = 'Verlaten'; btn.onclick = window.leaveRoom; }
-    push();
     timer = setInterval(poll, 300);
   };
 
@@ -5612,10 +5618,22 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
     if(btn){ btn.textContent = 'Verbinden'; btn.onclick = window.joinRoom; }
   };
 
+  // Hook in op pad klikken
   document.addEventListener('click', function(e){
-    if(room && e.target && e.target.classList && e.target.classList.contains('pad')){
-      setTimeout(push, 100);
-    }
+    if(!room) return;
+    var el = e.target;
+    if(!el || !el.id) return;
+    var m = el.id.match(/^p(\d+)-(\d+)$/);
+    if(!m) return;
+    var ti = parseInt(m[1]);
+    var s = parseInt(m[2]);
+    // Lees de nieuwe staat na de klik
+    setTimeout(function(){
+      if(window._blGetPat){
+        var val = window._blGetPat()[ti][s];
+        window.blPushPad(ti, s, val);
+      }
+    }, 20);
   });
 })();
 </script>
