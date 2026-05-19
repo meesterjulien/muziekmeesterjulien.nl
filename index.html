@@ -641,13 +641,13 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
       <button class="btn play" id="playbtn">&#9654; play</button>
       <button class="btn" id="clearbtn">clear</button>
       <button class="btn" id="randbtn">shuffle</button>
-      <div style="display:flex;align-items:center;gap:6px;background:#1a1a1a;border:2px solid rgba(255,255,255,0.3);border-radius:8px;padding:6px 12px;">
-        <span style="font-family:'Space Mono',monospace;font-size:11px;color:#aaa;white-space:nowrap;">🔗 KAMER:</span>
-        <input id="roomInput" type="text" placeholder="klas3a" maxlength="20"
-          style="background:transparent;border:none;outline:none;font-family:'Space Mono',monospace;font-size:13px;color:#fff;width:80px;"
+      <div style="display:flex;align-items:center;gap:6px;background:#222;border:2px solid rgba(255,255,255,0.3);border-radius:8px;padding:5px 10px;">
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:#aaa;">KAMER:</span>
+        <input id="roomInput" type="text" placeholder="klas1" maxlength="20"
+          style="background:transparent;border:none;outline:none;font-family:'Space Mono',monospace;font-size:13px;color:#fff;width:70px;"
           onclick="event.stopPropagation()">
-        <button id="joinRoomBtn" onclick="joinRoom()" style="background:#7C4DFF;border:none;border-radius:6px;padding:4px 10px;font-family:'Space Mono',monospace;font-size:11px;color:#fff;cursor:pointer;white-space:nowrap;">Verbinden</button>
-        <div id="roomStatus" style="font-family:'Space Mono',monospace;font-size:10px;color:#666;">● offline</div>
+        <button id="joinRoomBtn" onclick="window.joinRoom&&window.joinRoom()" style="background:#7C4DFF;border:none;border-radius:6px;padding:4px 10px;font-family:'Space Mono',monospace;font-size:11px;color:#fff;cursor:pointer;">Verbinden</button>
+        <span id="roomStatus" style="font-family:'Space Mono',monospace;font-size:10px;color:#666;">● offline</span>
       </div>
       <div class="bpmbox">
         <label>bpm</label>
@@ -698,10 +698,6 @@ const TRACKS = [
   { name: 'Shaker',  grp: 'perc',  on: '#D85A30', off: '#321000', type: 'shaker',  freq: 0   },
   { name: 'Tom hi',  grp: 'toms',  on: '#D4537E', off: '#300d20', type: 'tom',     freq: 180 },
   { name: 'Tom lo',  grp: 'toms',  on: '#993556', off: '#280815', type: 'tom',     freq: 80  },
-  { name: 'Bas C',   grp: 'bass',  on: '#7C4DFF', off: '#1a0a3a', type: 'sub',     freq: 130.8 },
-  { name: 'Bas F',   grp: 'bass',  on: '#651FFF', off: '#160830', type: 'sub',     freq: 174.6 },
-  { name: 'Bas G',   grp: 'bass',  on: '#D500F9', off: '#2a0035', type: 'sub',     freq: 196.0 },
-  { name: 'Bas A',   grp: 'bass',  on: '#AA00FF', off: '#200040', type: 'sub',     freq: 220.0 },
 ];
 
 const STEPS = 16;
@@ -794,31 +790,15 @@ function playSound(t, when) {
     o.frequency.setValueAtTime(t.freq * 2, now);
     o.frequency.exponentialRampToValueAtTime(t.freq * 0.5, now + 0.22);
     g.gain.exponentialRampToValueAtTime(0.001, now + 0.28); o.start(now); o.stop(now + 0.28);
-  } else if (t.type === 'sub') {
-    const dur = (60 / bpm) * 0.88;
-    const o = actx.createOscillator();
-    const o2 = actx.createOscillator();
-    const filt = actx.createBiquadFilter();
-    filt.type = 'lowpass'; filt.frequency.value = 800; filt.Q.value = 0.8;
-    o.type = 'sine'; o.frequency.value = t.freq;
-    o2.type = 'sine'; o2.frequency.value = t.freq * 2;
-    const og2 = actx.createGain(); og2.gain.value = 0.12;
-    o.connect(filt); o2.connect(og2); og2.connect(filt); filt.connect(g);
-    g.gain.setValueAtTime(0, now);
-    g.gain.linearRampToValueAtTime(vol * 1.2, now + 0.012);
-    g.gain.setValueAtTime(vol * 1.2, now + dur * 0.65);
-    g.gain.exponentialRampToValueAtTime(0.001, now + dur);
-    o.start(now); o2.start(now);
-    o.stop(now + dur + 0.05); o2.stop(now + dur + 0.05);
   }
 }
 
 const PRESETS = {
-  house:  { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 3:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 6:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 10:[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0], 11:[0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0] },
-  hiphop: { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1], 3:[1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1], 6:[0,0,1,0,0,0,1,0,0,1,0,0,0,0,1,0], 10:[1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0], 13:[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0] },
-  jungle: { 0:[1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0], 1:[0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,0], 3:[0,1,0,1,1,0,1,0,1,1,0,1,0,1,1,0], 4:[0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0], 8:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0], 10:[1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0] },
-  latin:  { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0], 7:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0], 9:[1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1], 10:[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0], 12:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0] },
-  techno: { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 2:[0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0], 3:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,0,0,1,0,0,1,0,0,0,0,1,0,1,0], 10:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0] },
+  house:  { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 3:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 6:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0] },
+  hiphop: { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1], 3:[1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1], 6:[0,0,1,0,0,0,1,0,0,1,0,0,0,0,1,0] },
+  jungle: { 0:[1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0], 1:[0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,0], 3:[0,1,0,1,1,0,1,0,1,1,0,1,0,1,1,0], 4:[0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0], 8:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0] },
+  latin:  { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0], 7:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0], 9:[1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1] },
+  techno: { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 2:[0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0], 3:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,0,0,1,0,0,1,0,0,0,0,1,0,1,0] },
 };
 
 function loadPreset(name) {
@@ -874,7 +854,6 @@ function buildUI() {
         pad.style.background = padBg(ti, s);
         pad.style.borderColor = pat[ti][s] ? 'transparent' : 'rgba(255,255,255,0.08)';
         if (pat[ti][s]) playSound(t);
-        setTimeout(fbPush,50);
       });
       row.appendChild(pad);
     }
@@ -932,19 +911,14 @@ document.getElementById('swing').addEventListener('input', function () {
   swing = parseFloat(this.value); document.getElementById('swingv').textContent = Math.round(swing * 1000) + '%';
 });
 
-if(document.getElementById('playbtn')){buildUI();loadPreset('house');}
+buildUI();
+loadPreset('house');
 window._drumLoadPreset = loadPreset;
-window._bl_pat = function(){ return pat; };
-window._bl_setPat = function(p,b){ pat=p; if(b)bpm=b; renderPads(); var be=document.getElementById('bpm'); var bv=document.getElementById('bpmv'); if(be&&b)be.value=b; if(bv&&b)bv.textContent=b; };
-window._bl_bpm = function(){ return bpm; };
-
-
 })();
 </script>
 
 </div>
 </div>
-
 
 <!-- OVER ONS PAGINA -->
 <div id="over" class="page">
@@ -3010,11 +2984,6 @@ window._bl_bpm = function(){ return bpm; };
       if (activeSound === id) stopActive();
     }, soundDurations[id]);
   }
-  window.playSound = playSound;
-  window.stopActive = stopActive;
-  // Stop geluid als pagina verlaten wordt
-  window.addEventListener('blur', function(){ stopActive(); });
-  document.addEventListener('visibilitychange', function(){ if(document.hidden) stopActive(); });
 })();
 </script>
 
@@ -3054,13 +3023,10 @@ window._bl_bpm = function(){ return bpm; };
     card.classList.toggle('done');
     updateProgress();
   }
-  window.toggle = toggle;
-  window.stopActive = stopActive;
 
   function opdrachtDone(cb) {
     updateProgress();
   }
-  window.opdrachtDone = opdrachtDone;
 
   updateProgress();
 })();
@@ -3635,7 +3601,7 @@ function loadPreset(name,btn){
 }
 
 // ── BOOT ─────────────────────────────────────────────────────────────────────
-if(document.getElementById('kw-octave')){makeKnob('kw-octave', 'octave', 'Octaaf',   -2,  2,   0,    0, updateSynth);
+makeKnob('kw-octave', 'octave', 'Octaaf',   -2,  2,   0,    0, updateSynth);
 makeKnob('kw-detune', 'detune', 'Detune',  -50, 50,   0,    0, updateSynth);
 makeKnob('kw-gain',   'gain',   'Volume',    0,  1,   0.6,  2, updateSynth);
 makeKnob('kw-cutoff', 'cutoff', 'Afsnij',   80, 8000, 4000, 0, updateSynth);
@@ -3648,7 +3614,7 @@ makeKnob('kw-lfoRate','lfoRate','Snelheid', 0.1, 20,  4,    1, updateSynth);
 makeKnob('kw-lfoDepth','lfoDepth','Diepte',  0,  1,   0.3,  2, updateSynth);
 
 buildKb();
-drawScopes();}
+drawScopes();
 
 document.addEventListener('keydown',e=>{
   if(e.repeat||e.ctrlKey||e.metaKey||e.altKey) return;
@@ -4272,9 +4238,8 @@ function startFilterNote(freq){
 }
 function stopFilterNote(){
   if(!fGain)return;var ac=gFAC();
-  fGain.gain.cancelScheduledValues(ac.currentTime);
-  fGain.gain.setTargetAtTime(0,ac.currentTime,0.03);
-  setTimeout(function(){if(fOsc){try{fOsc.stop();}catch(e){}}fOsc=null;cancelAnimationFrame(fVizRaf);},150);
+  fGain.gain.setTargetAtTime(0,ac.currentTime,0.05);
+  setTimeout(function(){if(fOsc){try{fOsc.stop();}catch(e){}}fOsc=null;},200);
   cancelAnimationFrame(fVizRaf);
 }
 function updateFilter(){
@@ -4324,7 +4289,7 @@ function buildFilterPiano(){
   });
 }
 document.addEventListener('keydown',function(e){
-  if(e.repeat||!e.key)return;
+  if(e.repeat)return;
   // Geen geluid als je in een tekstvak of textarea zit
   if(_inputFocused)return;
   var geluidActive=document.getElementById('geluid')&&document.getElementById('geluid').classList.contains('active');
@@ -4338,30 +4303,18 @@ document.addEventListener('keydown',function(e){
   if(e.key===' '&&document.getElementById('adsrAttack')){e.preventDefault();gFAC();playADSRNote();}
   // Filter piano A S D F G
   var fNote=fNotes[(e.key||'').toLowerCase()];
-  if(fNote&&!fKeysDown[e.key]){fKeysDown[e.key]=true;gFAC();startFilterNote(fNote);}
+  if(fNote&&!fKeysDown[(e.key||'')]){fKeysDown[(e.key||'')]=true;gFAC();startFilterNote(fNote);}
   // LFO piano A S D F G (zelfde toetsen als filter, werkt op actieve synth)
   if(fNotes[(e.key||'').toLowerCase()]&&!lfoOscNode){gFAC();startLFONote(fNotes[(e.key||'').toLowerCase()]);}
   // Fase 3 piano Z X C V B N M
   var f3idx=F3_KEYS.indexOf((e.key||'').toLowerCase());
-  if(f3idx>=0&&!f3KeysDown[e.key]){f3KeysDown[e.key]=true;gFAC();startF3Note(F3_FREQS[f3idx]);}
+  if(f3idx>=0&&!f3KeysDown[(e.key||'')]){f3KeysDown[(e.key||'')]=true;gFAC();startF3Note(F3_FREQS[f3idx]);}
 });
 document.addEventListener('keyup',function(e){
   if(_inputFocused)return;
-  if(fNotes[(e.key||'').toLowerCase()]&&fKeysDown[e.key]){fKeysDown[e.key]=false;stopFilterNote();}
+  if(fNotes[(e.key||'').toLowerCase()]&&fKeysDown[(e.key||'')]){fKeysDown[(e.key||'')]=false;stopFilterNote();}
 });
 setTimeout(function(){buildFilterPiano();moogRotate2('filterCutoffLine',1,32);moogRotate2('filterResLine',0,32);},400);
-
-// Stop filter noot als muis/vinger buiten piano losgelaten wordt
-document.addEventListener('mouseup', function(){
-  if(fOsc) stopFilterNote();
-  if(lfoOscNode) stopLFONote();
-  if(f3OscNode) stopF3Note();
-});
-document.addEventListener('touchend', function(){
-  if(fOsc) stopFilterNote();
-  if(lfoOscNode) stopLFONote();
-  if(f3OscNode) stopF3Note();
-});
 // ===== WAVEFORM LUISTERAAR =====
 var waveOscNode=null,waveGainNode=null;
 function playWaveform(type){
@@ -4536,15 +4489,15 @@ function buildF3Piano(){
 }
 var f3KeysDown={};
 document.addEventListener('keydown',function(e){
-  if(e.repeat||f3KeysDown[e.key])return;
+  if(e.repeat||f3KeysDown[(e.key||'')])return;
   if(_inputFocused)return;
   var idx=F3_KEYS.indexOf((e.key||'').toLowerCase());
-  if(idx>=0&&document.getElementById('geluid').classList.contains('active')){f3KeysDown[e.key]=true;gFAC();startF3Note(F3_FREQS[idx]);}
+  if(idx>=0&&document.getElementById('geluid').classList.contains('active')){f3KeysDown[(e.key||'')]=true;gFAC();startF3Note(F3_FREQS[idx]);}
 });
 document.addEventListener('keyup',function(e){
   if(_inputFocused)return;
   var idx=F3_KEYS.indexOf((e.key||'').toLowerCase());
-  if(idx>=0&&f3KeysDown[e.key]){f3KeysDown[e.key]=false;stopF3Note();}
+  if(idx>=0&&f3KeysDown[(e.key||'')]){f3KeysDown[(e.key||'')]=false;stopF3Note();}
 });
 setTimeout(function(){buildLFOPiano();buildF3Piano();},500);
 
@@ -4561,10 +4514,6 @@ const TRACKS = [
   { name: 'Shaker',  grp: 'perc',  on: '#D85A30', off: '#321000', type: 'shaker',  freq: 0   },
   { name: 'Tom hi',  grp: 'toms',  on: '#D4537E', off: '#300d20', type: 'tom',     freq: 180 },
   { name: 'Tom lo',  grp: 'toms',  on: '#993556', off: '#280815', type: 'tom',     freq: 80  },
-  { name: 'Bas C',   grp: 'bass',  on: '#7C4DFF', off: '#1a0a3a', type: 'sub',     freq: 130.8 },
-  { name: 'Bas F',   grp: 'bass',  on: '#651FFF', off: '#160830', type: 'sub',     freq: 174.6 },
-  { name: 'Bas G',   grp: 'bass',  on: '#D500F9', off: '#2a0035', type: 'sub',     freq: 196.0 },
-  { name: 'Bas A',   grp: 'bass',  on: '#AA00FF', off: '#200040', type: 'sub',     freq: 220.0 },
 ];
 
 const STEPS = 16;
@@ -4657,31 +4606,15 @@ function playSound(t, when) {
     o.frequency.setValueAtTime(t.freq * 2, now);
     o.frequency.exponentialRampToValueAtTime(t.freq * 0.5, now + 0.22);
     g.gain.exponentialRampToValueAtTime(0.001, now + 0.28); o.start(now); o.stop(now + 0.28);
-  } else if (t.type === 'sub') {
-    const dur = (60 / bpm) * 0.88;
-    const o = actx.createOscillator();
-    const o2 = actx.createOscillator();
-    const filt = actx.createBiquadFilter();
-    filt.type = 'lowpass'; filt.frequency.value = 800; filt.Q.value = 0.8;
-    o.type = 'sine'; o.frequency.value = t.freq;
-    o2.type = 'sine'; o2.frequency.value = t.freq * 2;
-    const og2 = actx.createGain(); og2.gain.value = 0.12;
-    o.connect(filt); o2.connect(og2); og2.connect(filt); filt.connect(g);
-    g.gain.setValueAtTime(0, now);
-    g.gain.linearRampToValueAtTime(vol * 1.2, now + 0.012);
-    g.gain.setValueAtTime(vol * 1.2, now + dur * 0.65);
-    g.gain.exponentialRampToValueAtTime(0.001, now + dur);
-    o.start(now); o2.start(now);
-    o.stop(now + dur + 0.05); o2.stop(now + dur + 0.05);
   }
 }
 
 const PRESETS = {
-  house:  { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 3:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 6:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 10:[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0], 11:[0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0] },
-  hiphop: { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1], 3:[1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1], 6:[0,0,1,0,0,0,1,0,0,1,0,0,0,0,1,0], 10:[1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0], 13:[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0] },
-  jungle: { 0:[1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0], 1:[0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,0], 3:[0,1,0,1,1,0,1,0,1,1,0,1,0,1,1,0], 4:[0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0], 8:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0], 10:[1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0] },
-  latin:  { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0], 7:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0], 9:[1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1], 10:[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0], 12:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0] },
-  techno: { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 2:[0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0], 3:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,0,0,1,0,0,1,0,0,0,0,1,0,1,0], 10:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0] },
+  house:  { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 3:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], 6:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0] },
+  hiphop: { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1], 3:[1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1], 6:[0,0,1,0,0,0,1,0,0,1,0,0,0,0,1,0] },
+  jungle: { 0:[1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0], 1:[0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,0], 3:[0,1,0,1,1,0,1,0,1,1,0,1,0,1,1,0], 4:[0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0], 8:[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0] },
+  latin:  { 0:[1,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0], 7:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,1,0,0,1,0,0,1,0,0,1,0,0,1,0], 9:[1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,1] },
+  techno: { 0:[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0], 1:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0], 2:[0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0], 3:[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0], 6:[0,0,0,0,1,0,0,1,0,0,0,0,1,0,1,0] },
 };
 
 function loadPreset(name) {
@@ -4794,7 +4727,8 @@ document.getElementById('swing').addEventListener('input', function () {
   swing = parseFloat(this.value); document.getElementById('swingv').textContent = Math.round(swing * 1000) + '%';
 });
 
-if(document.getElementById('playbtn')){buildUI();loadPreset('house');}
+buildUI();
+loadPreset('house');
 
 })();
 
@@ -4869,20 +4803,20 @@ var SNG = [
   {n:'Slaap Kindje Slaap',        s:1, q:'G E E R F D D R E F G A G R'},
   {n:'In het oerwoud',            s:1, q:'E E F G E R E E F G E R G A G R'},
   {n:'Doe Re Mi',                 s:2, q:'C D E C R E C R D E F D R F D R'},
-  {n:'Happy Birthday',            s:2, q:'C C D C F E R C C D C G F R C C C A F E D A A G F R R'},
-  {n:'Jingle Bells',              s:2, q:'E E E R E E E R E G C D E R E E E R E E E R E G C D C R'},
+  {n:'Happy Birthday',            s:2, q:'G G A G C B R G G A G D C R'},
+  {n:'Jingle Bells',              s:2, q:'E E E R E E E R E G C D E R R'},
   {n:'Wiegenlied Brahms',         s:2, q:'D D G R G F E C R E F G A G R'},
   {n:'Zwanenmeer',                s:2, q:'E D C D E E E R D D D R E G G R'},
-  {n:'Ode aan de Vreugde',        s:2, q:'E E F G G F E D C C D E D C C R E E F G G F E D C C D E D C C R'},
+  {n:'Ode aan de Vreugde',        s:2, q:'E E F G G F E D C C D E E D D R'},
   {n:'Hakuna Matata',             s:2, q:'G E G A G R E R C D E G R E R'},
-  {n:'Seven Nation Army',         s:2, q:'E E G E D C B R E E G E D C D R'},
+  {n:'Seven Nation Army',         s:2, q:'E E G E R D C R B R C R D R'},
   {n:'Ocean Eyes',                s:3, q:'B A G E R A G E R G A B A G R'},
-  {n:'Over the Rainbow',          s:3, q:'C G F E D C R E C G R F E D C R G E C D E F G E R'},
-  {n:'Let It Go',                 s:3, q:'A G A R E R F E F R C R D E F G A R A G A R F E D C R'},
+  {n:'Over the Rainbow',          s:3, q:'C G R F E D C R E G R D F E R'},
+  {n:'Let It Go',                 s:3, q:'A A B A R F R E R A G F E D C R'},
   {n:'A Sky Full of Stars',       s:3, q:'G A B A G R E R G A B C R B A R'},
   {n:'Happy - Pharrell',          s:3, q:'G G A G R C R B R G G A G R D R'},
   {n:'Counting Stars',            s:3, q:'E G A B R A G R E G A B R C B R'},
-  {n:'Shape of You',              s:3, q:'A G E C R A G E C R A G E C A R C D E C R D E F E D R E D C D E R A G E R'},
+  {n:'Shape of You',              s:3, q:'B A G E R A G R B A G E R A G R'},
   {n:'Ode aan de Vreugde (lang)', s:3, q:'E E F G G F E D C C D E D C C R E E F G G F E D C C D E C R'},
   {n:'Fur Elise',                 s:4, q:'E D E D E B D C A R A C E A B R'},
   {n:'Fur Elise (deel 2)',        s:4, q:'E G B C R B R E A C R A R E D F R A B R'},
@@ -5113,7 +5047,7 @@ function hKey(k){
     for(var j=0;j<10;j++){if(KN[j]===pressed)flKey(j,'hw');}playErr();setSt('\u274C Fout! Verwacht: '+exp+' \u2014 probeer opnieuw!','er');
   }
 }
-document.addEventListener('keydown',function(e){if(e.repeat||!e.key)return;hKey((e.key||'').toLowerCase());});
+document.addEventListener('keydown',function(e){if(e.repeat)return;hKey((e.key||'').toLowerCase());});
 
 (function(){
   var sel=document.getElementById('ssel');
@@ -5597,97 +5531,109 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
   const kbArea=document.getElementById('uKbArea');
   kbArea.addEventListener('focus',()=>kbArea.classList.add('kbf'));
   kbArea.addEventListener('blur',()=>kbArea.classList.remove('kbf'));
-  kbArea.addEventListener('keydown',e=>{if(e.repeat)return;const k=e.key.toUpperCase();if(UCM[k]){e.preventDefault();uPlayManual(k);}});
+  kbArea.addEventListener('keydown',e=>{if(e.repeat)return;const k=(e.key||'').toUpperCase();if(UCM[k]){e.preventDefault();uPlayManual(k);}});
   const tabsEl=document.getElementById('uSongTabs');
   USONGS.forEach((s,i)=>{const t=document.createElement('div');t.className='u-stab'+(i===0?' active':'');t.textContent=s.title;t.onclick=()=>uSelectSong(i);tabsEl.appendChild(t);});
   uBuildStrumVis();uRenderSeq();uRenderNeck(null);document.getElementById('uNpSong').textContent=USONGS[0].title;
 })();
-
-// Push na elke pad klik - hook in via pad event delegation
-document.addEventListener('click',function(e){
-  if(e.target&&e.target.classList&&e.target.classList.contains('pad')&&fbRoom){
-    setTimeout(fbPush,50);
-  }
-});
-
 </script>
 
+<!-- FIREBASE SAMENWERKING -->
 <script>
-// ===== FIREBASE SAMENWERKING =====
 (function(){
   var FB = 'https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app';
   var room = null;
   var timer = null;
-  var myPushTs = 0;
+  var pauseUntil = 0;
 
   function status(t,c){
     var e=document.getElementById('roomStatus');
     if(e){e.textContent=t;e.style.color=c;}
   }
 
-  function push(){
-    if(!room||!window._bl_pat)return;
-    var p = window._bl_pat();
-    var b = window._bl_bpm ? window._bl_bpm() : 80;
-    myPushTs = Date.now();
-    fetch(FB+'/rooms/'+room+'.json',{
-      method:'PUT',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({pat:JSON.parse(JSON.stringify(p)),bpm:b,ts:myPushTs})
-    }).catch(function(e){console.error('push:',e);});
+  function getState(){
+    // Lees de huidige staat van de pads direct uit de DOM
+    var state = [];
+    var rows = document.querySelectorAll('#app .track-row');
+    rows.forEach(function(row){
+      var rowState = [];
+      row.querySelectorAll('.pad').forEach(function(pad){
+        // Pad is actief als de achtergrond niet donker is
+        var bg = pad.style.background;
+        rowState.push(bg && bg !== '' && !bg.startsWith('#0') && !bg.startsWith('#1') && !bg.startsWith('#2') && !bg.startsWith('rgba'));
+      });
+      state.push(rowState);
+    });
+    return state;
   }
 
-  var lastRemoteTs = 0;
+  function applyState(state){
+    var rows = document.querySelectorAll('#app .track-row');
+    rows.forEach(function(row, ti){
+      if(!state[ti]) return;
+      var pads = row.querySelectorAll('.pad');
+      pads.forEach(function(pad, s){
+        var shouldBeOn = state[ti][s];
+        var isOn = pad.style.background && !pad.style.background.startsWith('#0') && !pad.style.background.startsWith('#1') && !pad.style.background.startsWith('#2') && !pad.style.background.startsWith('rgba');
+        if(shouldBeOn !== isOn){
+          pad.click();
+        }
+      });
+    });
+  }
+
+  function push(){
+    if(!room) return;
+    pauseUntil = Date.now() + 2000;
+    fetch(FB+'/rooms/'+room+'.json', {
+      method: 'PUT',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({state: getState(), ts: Date.now()})
+    }).catch(function(e){ console.error('push:', e); });
+  }
 
   function poll(){
-    if(!room)return;
+    if(!room || Date.now() < pauseUntil) return;
     fetch(FB+'/rooms/'+room+'.json')
-      .then(function(r){return r.json();})
+      .then(function(r){ return r.json(); })
       .then(function(d){
-        status('● live','#4ade80');
-        if(!d||!d.ts)return;
-        // Sla over als dit onze eigen push was
-        if(d.ts === myPushTs)return;
-        // Sla over als we dit al verwerkt hebben
-        if(d.ts <= lastRemoteTs)return;
-        lastRemoteTs = d.ts;
-        if(d.pat && window._bl_setPat){
-          window._bl_setPat(d.pat, d.bpm);
-        }
+        status('● live', '#4ade80');
+        if(!d || !d.state) return;
+        applyState(d.state);
       })
-      .catch(function(){status('● fout','#f87171');});
+      .catch(function(){ status('● fout', '#f87171'); });
   }
 
   window.joinRoom = function(){
     var inp = document.getElementById('roomInput');
-    var val = inp ? inp.value : '';
-    var name = val.trim().toLowerCase().replace(/[^a-z0-9]/g,'');
-    if(!name){if(inp)inp.focus();return;}
-    if(timer)clearInterval(timer);
+    var name = (inp ? inp.value : '').trim().toLowerCase().replace(/[^a-z0-9]/g,'');
+    if(!name){ if(inp) inp.focus(); return; }
+    if(timer) clearInterval(timer);
     room = name;
-    lastRemoteTs = 0;
-    myPushTs = 0;
-    status('● live','#4ade80');
+    pauseUntil = 0;
+    status('● live', '#4ade80');
     var btn = document.getElementById('joinRoomBtn');
-    if(btn){btn.textContent='Verlaten';btn.onclick=window.leaveRoom;}
+    if(btn){ btn.textContent = 'Verlaten'; btn.onclick = window.leaveRoom; }
     push();
-    timer = setInterval(poll, 300);
+    timer = setInterval(poll, 500);
   };
 
   window.leaveRoom = function(){
-    if(timer)clearInterval(timer);
-    timer=null;room=null;
-    status('● offline','#666');
-    var btn=document.getElementById('joinRoomBtn');
-    if(btn){btn.textContent='Verbinden';btn.onclick=window.joinRoom;}
+    if(timer) clearInterval(timer);
+    timer = null; room = null;
+    status('● offline', '#666');
+    var btn = document.getElementById('joinRoomBtn');
+    if(btn){ btn.textContent = 'Verbinden'; btn.onclick = window.joinRoom; }
   };
 
   // Push na elke pad klik
-  document.addEventListener('click',function(e){
-    if(room && e.target && e.target.id && /^p\d+-\d+$/.test(e.target.id)){
-      setTimeout(push, 80);
+  document.addEventListener('click', function(e){
+    if(room && e.target && e.target.classList && e.target.classList.contains('pad')){
+      setTimeout(push, 100);
     }
   });
-
 })();
->
+</script>
+
+</body>
+</html>
