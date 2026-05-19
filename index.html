@@ -5555,7 +5555,7 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
   var FB = 'https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app';
   var room = null;
   var timer = null;
-  var lastPushTs = 0;
+  var myId = Math.random().toString(36).slice(2,10);
 
   function status(t,c){
     var e=document.getElementById('roomStatus');
@@ -5564,15 +5564,14 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
 
   function push(){
     if(!room || !window._blGetPat) return;
-    var ts = Date.now();
-    lastPushTs = ts;
     fetch(FB+'/rooms/'+room+'.json', {
       method: 'PUT',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         pat: JSON.parse(JSON.stringify(window._blGetPat())),
         bpm: window._blGetBpm ? window._blGetBpm() : 80,
-        ts: ts
+        ts: Date.now(),
+        id: myId
       })
     }).catch(function(e){ console.error('push:', e); });
   }
@@ -5583,11 +5582,9 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
       .then(function(r){ return r.json(); })
       .then(function(d){
         status('● live', '#4ade80');
-        if(!d || !d.pat || !d.ts) return;
-        // Sla onze eigen push over
-        if(d.ts === lastPushTs) return;
-        // Alleen nieuwere data
-        if(d.ts <= lastPushTs) return;
+        if(!d || !d.pat) return;
+        // Sla alleen onze EIGEN pushes over
+        if(d.id === myId) return;
         if(window._blSet) window._blSet(d.pat, d.bpm);
       })
       .catch(function(){ status('● fout', '#f87171'); });
