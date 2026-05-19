@@ -5575,7 +5575,7 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
 
   function poll(){
     if(!room) return;
-    fetch(FB+'/rooms/'+room+'/changes.json?orderBy="ts"&startAt='+lastSeenTs+'&limitToLast=20')
+    fetch(FB+'/rooms/'+room+'/changes.json')
       .then(function(r){ return r.json(); })
       .then(function(d){
         status('● live', '#4ade80');
