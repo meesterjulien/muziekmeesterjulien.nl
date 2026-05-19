@@ -5580,19 +5580,30 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
       .then(function(d){
         status('● live', '#4ade80');
         if(!d) return;
-        Object.values(d).forEach(function(change){
-          if(change.id === myId) return; // eigen wijziging
+        var changes = Object.values(d);
+        // Sorteer op timestamp
+        changes.sort(function(a,b){ return a.ts - b.ts; });
+        var newTs = lastSeenTs;
+        var updated = false;
+        changes.forEach(function(change){
+          // Sla eigen wijzigingen over
+          if(change.id === myId) return;
+          // Sla al verwerkte wijzigingen over
           if(change.ts <= lastSeenTs) return;
-          lastSeenTs = Math.max(lastSeenTs, change.ts);
-          // Pas de wijziging toe
+          newTs = Math.max(newTs, change.ts);
+          // Pas toe
           if(window._blGetPat){
             var pat = window._blGetPat();
             if(pat[change.ti] !== undefined){
               pat[change.ti][change.s] = change.val;
-              if(window._blSet) window._blSet(pat, null);
+              updated = true;
             }
           }
         });
+        lastSeenTs = newTs;
+        if(updated && window._blSet){
+          window._blSet(window._blGetPat(), null);
+        }
       })
       .catch(function(){ status('● fout', '#f87171'); });
   }
@@ -5603,7 +5614,7 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
     if(!name){ if(inp) inp.focus(); return; }
     if(timer) clearInterval(timer);
     room = name;
-    lastSeenTs = Date.now();
+    lastSeenTs = 0;
     status('● live', '#4ade80');
     var btn = document.getElementById('joinRoomBtn');
     if(btn){ btn.textContent = 'Verlaten'; btn.onclick = window.leaveRoom; }
