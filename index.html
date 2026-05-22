@@ -658,6 +658,14 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
         <button id="joinRoomBtn" onclick="window.joinRoom&&window.joinRoom()" style="background:#7C4DFF;border:none;border-radius:6px;padding:4px 10px;font-family:'Space Mono',monospace;font-size:11px;color:#fff;cursor:pointer;">Verbinden</button>
         <span id="roomStatus" style="font-family:'Space Mono',monospace;font-size:10px;color:#666;">● offline</span>
       </div>
+      <div style="display:flex;align-items:center;gap:6px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:5px 10px;">
+        <span style="font-family:'Space Mono',monospace;font-size:10px;color:#666;letter-spacing:1px;">NAAM:</span>
+        <input id="beatName" type="text" placeholder="jouw naam" maxlength="20"
+          style="background:transparent;border:none;outline:none;font-family:'Space Mono',monospace;font-size:12px;color:#fff;width:90px;"
+          onclick="event.stopPropagation()">
+        <button onclick="window.blSubmitBeat&&window.blSubmitBeat()" style="background:#E24B4A;border:none;border-radius:5px;padding:3px 10px;font-family:'Space Mono',monospace;font-size:10px;color:#fff;cursor:pointer;font-weight:700;">📤 Inzenden</button>
+        <button onclick="window.blShowScoreboard&&window.blShowScoreboard()" style="background:#333;border:none;border-radius:5px;padding:3px 10px;font-family:'Space Mono',monospace;font-size:10px;color:#aaa;cursor:pointer;">🏆 Scorebord</button>
+      </div>
       <div class="bpmbox">
         <label>bpm</label>
         <input type="range" id="bpm" min="60" max="200" value="120" step="1" style="width:90px">
@@ -5862,5 +5870,168 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
 })();
 </script>
 
+
+<!-- SCOREBORD MODAL -->
+<div id="blScoreModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:none;align-items:center;justify-content:center;">
+  <div style="background:#1a1a1a;border:2px solid rgba(255,255,255,0.2);border-radius:16px;padding:24px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto;position:relative;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:#fff;">🏆 SCOREBORD</div>
+      <button onclick="window.blCloseScoreboard&&window.blCloseScoreboard()" style="background:transparent;border:none;color:#888;font-size:20px;cursor:pointer;">✕</button>
+    </div>
+    <div id="blScoreList" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+</div>
+
+<script>
+// ===== BEATLAB SCOREBORD =====
+  var FB = 'https://beatlab-da2a3-default-rtdb.europe-west1.firebasedatabase.app';
+  var myVotes = {}; // bijhouden welke beats ik al gestemd heb
+
+  window.blSubmitBeat = function(){
+    var nameEl = document.getElementById('beatName');
+    var name = nameEl ? nameEl.value.trim() : '';
+    if(!name){ if(nameEl) nameEl.focus(); alert('Vul eerst je naam in!'); return; }
+    if(!window._blGetPat){ alert('Fout: BeatLab niet geladen'); return; }
+    var pat = window._blGetPat();
+    var bpm = window._blGetBpm ? window._blGetBpm() : 80;
+    var kamer = document.getElementById('roomInput');
+    var kamerName = kamer ? kamer.value.trim().toLowerCase().replace(/[^a-z0-9]/g,'') : 'klas';
+    if(!kamerName) kamerName = 'klas';
+
+    // Bereken complexiteit (aantal actieve pads)
+    var complexity = 0;
+    pat.forEach(function(row){ row.forEach(function(v){ if(v) complexity++; }); });
+
+    var entry = {
+      name: name,
+      bpm: bpm,
+      complexity: complexity,
+      votes: 0,
+      ts: Date.now(),
+      pat: JSON.parse(JSON.stringify(pat))
+    };
+
+    fetch(FB + '/scoreboard/' + kamerName + '.json', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(entry)
+    }).then(function(r){ return r.json(); })
+    .then(function(d){
+      alert('Beat van ' + name + ' is ingezonden! 🎵');
+      nameEl.value = '';
+    }).catch(function(e){ alert('Fout bij inzenden: ' + e); });
+  };
+
+  window.blShowScoreboard = function(){
+    var modal = document.getElementById('blScoreModal');
+    if(modal){ modal.style.display = 'flex'; }
+    var kamer = document.getElementById('roomInput');
+    var kamerName = kamer ? kamer.value.trim().toLowerCase().replace(/[^a-z0-9]/g,'') : 'klas';
+    if(!kamerName) kamerName = 'klas';
+    blLoadScores(kamerName);
+  };
+
+  window.blCloseScoreboard = function(){
+    var modal = document.getElementById('blScoreModal');
+    if(modal){ modal.style.display = 'none'; }
+  };
+
+  function blLoadScores(kamer){
+    var list = document.getElementById('blScoreList');
+    if(!list) return;
+    list.innerHTML = '<div style="color:#666;font-family:Space Mono,monospace;font-size:12px;text-align:center;padding:20px;">Laden...</div>';
+
+    fetch(FB + '/scoreboard/' + kamer + '.json')
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(!d){
+          list.innerHTML = '<div style="color:#666;font-family:Space Mono,monospace;font-size:12px;text-align:center;padding:20px;">Nog geen beats ingezonden!</div>';
+          return;
+        }
+        var entries = Object.entries(d).map(function(e){ return {id: e[0], data: e[1]}; });
+        entries.sort(function(a,b){ return (b.data.votes||0) - (a.data.votes||0); });
+        
+        list.innerHTML = '';
+        entries.forEach(function(entry, i){
+          var d2 = entry.data;
+          var voted = myVotes[entry.id];
+          var rank = ['🥇','🥈','🥉'][i] || (i+1)+'.';
+          var div = document.createElement('div');
+          div.style.cssText = 'background:#222;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;border:1px solid ' + (i===0?'rgba(255,200,0,0.4)':'rgba(255,255,255,0.08)') + ';';
+          // Rank
+          var rankEl = document.createElement('div');
+          rankEl.style.cssText = 'font-size:20px;min-width:28px;text-align:center;';
+          rankEl.textContent = rank;
+          div.appendChild(rankEl);
+
+          // Info
+          var infoEl = document.createElement('div');
+          infoEl.style.flex = '1';
+          var nameDiv = document.createElement('div');
+          nameDiv.style.cssText = 'font-family:Space Mono,monospace;font-size:13px;font-weight:700;color:#fff;';
+          nameDiv.textContent = d2.name || '?';
+          var metaDiv = document.createElement('div');
+          metaDiv.style.cssText = 'font-family:Space Mono,monospace;font-size:10px;color:#666;margin-top:3px;';
+          metaDiv.textContent = (d2.bpm||'?') + ' BPM · ' + (d2.complexity||0) + ' noten';
+          infoEl.appendChild(nameDiv);
+          infoEl.appendChild(metaDiv);
+          div.appendChild(infoEl);
+
+          // Stemmen
+          var actEl = document.createElement('div');
+          actEl.style.cssText = 'display:flex;align-items:center;gap:8px;';
+          var votesDiv = document.createElement('div');
+          votesDiv.style.cssText = 'font-family:Space Mono,monospace;font-size:18px;font-weight:700;color:#FAC775;';
+          votesDiv.textContent = d2.votes || 0;
+          var voteBtn = document.createElement('button');
+          voteBtn.textContent = '👍';
+          voteBtn.style.cssText = 'background:' + (voted?'#333':'#E24B4A') + ';border:none;border-radius:6px;padding:6px 12px;font-size:14px;cursor:' + (voted?'default':'pointer') + ';opacity:' + (voted?'0.4':'1') + ';';
+          if(voted) voteBtn.disabled = true;
+          (function(eid, km){
+            voteBtn.onclick = function(){ window.blVote(eid, km, voteBtn); };
+          })(entry.id, kamer);
+          actEl.appendChild(votesDiv);
+          actEl.appendChild(voteBtn);
+          div.appendChild(actEl);
+
+          // Laad beat knop
+          var loadBtn = document.createElement('button');
+          loadBtn.textContent = '▶ Laad beat';
+          loadBtn.style.cssText = 'background:#333;border:none;border-radius:6px;padding:4px 10px;font-family:Space Mono,monospace;font-size:10px;color:#aaa;cursor:pointer;margin-top:6px;width:100%;';
+          (function(p, b){
+            loadBtn.onclick = function(){
+              if(window._blSet){ window._blSet(p, b); window.blCloseScoreboard(); }
+            };
+          })(d2.pat, d2.bpm);
+          div.appendChild(loadBtn);
+          list.appendChild(div);
+        });
+      })
+      .catch(function(){ list.innerHTML = '<div style="color:#f87171;font-family:Space Mono,monospace;font-size:12px;text-align:center;padding:20px;">Kan scorebord niet laden.</div>'; });
+  }
+
+window.blVoteBtn = function(id, kamer){
+  var btn = event.target;
+  window.blVote(id, kamer, btn);
+};
+  window.blVote = function(id, kamer, btn){
+    if(myVotes[id]) return;
+    myVotes[id] = true;
+    btn.disabled = true; btn.style.opacity = '0.4'; btn.style.cursor = 'default';
+    fetch(FB + '/scoreboard/' + kamer + '/' + id + '/votes.json')
+      .then(function(r){ return r.json(); })
+      .then(function(votes){
+        var newVotes = (votes||0) + 1;
+        return fetch(FB + '/scoreboard/' + kamer + '/' + id + '/votes.json', {
+          method: 'PUT',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(newVotes)
+        });
+      })
+      .then(function(){ blLoadScores(kamer); })
+      .catch(function(e){ console.error('Stem fout:', e); });
+  };
+
+</script>
 </body>
 </html>
