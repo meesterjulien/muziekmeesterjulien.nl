@@ -5874,10 +5874,14 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
 <!-- SCOREBORD MODAL -->
 <div id="blScoreModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:none;align-items:center;justify-content:center;">
   <div style="background:#1a1a1a;border:2px solid rgba(255,255,255,0.2);border-radius:16px;padding:24px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto;position:relative;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
       <div style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:#fff;">🏆 SCOREBORD</div>
-      <button onclick="window.blCloseScoreboard&&window.blCloseScoreboard()" style="background:transparent;border:none;color:#888;font-size:20px;cursor:pointer;">✕</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="window.blRefreshScoreboard&&window.blRefreshScoreboard()" style="background:#333;border:none;border-radius:6px;padding:4px 10px;font-family:'Space Mono',monospace;font-size:11px;color:#aaa;cursor:pointer;">🔄 Ververs</button>
+        <button onclick="window.blCloseScoreboard&&window.blCloseScoreboard()" style="background:transparent;border:none;color:#888;font-size:20px;cursor:pointer;">✕</button>
+      </div>
     </div>
+    <div id="blScoreKamer" style="font-family:'Space Mono',monospace;font-size:10px;color:#666;margin-bottom:12px;letter-spacing:1px;"></div>
     <div id="blScoreList" style="display:flex;flex-direction:column;gap:8px;"></div>
   </div>
 </div>
@@ -5917,10 +5921,12 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
       body: JSON.stringify(entry)
     }).then(function(r){ return r.json(); })
     .then(function(d){
-      alert('Beat van ' + name + ' is ingezonden! 🎵');
+      alert('Beat van ' + name + ' is ingezonden in kamer "' + kamerName + '"! 🎵\nAndere leerlingen kunnen nu stemmen.');
       nameEl.value = '';
     }).catch(function(e){ alert('Fout bij inzenden: ' + e); });
   };
+
+  var currentScoreKamer = 'klas';
 
   window.blShowScoreboard = function(){
     var modal = document.getElementById('blScoreModal');
@@ -5928,7 +5934,14 @@ function uTriggerKey(k){const el=document.getElementById('ukey-'+k);if(!el)retur
     var kamer = document.getElementById('roomInput');
     var kamerName = kamer ? kamer.value.trim().toLowerCase().replace(/[^a-z0-9]/g,'') : 'klas';
     if(!kamerName) kamerName = 'klas';
+    currentScoreKamer = kamerName;
+    var lbl = document.getElementById('blScoreKamer');
+    if(lbl) lbl.textContent = 'KAMER: ' + kamerName.toUpperCase();
     blLoadScores(kamerName);
+  };
+
+  window.blRefreshScoreboard = function(){
+    blLoadScores(currentScoreKamer);
   };
 
   window.blCloseScoreboard = function(){
