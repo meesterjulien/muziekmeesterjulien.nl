@@ -2,6 +2,7 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:;">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kind in Klank</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -641,6 +642,14 @@ select{width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700
       <button class="btn play" id="playbtn">&#9654; play</button>
       <button class="btn" id="clearbtn">clear</button>
       <button class="btn" id="randbtn">shuffle</button>
+      <div style="display:flex;align-items:center;gap:5px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:5px 10px;">
+        <span style="font-family:'Space Mono',monospace;font-size:10px;color:#666;letter-spacing:1px;">SYNTH:</span>
+        <button onclick="window._blSynthInst='piano';document.querySelectorAll('.sinst-btn').forEach(b=>b.style.background='');this.style.background='#00BCD4';" class="sinst-btn" style="background:#00BCD4;border:none;border-radius:5px;padding:3px 9px;font-family:'Space Mono',monospace;font-size:10px;color:#000;cursor:pointer;font-weight:700;">Piano</button>
+        <button onclick="window._blSynthInst='organ';document.querySelectorAll('.sinst-btn').forEach(b=>b.style.background='');this.style.background='#00BCD4';" class="sinst-btn" style="border:none;border-radius:5px;padding:3px 9px;font-family:'Space Mono',monospace;font-size:10px;color:#aaa;cursor:pointer;background:transparent;">Orgel</button>
+        <button onclick="window._blSynthInst='strings';document.querySelectorAll('.sinst-btn').forEach(b=>b.style.background='');this.style.background='#00BCD4';" class="sinst-btn" style="border:none;border-radius:5px;padding:3px 9px;font-family:'Space Mono',monospace;font-size:10px;color:#aaa;cursor:pointer;background:transparent;">Strijkers</button>
+        <button onclick="window._blSynthInst='flute';document.querySelectorAll('.sinst-btn').forEach(b=>b.style.background='');this.style.background='#00BCD4';" class="sinst-btn" style="border:none;border-radius:5px;padding:3px 9px;font-family:'Space Mono',monospace;font-size:10px;color:#aaa;cursor:pointer;background:transparent;">Fluit</button>
+        <button onclick="window._blSynthInst='lead';document.querySelectorAll('.sinst-btn').forEach(b=>b.style.background='');this.style.background='#00BCD4';" class="sinst-btn" style="border:none;border-radius:5px;padding:3px 9px;font-family:'Space Mono',monospace;font-size:10px;color:#aaa;cursor:pointer;background:transparent;">Lead</button>
+      </div>
       <div style="display:flex;align-items:center;gap:6px;background:#222;border:2px solid rgba(255,255,255,0.3);border-radius:8px;padding:5px 10px;">
         <span style="font-family:'Space Mono',monospace;font-size:11px;color:#aaa;">KAMER:</span>
         <input id="roomInput" type="text" placeholder="klas1" maxlength="20"
@@ -698,6 +707,22 @@ const TRACKS = [
   { name: 'Shaker',  grp: 'perc',  on: '#D85A30', off: '#321000', type: 'shaker',  freq: 0   },
   { name: 'Tom hi',  grp: 'toms',  on: '#D4537E', off: '#300d20', type: 'tom',     freq: 180 },
   { name: 'Tom lo',  grp: 'toms',  on: '#993556', off: '#280815', type: 'tom',     freq: 80  },
+  { name: 'Bas C',   grp: 'bass',  on: '#7C4DFF', off: '#1a0a3a', type: 'bass',    freq: 130.8},
+  { name: 'Bas D',   grp: 'bass',  on: '#651FFF', off: '#130828', type: 'bass',    freq: 146.8},
+  { name: 'Bas E',   grp: 'bass',  on: '#AA00FF', off: '#1a0030', type: 'bass',    freq: 164.8},
+  { name: 'Bas F',   grp: 'bass',  on: '#7C4DFF', off: '#1a0a3a', type: 'bass',    freq: 174.6},
+  { name: 'Bas G',   grp: 'bass',  on: '#651FFF', off: '#130828', type: 'bass',    freq: 196.0},
+  { name: 'Bas A',   grp: 'bass',  on: '#AA00FF', off: '#1a0030', type: 'bass',    freq: 220.0},
+  { name: 'Bas B',   grp: 'bass',  on: '#7C4DFF', off: '#1a0a3a', type: 'bass',    freq: 246.9},
+  { name: 'Bas C2',  grp: 'bass',  on: '#651FFF', off: '#130828', type: 'bass',    freq: 261.6},
+  { name: 'Syn C4',  grp: 'synth', on: '#00BCD4', off: '#002a30', type: 'synth',   freq: 261.6},
+  { name: 'Syn D4',  grp: 'synth', on: '#0097A7', off: '#002428', type: 'synth',   freq: 293.7},
+  { name: 'Syn E4',  grp: 'synth', on: '#00ACC1', off: '#002830', type: 'synth',   freq: 329.6},
+  { name: 'Syn F4',  grp: 'synth', on: '#00BCD4', off: '#002a30', type: 'synth',   freq: 349.2},
+  { name: 'Syn G4',  grp: 'synth', on: '#0097A7', off: '#002428', type: 'synth',   freq: 392.0},
+  { name: 'Syn A4',  grp: 'synth', on: '#00ACC1', off: '#002830', type: 'synth',   freq: 440.0},
+  { name: 'Syn B4',  grp: 'synth', on: '#00BCD4', off: '#002a30', type: 'synth',   freq: 493.9},
+  { name: 'Syn C5',  grp: 'synth', on: '#0097A7', off: '#002428', type: 'synth',   freq: 523.3},
 ];
 
 const STEPS = 16;
@@ -790,6 +815,90 @@ function playSound(t, when) {
     o.frequency.setValueAtTime(t.freq * 2, now);
     o.frequency.exponentialRampToValueAtTime(t.freq * 0.5, now + 0.22);
     g.gain.exponentialRampToValueAtTime(0.001, now + 0.28); o.start(now); o.stop(now + 0.28);
+  } else if (t.type === 'bass') {
+    const dur = (60 / bpm) * 0.88;
+    const o1 = actx.createOscillator();
+    const o2 = actx.createOscillator();
+    const filt = actx.createBiquadFilter();
+    filt.type = 'lowpass'; filt.frequency.value = 600; filt.Q.value = 1.5;
+    o1.type = 'sawtooth'; o1.frequency.value = t.freq;
+    o2.type = 'sine';     o2.frequency.value = t.freq;
+    const g2 = actx.createGain(); g2.gain.value = 0.4;
+    o1.connect(filt); o2.connect(g2); g2.connect(filt); filt.connect(g);
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(vol * 0.9, now + 0.012);
+    g.gain.setValueAtTime(vol * 0.9, now + dur * 0.6);
+    g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    o1.start(now); o2.start(now);
+    o1.stop(now + dur); o2.stop(now + dur);
+  } else if (t.type === 'synth') {
+    const synthInst = window._blSynthInst || 'piano';
+    const dur = (60 / bpm) * 0.85;
+    if (synthInst === 'piano') {
+      // Piano: sine + triangle met snelle decay
+      const o1 = actx.createOscillator(); const o2 = actx.createOscillator();
+      const o3 = actx.createOscillator();
+      o1.type = 'sine';     o1.frequency.value = t.freq;
+      o2.type = 'triangle'; o2.frequency.value = t.freq * 2;
+      o3.type = 'sine';     o3.frequency.value = t.freq * 3;
+      const g1 = actx.createGain(); const g2 = actx.createGain(); const g3 = actx.createGain();
+      g1.gain.value = 0.6; g2.gain.value = 0.2; g3.gain.value = 0.08;
+      o1.connect(g1); o2.connect(g2); o3.connect(g3);
+      [g1,g2,g3].forEach(gx => gx.connect(g));
+      g.gain.setValueAtTime(vol * 1.1, now);
+      g.gain.exponentialRampToValueAtTime(vol * 0.3, now + 0.08);
+      g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      o1.start(now); o2.start(now); o3.start(now);
+      o1.stop(now+dur+0.1); o2.stop(now+dur+0.1); o3.stop(now+dur+0.1);
+    } else if (synthInst === 'organ') {
+      // Orgel: meerdere harmonischen, sustain
+      const freqs = [1, 2, 3, 4, 6];
+      const amps  = [0.5, 0.3, 0.15, 0.1, 0.05];
+      freqs.forEach((mult, i) => {
+        const o = actx.createOscillator(); const og = actx.createGain();
+        o.type = 'sine'; o.frequency.value = t.freq * mult;
+        og.gain.value = amps[i];
+        o.connect(og); og.connect(g);
+        o.start(now); o.stop(now + dur);
+      });
+      g.gain.setValueAtTime(vol * 0.7, now);
+      g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    } else if (synthInst === 'strings') {
+      // Strijkers: sawtooth met filter en langzame attack
+      const o = actx.createOscillator(); const o2 = actx.createOscillator();
+      const filt = actx.createBiquadFilter();
+      filt.type = 'lowpass'; filt.frequency.value = 2000; filt.Q.value = 0.8;
+      o.type = 'sawtooth'; o.frequency.value = t.freq;
+      o2.type = 'sawtooth'; o2.frequency.value = t.freq * 1.005;
+      o.connect(filt); o2.connect(filt); filt.connect(g);
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(vol * 0.6, now + 0.06);
+      g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      o.start(now); o2.start(now); o.stop(now+dur); o2.stop(now+dur);
+    } else if (synthInst === 'flute') {
+      // Fluit: sine met vibrato
+      const o = actx.createOscillator(); const lfo = actx.createOscillator();
+      const lfoG = actx.createGain();
+      o.type = 'sine'; o.frequency.value = t.freq;
+      lfo.type = 'sine'; lfo.frequency.value = 5.5;
+      lfoG.gain.value = 4;
+      lfo.connect(lfoG); lfoG.connect(o.frequency);
+      o.connect(g);
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(vol * 0.7, now + 0.04);
+      g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      o.start(now); lfo.start(now); o.stop(now+dur); lfo.stop(now+dur);
+    } else {
+      // Lead synth: square
+      const o = actx.createOscillator(); const filt = actx.createBiquadFilter();
+      filt.type = 'lowpass'; filt.frequency.value = 3000; filt.Q.value = 2;
+      o.type = 'square'; o.frequency.value = t.freq;
+      o.connect(filt); filt.connect(g);
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(vol * 0.5, now + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      o.start(now); o.stop(now + dur);
+    }
   }
 }
 
@@ -834,7 +943,7 @@ function buildUI() {
   TRACKS.forEach((t, ti) => {
     if (t.grp !== lastGrp) {
       const gl = document.createElement('div'); gl.className = 'grp-label';
-      const names = { drums: '— Drums', hats: '— Hats', perc: '— Percussion', toms: '— Toms' };
+      const names = { drums: '— Drums', hats: '— Hats', perc: '— Percussion', toms: '— Toms', bass: '— Bass', synth: '— Synth' };
       gl.textContent = names[t.grp] || t.grp;
       gl.style.color = t.on;
       grid.appendChild(gl); lastGrp = t.grp;
@@ -914,6 +1023,7 @@ document.getElementById('swing').addEventListener('input', function () {
 buildUI();
 loadPreset('house');
 window._drumLoadPreset = loadPreset;
+window._blSynthInst = window._blSynthInst || 'piano';
 })();
 </script>
 
@@ -4514,6 +4624,22 @@ const TRACKS = [
   { name: 'Shaker',  grp: 'perc',  on: '#D85A30', off: '#321000', type: 'shaker',  freq: 0   },
   { name: 'Tom hi',  grp: 'toms',  on: '#D4537E', off: '#300d20', type: 'tom',     freq: 180 },
   { name: 'Tom lo',  grp: 'toms',  on: '#993556', off: '#280815', type: 'tom',     freq: 80  },
+  { name: 'Bas C',   grp: 'bass',  on: '#7C4DFF', off: '#1a0a3a', type: 'bass',    freq: 130.8},
+  { name: 'Bas D',   grp: 'bass',  on: '#651FFF', off: '#130828', type: 'bass',    freq: 146.8},
+  { name: 'Bas E',   grp: 'bass',  on: '#AA00FF', off: '#1a0030', type: 'bass',    freq: 164.8},
+  { name: 'Bas F',   grp: 'bass',  on: '#7C4DFF', off: '#1a0a3a', type: 'bass',    freq: 174.6},
+  { name: 'Bas G',   grp: 'bass',  on: '#651FFF', off: '#130828', type: 'bass',    freq: 196.0},
+  { name: 'Bas A',   grp: 'bass',  on: '#AA00FF', off: '#1a0030', type: 'bass',    freq: 220.0},
+  { name: 'Bas B',   grp: 'bass',  on: '#7C4DFF', off: '#1a0a3a', type: 'bass',    freq: 246.9},
+  { name: 'Bas C2',  grp: 'bass',  on: '#651FFF', off: '#130828', type: 'bass',    freq: 261.6},
+  { name: 'Syn C4',  grp: 'synth', on: '#00BCD4', off: '#002a30', type: 'synth',   freq: 261.6},
+  { name: 'Syn D4',  grp: 'synth', on: '#0097A7', off: '#002428', type: 'synth',   freq: 293.7},
+  { name: 'Syn E4',  grp: 'synth', on: '#00ACC1', off: '#002830', type: 'synth',   freq: 329.6},
+  { name: 'Syn F4',  grp: 'synth', on: '#00BCD4', off: '#002a30', type: 'synth',   freq: 349.2},
+  { name: 'Syn G4',  grp: 'synth', on: '#0097A7', off: '#002428', type: 'synth',   freq: 392.0},
+  { name: 'Syn A4',  grp: 'synth', on: '#00ACC1', off: '#002830', type: 'synth',   freq: 440.0},
+  { name: 'Syn B4',  grp: 'synth', on: '#00BCD4', off: '#002a30', type: 'synth',   freq: 493.9},
+  { name: 'Syn C5',  grp: 'synth', on: '#0097A7', off: '#002428', type: 'synth',   freq: 523.3},
 ];
 
 const STEPS = 16;
@@ -4606,6 +4732,90 @@ function playSound(t, when) {
     o.frequency.setValueAtTime(t.freq * 2, now);
     o.frequency.exponentialRampToValueAtTime(t.freq * 0.5, now + 0.22);
     g.gain.exponentialRampToValueAtTime(0.001, now + 0.28); o.start(now); o.stop(now + 0.28);
+  } else if (t.type === 'bass') {
+    const dur = (60 / bpm) * 0.88;
+    const o1 = actx.createOscillator();
+    const o2 = actx.createOscillator();
+    const filt = actx.createBiquadFilter();
+    filt.type = 'lowpass'; filt.frequency.value = 600; filt.Q.value = 1.5;
+    o1.type = 'sawtooth'; o1.frequency.value = t.freq;
+    o2.type = 'sine';     o2.frequency.value = t.freq;
+    const g2 = actx.createGain(); g2.gain.value = 0.4;
+    o1.connect(filt); o2.connect(g2); g2.connect(filt); filt.connect(g);
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(vol * 0.9, now + 0.012);
+    g.gain.setValueAtTime(vol * 0.9, now + dur * 0.6);
+    g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    o1.start(now); o2.start(now);
+    o1.stop(now + dur); o2.stop(now + dur);
+  } else if (t.type === 'synth') {
+    const synthInst = window._blSynthInst || 'piano';
+    const dur = (60 / bpm) * 0.85;
+    if (synthInst === 'piano') {
+      // Piano: sine + triangle met snelle decay
+      const o1 = actx.createOscillator(); const o2 = actx.createOscillator();
+      const o3 = actx.createOscillator();
+      o1.type = 'sine';     o1.frequency.value = t.freq;
+      o2.type = 'triangle'; o2.frequency.value = t.freq * 2;
+      o3.type = 'sine';     o3.frequency.value = t.freq * 3;
+      const g1 = actx.createGain(); const g2 = actx.createGain(); const g3 = actx.createGain();
+      g1.gain.value = 0.6; g2.gain.value = 0.2; g3.gain.value = 0.08;
+      o1.connect(g1); o2.connect(g2); o3.connect(g3);
+      [g1,g2,g3].forEach(gx => gx.connect(g));
+      g.gain.setValueAtTime(vol * 1.1, now);
+      g.gain.exponentialRampToValueAtTime(vol * 0.3, now + 0.08);
+      g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      o1.start(now); o2.start(now); o3.start(now);
+      o1.stop(now+dur+0.1); o2.stop(now+dur+0.1); o3.stop(now+dur+0.1);
+    } else if (synthInst === 'organ') {
+      // Orgel: meerdere harmonischen, sustain
+      const freqs = [1, 2, 3, 4, 6];
+      const amps  = [0.5, 0.3, 0.15, 0.1, 0.05];
+      freqs.forEach((mult, i) => {
+        const o = actx.createOscillator(); const og = actx.createGain();
+        o.type = 'sine'; o.frequency.value = t.freq * mult;
+        og.gain.value = amps[i];
+        o.connect(og); og.connect(g);
+        o.start(now); o.stop(now + dur);
+      });
+      g.gain.setValueAtTime(vol * 0.7, now);
+      g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    } else if (synthInst === 'strings') {
+      // Strijkers: sawtooth met filter en langzame attack
+      const o = actx.createOscillator(); const o2 = actx.createOscillator();
+      const filt = actx.createBiquadFilter();
+      filt.type = 'lowpass'; filt.frequency.value = 2000; filt.Q.value = 0.8;
+      o.type = 'sawtooth'; o.frequency.value = t.freq;
+      o2.type = 'sawtooth'; o2.frequency.value = t.freq * 1.005;
+      o.connect(filt); o2.connect(filt); filt.connect(g);
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(vol * 0.6, now + 0.06);
+      g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      o.start(now); o2.start(now); o.stop(now+dur); o2.stop(now+dur);
+    } else if (synthInst === 'flute') {
+      // Fluit: sine met vibrato
+      const o = actx.createOscillator(); const lfo = actx.createOscillator();
+      const lfoG = actx.createGain();
+      o.type = 'sine'; o.frequency.value = t.freq;
+      lfo.type = 'sine'; lfo.frequency.value = 5.5;
+      lfoG.gain.value = 4;
+      lfo.connect(lfoG); lfoG.connect(o.frequency);
+      o.connect(g);
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(vol * 0.7, now + 0.04);
+      g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      o.start(now); lfo.start(now); o.stop(now+dur); lfo.stop(now+dur);
+    } else {
+      // Lead synth: square
+      const o = actx.createOscillator(); const filt = actx.createBiquadFilter();
+      filt.type = 'lowpass'; filt.frequency.value = 3000; filt.Q.value = 2;
+      o.type = 'square'; o.frequency.value = t.freq;
+      o.connect(filt); filt.connect(g);
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(vol * 0.5, now + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      o.start(now); o.stop(now + dur);
+    }
   }
 }
 
@@ -4650,7 +4860,7 @@ function buildUI() {
   TRACKS.forEach((t, ti) => {
     if (t.grp !== lastGrp) {
       const gl = document.createElement('div'); gl.className = 'grp-label';
-      const names = { drums: '— Drums', hats: '— Hats', perc: '— Percussion', toms: '— Toms' };
+      const names = { drums: '— Drums', hats: '— Hats', perc: '— Percussion', toms: '— Toms', bass: '— Bass', synth: '— Synth' };
       gl.textContent = names[t.grp] || t.grp;
       gl.style.color = t.on;
       grid.appendChild(gl); lastGrp = t.grp;
@@ -4731,6 +4941,7 @@ buildUI();
 loadPreset('house');
 
 window._drumLoadPreset = loadPreset;
+window._blSynthInst = window._blSynthInst || 'piano';
 window._blGetPat = function(){ return pat; };
 window._blGetBpm = function(){ return bpm; };
 window._blSet = function(newPat, newBpm){
